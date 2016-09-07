@@ -1,0 +1,25 @@
+{
+  "name": "uwmctools",
+  "version": "2.0.0",
+  "description": "convert data from unlimitedworld.de, mostly used for some tools on https://lergin.de",
+  "homepage": "https://legin.de/tools/uwmc/player",
+  "bugs": {
+      "url": "//TODO: GITHUB ISSUE URL"
+  },
+  "license": "MIT",
+  "author": {
+      "name": "Malte Laukötter",
+      "email": "lergin@gmx.de",
+      "url": "Lergin.de"
+  },
+  "main": "main.js",
+  "repository": "//TODO: GITHUB URL",
+  "private": true,
+  "engines": {
+    "node": ">=6.3.0"
+  },
+  "dependencies": {
+    "mongodb": "^2.2.2",
+    "request": "^2.73.0"
+  }
+}

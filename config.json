@@ -1,0 +1,26 @@
+{
+    "MONGODB": {
+        "DATABASE": {
+            "UWMC": {
+                "NAME": "uwmc",
+                "COLLECTION": {
+                    "PLAYERS": "players",
+                    "ZONES": "zones",
+                    "PLOTS": "plots",
+                    "MAPSTATS": "mapstats"
+                }
+            }
+        }
+    },
+    "URLS": {
+        "UWMC": {
+            "ZONELIST_MAIN": "https://unlimitedworld.de/dynmap/tiles/_markers_/marker_main.json",
+            "ZONELIST_CREATIVE": "https://unlimitedworld.de/dynmap/tiles/_markers_/marker_creative.json",
+            "VOTELIST": "https://unlimitedworld.de/server_api/ajax.php?req=player_votes",
+            "PLAYERLIST": "https://unlimitedworld.de/server_api/ajax.php?req=player_list"
+        },
+        "MOJANG": {
+            "PLAYERS_TO_UUID": "https://api.mojang.com/profiles/minecraft"
+        }
+    }
+}
