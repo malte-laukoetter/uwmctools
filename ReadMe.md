@@ -3,28 +3,28 @@
 ## Usage
 
 ``` javascript
-const UwmcTools = require('uwtools');
+const UwmcTools = require('uwmctools');
 
 //connection url of the Mongodb databse
-const MONGODB_URL = 'mongodb://database/uwtools';
+const MONGODB_URL = 'mongodb://database/uwmctools';
 
 //init the module with the url of the MongoDb database
-let uwtool = new UwmcTools(MONGODB_URL);
+let uwmctool = new UwmcTools(MONGODB_URL);
 
 //save the data from the playerlist
-uwtool.savePlayerListData();
+uwmctool.savePlayerListData();
 
 //save the data about the plots
-uwtool.savePlotListData();
+uwmctool.savePlotListData();
 
 //save the data about the zones
-uwtool.saveZoneListData();
+uwmctool.saveZoneListData();
 
 //save the data from the zonelist
-uwtool.saveVoteListData();
+uwmctool.saveVoteListData();
 
 //get the data about a player
-uwtool.getPlayer('ebdf264aabda45708f61f2d7a2bb4758').then(function(player){
+uwmctool.getPlayer('ebdf264aabda45708f61f2d7a2bb4758').then(function(player){
     //the player is an instance of UwmcPlayer
     console.log(`Name: ${player.name}`);
     console.log(`Rank: ${UwmcTools.rankToRankName(player.rank)}`);
