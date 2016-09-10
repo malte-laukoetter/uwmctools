@@ -248,7 +248,7 @@ class UwmcPlayer extends Player {
                         $match: {
                             "uuid": uuid
                         }
-                    }, {
+                    },/* {
                         $lookup: {
                             from: config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES,
                             localField: "uuid",
@@ -262,7 +262,7 @@ class UwmcPlayer extends Player {
                             foreignField: "owner.id",
                             as: "plots"
                         }
-                    },{
+                    },*/{
                         $project: {
                             _id: 0,
                             uuid: 1,
@@ -271,9 +271,9 @@ class UwmcPlayer extends Player {
                             ranks: 1,
                             boardId: 1,
                             votes: 1,
-                            lastPlayed: 1,
-                            zones: 1,
-                            plots: 1
+                            lastPlayed: 1//,
+                        //    zones: 1,
+                        //    plots: 1
                         }
                     } ] )
                 .next( function ( err, data ) {
@@ -289,8 +289,8 @@ class UwmcPlayer extends Player {
                         player.lastPlayed = data.lastPlayed
                         player._setVotes( data.votes || {} )
                         player._setRankHistory( data.ranks || [] )
-                        player._setZones(data.zones)
-                        player._setPlots(data.plots)
+                    //    player._setZones(data.zones)
+                    //    player._setPlots(data.plots)
 
                         resolve( player )
                     }else{
