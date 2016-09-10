@@ -1,5 +1,9 @@
 const assert = require( 'assert' );
 
+const EventEmitter = require('events');
+class UwmcPlayerEmitter extends EventEmitter {}
+const emitter = new UwmcPlayerEmitter();
+
 const config = require( '../config.json' );
 
 const Player = require( './Player' );
@@ -74,6 +78,11 @@ class UwmcPlayer extends Player {
             rank: rank,
             date: date
         } );
+
+        UwmcPlayer.eventEmitter.emit('rankchange', {
+            player: this,
+            rank: rank
+        });
     }
 
     /*
@@ -131,6 +140,11 @@ class UwmcPlayer extends Player {
             this._plots = []
 
         this._plots.push( plot )
+
+        UwmcPlayer.eventEmitter.emit('newplot', {
+            player: this,
+            plot: plot
+        });
     }
 
     /*
@@ -158,6 +172,11 @@ class UwmcPlayer extends Player {
             this._zones = []
 
         this._zones.push( zone )
+
+        UwmcPlayer.eventEmitter.emit('newzone', {
+            player: this,
+            zone: zone
+        });
     }
 
     /*
@@ -309,6 +328,13 @@ class UwmcPlayer extends Player {
         default:
             return "unknown";
         }
+    }
+
+    /*
+     * gets the event emitter for the UwmcPlayer class (not the emitter for an instance of the UwmcPlayer)
+     */
+    static get eventEmitter(){
+        return emitter
     }
 }
 
