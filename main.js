@@ -5,6 +5,12 @@ const ZoneListRequest = require( './requests/ZoneListRequest' );
 const PlotListRequest = require( './requests/PlotListRequest' );
 const VoteListRequest = require( './requests/VoteListRequest' );
 const UwmcPlayer = require( './player/UwmcPlayer' );
+const Player = require( './player/Player' );
+const MainMapZone = require( './zones/MainMapZone' );
+const PlayerZone = require( './zones/PlayerZone' );
+const Plot = require( './zones/Plot' );
+const ServerZone = require( './zones/ServerZone' );
+const Zone = require( './zones/Zone' );
 
 /*
  * Main Class of the uwmc tools
@@ -90,6 +96,55 @@ class Main {
                 return res;
             } );
         } )
+    }
+
+    /*
+     * gets the UwmcPlayer class
+     */
+    static get UwmcPlayer(){
+        return UwmcPlayer;
+    }
+
+    /*
+     * gets the Player class
+     */
+    static get Player(){
+        return Player;
+    }
+
+    /*
+     * gets the MainMapZone class
+     */
+    static get MainMapZone(){
+        return MainMapZone;
+    }
+
+    /*
+     * gets the PlayerZone class
+     */
+    static get PlayerZone(){
+        return PlayerZone;
+    }
+
+    /*
+     * gets the Plot class
+     */
+    static get Plot(){
+        return Plot;
+    }
+
+    /*
+     * gets the ServerZone class
+     */
+    static get ServerZone(){
+        return ServerZone;
+    }
+
+    /*
+     * gets the Zone class
+     */
+    static get Zone(){
+        return Zone;
     }
 }
 
