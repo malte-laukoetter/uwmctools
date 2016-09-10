@@ -1,4 +1,4 @@
-const Zone = require('./MainMapZone');
+const MainMapZone = require('./MainMapZone');
 
 /*
  * a ServerZone of the mainmap of unlimitedworld
