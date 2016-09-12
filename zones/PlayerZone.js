@@ -89,10 +89,34 @@ class PlayerZone extends MainMapZone {
     }
 
     /*
+     * creates a PlayerZone from the data from the database
+     */
+    static fromDbObject(obj){
+        if(!obj.owner)
+            return false
+
+        let player = new Player(obj.owner.id);
+        player.name = obj.owner.name;
+        let zone = new PlayerZone(player, obj.number, obj.zoneId, obj.x[0], obj.x[1], obj.z[0], obj.z[1]);
+        if(obj.created)
+            zone.created = new Date(obj.created);
+        if(obj.deleted)
+            zone.deleted = new Date(obj.deleted);
+
+        return zone
+    }
+
+    /*
      * sets all zones to deleted that not been updated in the last 2 hours
      */
     static setOldZonesToDeleted( db ) {
-        return Zone.setOldZonesToDeleted( db, config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES );
+        return Zone.setOldZonesToDeleted( db, config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES ).then(function(res){
+            for(let zone of res){
+                zone = PlayerZone.fromDbObject(zone)
+                if(zone)
+                    Zone.eventEmitter.emit('zonedelete', zone);
+            }
+        });
     }
 }
 

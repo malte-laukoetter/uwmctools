@@ -1,3 +1,7 @@
+const EventEmitter = require('events');
+class ZoneEmitter extends EventEmitter {}
+const emitter = new ZoneEmitter();
+
 /*
  * an area in a 2d grid
  */
@@ -69,28 +73,44 @@ class Zone {
      */
     static setOldZonesToDeleted( db, collection ) {
         return new Promise( function ( resolve, reject ) {
-            db.collection( collection ).update( {
+            db.collection( collection ).find( {
                     deleted: {
                         $exists: false
                     },
                     updated: {
                         $lt: new Date() - 7200000
                     }
-                }, {
-                    $currentDate: {
-                        deleted: true
-                    }
-                }, {
-                    multi: true
-                },
-                function ( err, results ) {
+                }).toArray(function ( err, results ) {
                     if ( err ) {
                         reject( err );
                     }
 
-                    resolve( results );
+                    if(results){
+                        let requests = []
+
+                        for(let result of results){
+                            requests.push(db.collection(collection).update({
+                                _id: result._id
+                            },{
+                                $currentDate: {
+                                    deleted: 1
+                                }
+                            }))
+                        }
+
+                        resolve(Promise.all(requests).then(function(res){
+                            return results
+                        }));
+                    }
                 } );
         } );
+    }
+
+    /*
+     * gets the event emitter for the Zone class (not the emitter for an instance of the Zone)
+     */
+    static get eventEmitter(){
+        return emitter
     }
 }
 
