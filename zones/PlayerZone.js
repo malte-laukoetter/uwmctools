@@ -56,7 +56,7 @@ class PlayerZone extends MainMapZone {
                         x2: zone.pos.x2,
                         z1: zone.pos.z1,
                         z2: zone.pos.z2,
-                        'owner.uuid': zone.player.uuid,
+                        'owner.id': zone.player.id,
                         'owner.name': zone.player.name,
                         number: zone.number
                     },
