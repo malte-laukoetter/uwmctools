@@ -57,10 +57,15 @@ class ZoneListRequest extends Request {
                     let playername = ZoneListRequest._getZoneOwner(zoneData.label).toLowerCase()
 
                     if(players.has(playername)){
-                        let player = new Player(players.get(playername).id)
-                        player.name = players.get(playername).name
-
-                        let zone = new PlayerZone(player, ZoneListRequest._getZoneNumber(zoneData.label), zoneId, zoneData.x[0], zoneData.x[1], zoneData.z[0], zoneData.z[1]);
+                        let zone = new PlayerZone(
+                            players.get(playername),
+                            ZoneListRequest._getZoneNumber(zoneData.label),
+                            zoneId,
+                            zoneData.x[0],
+                            zoneData.x[1],
+                            zoneData.z[0],
+                            zoneData.z[1]
+                        );
 
                         zoneList.push( zone )
                     }
