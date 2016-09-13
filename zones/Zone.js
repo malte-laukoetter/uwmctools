@@ -78,7 +78,7 @@ class Zone {
                         $exists: false
                     },
                     updated: {
-                        $lt: new Date() - 7200000
+                        $lt: new Date(new Date() - 3000000)
                     }
                 }).toArray(function ( err, results ) {
                     if ( err ) {

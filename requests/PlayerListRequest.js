@@ -60,7 +60,7 @@ class PlayerListRequest extends Request {
 
             player = PlayerListRequest._addPlayerListDataToPlayer(player, data)
 
-            return player.saveToDb( db );
+            return player.saveToDb( db ).then(function(){return player});
         })
     }
 
