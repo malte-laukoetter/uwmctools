@@ -93,12 +93,13 @@ class Zone {
                                 _id: result._id
                             },{
                                 $currentDate: {
-                                    deleted: 1
+                                    deleted: true
                                 }
                             }))
                         }
 
                         resolve(Promise.all(requests).then(function(res){
+                            //return the list of zones we just deleted (from the find query)
                             return results
                         }));
                     }
