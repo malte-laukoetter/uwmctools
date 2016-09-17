@@ -1,4 +1,4 @@
-const Zone = require('./Zone');
+const Zone = require( './Zone' );
 
 /*
  * a zone of the mainmap of unlimitedworld.de
@@ -56,6 +56,25 @@ class MainMapZone extends Zone {
      */
     get type() {
         return type
+    }
+
+    /*
+     * sets the zone to deleted in the database
+     */
+    setToDeleted( db, collection ) {
+        this.deleted = new Date();
+
+        return new Promise( function ( resolve, reject ) {
+            db.collection( collection ).update( {
+                zoneId: this.id
+            }, {
+                $currentDate: {
+                    deleted: true
+                }
+            } ).then( function ( res ) {
+                return res
+            } );
+        } );
     }
 }
 

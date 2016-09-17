@@ -82,6 +82,41 @@ class PlayerZone extends MainMapZone {
     }
 
     /*
+     * sets the status of the zone to deleted
+     */
+    setToDeleted(db){
+        let zone = this;
+
+        super.setToDeleted(db, config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES).then(function(res){
+            Zone.eventEmitter.emit('zonedelete', zone);
+        });
+    }
+
+    /*
+     * creates a PlayerZone from the database
+     */
+    static fromDb(db, zoneId){
+        return new Promise( function ( resolve, reject ) {
+            db.collection( collection ).find( {
+                deleted: {
+                    $exists: false
+                },
+                updated: {
+                    $lt: new Date(new Date() - 3000000)
+                }
+            }).each(function(err, res){
+                if ( err ) {
+                    reject( err );
+                }
+
+                if(res){
+                    resolcve(PlayerZone.fromDbObject(res));
+                }
+            })
+        });
+    }
+
+    /*
      * true if the value is an instanceof PlayerZone
      */
     static isPlayerZone( zone ) {

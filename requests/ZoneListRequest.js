@@ -13,6 +13,8 @@ const Helper = require('../Helper');
 class ZoneListRequest extends Request {
     constructor() {
         super( config.URLS.UWMC.ZONELIST_MAIN )
+
+        this.cache = new Map();
     }
 
     /*
@@ -23,15 +25,37 @@ class ZoneListRequest extends Request {
 
         return super.execute().then( function ( res ) {
             return ZoneListRequest._convertPlayerZones(res.body.sets.Spielerzonen.areas).then(function(zones){
-                let dbRequests = []
+                let dbRequests = [];
 
+                //save changed zone data
                 for(let zone of zones){
-                    dbRequests.push(zone.saveToDb(db));
+                    if(this.cache.get(zone.id) !== zone.hash){
+                        this.cache.add(zone.id, zone.hash);
+                        dbRequests.push(zone.saveToDb(db));
+                    }
                 }
 
-                return Promise.all(dbRequests).then(function(res){
-                    return PlayerZone.setOldZonesToDeleted(db)
-                });
+                //delete zones that no longer exist
+                for(let cachedZoneId of this.cache.keys){
+                    let zone = false;
+
+                    //test if the zoneid of the cached zone is in the results (-> if it exists in the reults the zone still exists)
+                    for(let zone of zones){
+                        if(zone.id === cachedZoneId){
+                            exist = true;
+                        }
+                    }
+
+                    if(!exist){
+                        dbRequests.push(PlayerZone.fromDb(db, cachedZoneId).then(function(res){
+                            res.setToDeleted(db)
+                        }))
+
+                        this.cache.remove(cachedZoneId);
+                    }
+                }
+
+                return Promise.all(dbRequests);
             })
         });
     }

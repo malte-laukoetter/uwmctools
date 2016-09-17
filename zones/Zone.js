@@ -1,6 +1,7 @@
 const EventEmitter = require('events');
 class ZoneEmitter extends EventEmitter {}
 const emitter = new ZoneEmitter();
+const crypto = require('crypto');
 
 /*
  * an area in a 2d grid
@@ -54,6 +55,10 @@ class Zone {
         }
     }
 
+    get hash(){
+        return JSON.stringify(this). //todo use crypto to create hash;
+    }
+
     /*
      * calculates the middel of the tow numbers
      */
@@ -102,6 +107,8 @@ class Zone {
                             //return the list of zones we just deleted (from the find query)
                             return results
                         }));
+                    }else{
+                        resolve([])
                     }
                 } );
         } );
