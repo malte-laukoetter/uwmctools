@@ -140,19 +140,6 @@ class PlayerZone extends MainMapZone {
 
         return zone
     }
-
-    /*
-     * sets all zones to deleted that not been updated in the last 2 hours
-     */
-    static setOldZonesToDeleted( db ) {
-        return Zone.setOldZonesToDeleted( db, config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES ).then(function(res){
-            for(let zone of res){
-                zone = PlayerZone.fromDbObject(zone)
-                if(zone)
-                    Zone.eventEmitter.emit('zonedelete', zone);
-            }
-        });
-    }
 }
 
 module.exports = PlayerZone;

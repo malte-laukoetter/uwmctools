@@ -74,47 +74,6 @@ class Zone {
     }
 
     /*
-     * sets all zones saved in the collection of the db to deleted that not been updated in the last 2 hours
-     */
-    static setOldZonesToDeleted( db, collection ) {
-        return new Promise( function ( resolve, reject ) {
-            db.collection( collection ).find( {
-                    deleted: {
-                        $exists: false
-                    },
-                    updated: {
-                        $lt: new Date(new Date() - 3000000)
-                    }
-                }).toArray(function ( err, results ) {
-                    if ( err ) {
-                        reject( err );
-                    }
-
-                    if(results){
-                        let requests = []
-
-                        for(let result of results){
-                            requests.push(db.collection(collection).update({
-                                _id: result._id
-                            },{
-                                $currentDate: {
-                                    deleted: true
-                                }
-                            }))
-                        }
-
-                        resolve(Promise.all(requests).then(function(res){
-                            //return the list of zones we just deleted (from the find query)
-                            return results
-                        }));
-                    }else{
-                        resolve([])
-                    }
-                } );
-        } );
-    }
-
-    /*
      * gets the event emitter for the Zone class (not the emitter for an instance of the Zone)
      */
     static get eventEmitter(){
