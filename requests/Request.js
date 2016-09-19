@@ -46,7 +46,7 @@ class Request{
     execute(){
         const req = this;
 
-        return new Promise(function(resolve, rejevt){
+        return new Promise(function(resolve, reject){
             requestjs(req.options, function(err, res){
                 if(err)
                     reject(err);

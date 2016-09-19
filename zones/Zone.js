@@ -56,7 +56,9 @@ class Zone {
     }
 
     get hash(){
-        return JSON.stringify(this). //todo use crypto to create hash;
+        let hashsum = crypto.createHash('md5');
+
+        return hashsum.update(JSON.stringify(this)).digest('hex');
     }
 
     /*

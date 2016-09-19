@@ -14,7 +14,7 @@ class ZoneListRequest extends Request {
     constructor() {
         super( config.URLS.UWMC.ZONELIST_MAIN )
 
-        this.cache = new Map();
+        this._cache = new Map();
     }
 
     /*
@@ -29,19 +29,19 @@ class ZoneListRequest extends Request {
 
                 //save changed zone data
                 for(let zone of zones){
-                    if(this.cache.get(zone.id) !== zone.hash){
-                        this.cache.add(zone.id, zone.hash);
+                    if(req._cache.get(zone.id) !== zone.hash){
+                        req._cache.set(zone.id, zone.hash);
                         dbRequests.push(zone.saveToDb(db));
                     }
                 }
 
                 //delete zones that no longer exist
-                for(let cachedZoneId of this.cache.keys){
-                    let zone = false;
+                for(let cachedZoneId of req._cache.keys()){
+                    let exist = false;
 
                     //test if the zoneid of the cached zone is in the results (-> if it exists in the reults the zone still exists)
                     for(let zone of zones){
-                        if(zone.id === cachedZoneId){
+                        if(!exist && zone.id === cachedZoneId){
                             exist = true;
                         }
                     }
@@ -51,7 +51,7 @@ class ZoneListRequest extends Request {
                             res.setToDeleted(db)
                         }))
 
-                        this.cache.remove(cachedZoneId);
+                        req._cache.remove(cachedZoneId);
                     }
                 }
 

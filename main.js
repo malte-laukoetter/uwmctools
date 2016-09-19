@@ -18,6 +18,11 @@ const Zone = require( './zones/Zone' );
 class Main {
     constructor( mongoDbUrl ) {
         this._mongoDbUrl = mongoDbUrl;
+
+        this._playerListRequest = new PlayerListRequest();
+        this._zoneListRequest = new ZoneListRequest();
+        this._plotListRequest = new PlotListRequest();
+        this._voteListRequest = new VoteListRequest();
     }
 
     /*
@@ -46,28 +51,28 @@ class Main {
      * save the data from the playerlist
      */
     savePlayerListData() {
-        return this._saveData( new PlayerListRequest() );
+        return this._saveData( this._playerListRequest );
     }
 
     /*
      * save the data about the zones
      */
     saveZoneListData() {
-        return this._saveData( new ZoneListRequest() );
+        return this._saveData( this._zoneListRequest );
     }
 
     /*
      * save the data about the plots
      */
     savePlotListData() {
-        return this._saveData( new PlotListRequest() );
+        return this._saveData( this._plotListRequest );
     }
 
     /*
      * save the data from the zonelist
      */
     saveVoteListData() {
-        return this._saveData( new VoteListRequest() );
+        return this._saveData( this._voteListRequest );
     }
 
     /*
