@@ -10,7 +10,9 @@ const Plot = require( '../zones/Plot' );
  */
 class PlotListRequest extends Request {
     constructor() {
-        super( config.URLS.UWMC.ZONELIST_CREATIVE )
+        super( config.URLS.UWMC.ZONELIST_CREATIVE );
+
+        this._cache = new Map();
     }
 
     /*
@@ -23,13 +25,34 @@ class PlotListRequest extends Request {
             return PlotListRequest._convertPlots(res.body.sets[ "plot2.markerset" ].areas).then(function(plots){
                 let dbRequests = []
 
+                //save changed zone data
                 for(let plot of plots){
-                    dbRequests.push(plot.saveToDb(db));
+                    if(req._cache.get(plot.id) !== plot.hash){
+                        req._cache.set(plot.id, plot.hash);
+                        dbRequests.push(plot.saveToDb(db));
+                    }
                 }
 
-                return Promise.all(dbRequests).then(function(res){
-                    return Plot.setOldPlotsToDeleted(db)
-                });
+                for(let cachedPlotId of req._cache.keys()){
+                    let exist = false;
+
+                    //test if the plotid of the cached plot is in the results (-> if it exists in the reults the plot still exists)
+                    for(let plot of plots){
+                        if(!exist && plot.id === cachedPlotId){
+                            exist = true;
+                        }
+                    }
+
+                    if(!exist){
+                        dbRequests.push(Plot.fromDb(db, cachedPlotId).then(function(res){
+                            res.setToDeleted(db)
+                        }));
+
+                        req._cache.remove(cachedPlotId);
+                    }
+                }
+
+                return Promise.all(dbRequests);
             })
         });
     }
@@ -114,7 +137,7 @@ class PlotListRequest extends Request {
      */
     static _getPlotCoords( x, z ){
         //the dynmap returns 4 coordinates for x and z but only 2 are different (eg. [12, 43, 43, 12]) but the order in which they apear isn't the same so we needed
-        //to test if the first and the second positions are the same to dicide wich we should use for the second position        
+        //to test if the first and the second positions are the same to dicide wich we should use for the second position
         return [
             x[ 0 ],
             x[ 0 ] == x[ 1 ] ? x[ 2 ] : x[ 1 ],

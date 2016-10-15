@@ -2,13 +2,14 @@ const config = require('../config.json')
 
 const Zone = require('./Zone');
 const Player = require('../player/Player');
+const MainMapZone = require( './MainMapZone' );
 
 /*
  * a Plot of the Creative Map of unlimitedworld
  */
-class Plot extends Zone {
+class Plot extends MainMapZone {
     constructor( owner, x1, x2, z1, z2, posX, posZ ) {
-        super( x1, x2, z1, z2 );
+        super( `${owner.uuid}-${posX}/${posZ}`, x1, x2, z1, z2, 'plot' );
 
         if ( !Player.isPlayer( owner ) )
             throw new Error( 'no Player' );
@@ -82,15 +83,23 @@ class Plot extends Zone {
                     plotId: plot.id
                 }, {
                     $set: {
-                        posx: plot.posX,
-                        posz: plot.posZ,
-                        owner: plot.owner,
-                        x1: plot.pos.x1,
-                        x2: plot.pos.x2,
-                        z1: plot.pos.z1,
-                        z2: plot.pos.z2,
-                        trusted: plot.trusted,
-                        updated: new Date()
+                        x: plot.posX,
+                        z: plot.posZ,
+                        'owner.id': plot.owner.uuid,
+                        'owner.name': plot.owner.name,
+                        length: plot.length,
+                        width: plot.width,
+                        'pos.x1': plot.pos.x1,
+                        'pos.x2': plot.pos.x2,
+                        'pos.z1': plot.pos.z1,
+                        'pos.z2': plot.pos.z2,
+                        trusted: plot.trusted
+                    },
+                    $unset: {
+                        deleted: ''
+                    },
+                    $currentDate: {
+                        updated: true
                     },
                     $setOnInsert: {
                         created: new Date()
@@ -107,6 +116,27 @@ class Plot extends Zone {
         } );
     }
 
+
+    /*
+     * sets the status of the zone to deleted
+     */
+    setToDeleted(db){
+        let plot = this;
+
+        return new Promise( function ( resolve, reject ) {
+            db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS ).update( {
+                plotId: this.id
+            }, {
+                $currentDate: {
+                    deleted: true
+                }
+            } ).then( function ( res ) {
+                Zone.eventEmitter.emit('plotdelete', plot);
+                return res
+            } );
+        } );
+    }
+
     /*
      * true if the value is an instanceof a Plot
      */
@@ -119,6 +149,31 @@ class Plot extends Zone {
      */
     static setOldPlotsToDeleted( db ) {
         return Zone.setOldZonesToDeleted( db, config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS );
+    }
+
+    /*
+     * creates a PlayerZone from the data from the database
+     */
+    static fromDbObject(obj){
+        if(!obj.owner)
+            return false
+
+        let player = new Player(obj.owner.id);
+        player.name = obj.owner.name;
+        let plot = new Plot(player, obj.pos.x1, obj.pos.x2, obj.pos.z1, obj.pos.z2, obj.x, obj.z);
+        if(obj.created)
+            plot.created = new Date(obj.created);
+        if(obj.deleted)
+            plot.deleted = new Date(obj.deleted);
+
+        for(let playerObj of obj.trusted){
+            let trusted = new Player(playerObj.id);
+            trusted.name = playerObj.name;
+
+            plot.addTrusted(trusted);
+        }
+
+        return plot
     }
 }
 
