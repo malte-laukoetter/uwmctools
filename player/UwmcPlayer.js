@@ -236,6 +236,19 @@ class UwmcPlayer extends Player {
         } );
     }
 
+    toJson(){
+        return {
+            'uuid': this.uuid,
+            'name': this.name,
+            'rank': this.rank,
+            'ranks': this.rankHistory,
+            'boardId': this.boardId,
+            'votes': this.votes,
+            'zones': this.zones,
+            'plots': this.plots
+        }
+    }
+
     /*
      * gets the data of the player with the given uuid from the database and creates a new UwmcPlayer object with it.
      * If there is no data about this player in the database it returns a UwmcPlayer object with just the given uuid.
@@ -248,7 +261,7 @@ class UwmcPlayer extends Player {
                         $match: {
                             "uuid": uuid
                         }
-                    },/* {
+                    }, {
                         $lookup: {
                             from: config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES,
                             localField: "uuid",
@@ -262,7 +275,7 @@ class UwmcPlayer extends Player {
                             foreignField: "owner.id",
                             as: "plots"
                         }
-                    },*/{
+                    },{
                         $project: {
                             _id: 0,
                             uuid: 1,
@@ -271,9 +284,9 @@ class UwmcPlayer extends Player {
                             ranks: 1,
                             boardId: 1,
                             votes: 1,
-                            lastPlayed: 1//,
-                        //    zones: 1,
-                        //    plots: 1
+                            lastPlayed: 1,
+                            zones: 1,
+                            plots: 1
                         }
                     } ] )
                 .next( function ( err, data ) {
@@ -289,8 +302,8 @@ class UwmcPlayer extends Player {
                         player.lastPlayed = data.lastPlayed
                         player._setVotes( data.votes || {} )
                         player._setRankHistory( data.ranks || [] )
-                    //    player._setZones(data.zones)
-                    //    player._setPlots(data.plots)
+                        player._setZones(data.zones)
+                        player._setPlots(data.plots)
 
                         resolve( player )
                     }else{
