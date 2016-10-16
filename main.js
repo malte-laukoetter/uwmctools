@@ -78,10 +78,10 @@ class Main {
     }
 
     /*
-     * gets all free 100*100 Zones
+     * gets all free Zones of the given length and width
      */
-    getFreeZones() {
-        return this._freeZonesCalcRequest.execute();
+    getFreeZones(length, width) {
+        return this._freeZonesCalcRequest.execute(length, width);
     }
 
     /*

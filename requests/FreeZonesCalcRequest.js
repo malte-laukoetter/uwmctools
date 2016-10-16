@@ -14,7 +14,7 @@ class FreeZonesCalcRequest extends Request {
     /*
      * executes the request, converts the data and returns an array of all free zones
      */
-    execute() {
+    execute(length, width) {
         let req = this;
 
         return super.execute().then( function ( res ) {
@@ -45,15 +45,15 @@ class FreeZonesCalcRequest extends Request {
                         }
                     }
 
-                    let areas = FreeZonesCalcRequest.biggerRectangle( area, 100, 100);
+                    let areas = FreeZonesCalcRequest.biggerRectangle( area, length, width);
                     let niceFormatedAreas = [];
 
                     for(let area of areas){
                         niceFormatedAreas.push({
                                 z1: area.ll.col-4000,
-                                z2: (area.ll.col + 100)-4000,
+                                z2: (area.ll.col + length)-4000,
                                 x1: area.ur.row-2000,
-                                x2: (area.ur.row + 100)-2000
+                                x2: (area.ur.row + width)-2000
                         });
                     }
 
@@ -101,7 +101,7 @@ class FreeZonesCalcRequest extends Request {
                        m0 = cell.col;
                        n0 = cell.row;
                        area = open_width * (m - m0);
-                       if (area > length * width && Math.abs(m0 - (m - 1)) >= length && Math.abs(n - (n - open_width + 1) >= width)) {
+                       if (area >= length * width && Math.abs(m0 - (m - 1)) >= length && Math.abs(n - (n - open_width + 1) >= width)) {
                            let ll_col = m0;
                            let ll_row = n;
                            let ur_col = m - 1;
