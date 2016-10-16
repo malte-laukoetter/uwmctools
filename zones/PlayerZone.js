@@ -127,7 +127,7 @@ class PlayerZone extends MainMapZone {
 
         let player = new Player(obj.owner.id);
         player.name = obj.owner.name;
-        let zone = new PlayerZone(player, obj.number, obj.zoneId, obj.x[0], obj.x[1], obj.z[0], obj.z[1]);
+        let zone = new PlayerZone(player, obj.number, obj.zoneId, obj.x1, obj.x2, obj.z1, obj.z2);
         if(obj.created)
             zone.created = new Date(obj.created);
         if(obj.deleted)
