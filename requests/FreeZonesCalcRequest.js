@@ -49,14 +49,12 @@ class FreeZonesCalcRequest extends Request {
                     let niceFormatedAreas = [];
 
                     for(let area of areas){
-                        niceFormatedAreas.push([
-                            [
-                                area.ll.col-4000, (area.ll.col + 100)-4000
-                            ],
-                            [
-                                area.ur.row-2000, (area.ur.row + 100)-2000
-                            ]
-                        ]);
+                        niceFormatedAreas.push({
+                                z1: area.ll.col-4000,
+                                z2: (area.ll.col + 100)-4000,
+                                x1: area.ur.row-2000,
+                                x2: (area.ur.row + 100)-2000
+                        });
                     }
 
                     return niceFormatedAreas
