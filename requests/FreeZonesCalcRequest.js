@@ -4,7 +4,7 @@ const Request = require( './Request' );
 const ZoneListRequest = require( './ZoneListRequest' );
 
 /*
- * request to get the data from the dynmap and calculates all free 100*100 zones
+ * request to get the data from the dynmap and calculates all free areas
  */
 class FreeZonesCalcRequest extends Request {
     constructor() {
@@ -13,6 +13,7 @@ class FreeZonesCalcRequest extends Request {
 
     /*
      * executes the request, converts the data and returns an array of all free zones
+     * the length and width are the size of the zones we are searching for
      */
     execute(length, width) {
         let req = this;

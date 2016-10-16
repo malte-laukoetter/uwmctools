@@ -236,6 +236,9 @@ class UwmcPlayer extends Player {
         } );
     }
 
+    /*
+     * converts the UwmcPlayer to JSON
+     */
     toJson(){
         return {
             'uuid': this.uuid,

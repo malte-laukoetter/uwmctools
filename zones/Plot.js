@@ -145,13 +145,6 @@ class Plot extends MainMapZone {
     }
 
     /*
-     * sets all zones to deleted that not been updated in the last 2 hours
-     */
-    static setOldPlotsToDeleted( db ) {
-        return Zone.setOldZonesToDeleted( db, config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS );
-    }
-
-    /*
      * creates a PlayerZone from the data from the database
      */
     static fromDbObject(obj){

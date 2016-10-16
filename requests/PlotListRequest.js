@@ -45,7 +45,7 @@ class PlotListRequest extends Request {
 
                     if(!exist){
                         dbRequests.push(Plot.fromDb(db, cachedPlotId).then(function(res){
-                            res.setToDeleted(db)
+                            return res.setToDeleted(db)
                         }));
 
                         req._cache.remove(cachedPlotId);

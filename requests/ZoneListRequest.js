@@ -49,8 +49,8 @@ class ZoneListRequest extends Request {
 
                     if(!exist){
                         dbRequests.push(PlayerZone.fromDb(db, cachedZoneId).then(function(res){
-                            res.setToDeleted(db)
-                        }))
+                            return res.setToDeleted(db);
+                        }));
 
                         req._cache.remove(cachedZoneId);
                     }
