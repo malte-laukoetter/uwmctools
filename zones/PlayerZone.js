@@ -97,20 +97,15 @@ class PlayerZone extends MainMapZone {
      */
     static fromDb(db, zoneId){
         return new Promise( function ( resolve, reject ) {
-            db.collection( collection ).find( {
-                deleted: {
-                    $exists: false
-                },
-                updated: {
-                    $lt: new Date(new Date() - 3000000)
-                }
+            db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES ).find( {
+                zoneId: zoneId
             }).each(function(err, res){
                 if ( err ) {
                     reject( err );
                 }
 
                 if(res){
-                    resolcve(PlayerZone.fromDbObject(res));
+                    resolve(PlayerZone.fromDbObject(res));
                 }
             })
         });

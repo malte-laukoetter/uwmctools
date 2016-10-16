@@ -125,7 +125,7 @@ class Plot extends MainMapZone {
 
         return new Promise( function ( resolve, reject ) {
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS ).update( {
-                plotId: this.id
+                plotId: plot.id
             }, {
                 $currentDate: {
                     deleted: true
@@ -135,6 +135,24 @@ class Plot extends MainMapZone {
                 return res
             } );
         } );
+    }
+
+    /*
+     * creates a PlayerZone from the database
+     */
+    static fromDb(db, plotId){
+        return new Promise( function ( resolve, reject ) {
+            db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS ).find( {
+                plotId: plotId
+            }).each(function(err, res){
+                if ( err ) {
+                    reject( err );
+                }
+                if(res){
+                    resolve(Plot.fromDbObject(res));
+                }
+            })
+        });
     }
 
     /*
