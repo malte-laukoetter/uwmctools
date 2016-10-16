@@ -4,6 +4,7 @@ const Request = require( './Request' );
 const uuidlockup = require( '../uuid' );
 const Player = require( '../player/Player' );
 const PlayerZone = require( '../zones/PlayerZone' );
+const ServerZone = require( '../zones/ServerZone' );
 const Helper = require('../Helper');
 
 
@@ -98,6 +99,30 @@ class ZoneListRequest extends Request {
                 resolve(zoneList)
             } );
         })
+    }
+
+    /*
+     * converts the server zonelist data into ServerZones
+     */
+    static _convertServerZones( zones ) {
+        let zoneList = [];
+
+        for ( let zoneId in zones ) {
+            let zoneData = zones[ zoneId ];
+
+
+            let zone = new ServerZone(
+                zoneId,
+                zoneData.x[0],
+                zoneData.x[1],
+                zoneData.z[0],
+                zoneData.z[1]
+            );
+
+            zoneList.push( zone )
+        }
+
+        return new Promise(function(resolve){resolve(zoneList)})
     }
 
     /*
