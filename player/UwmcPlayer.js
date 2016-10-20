@@ -276,7 +276,14 @@ class UwmcPlayer extends Player {
                             from: config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS,
                             localField: "uuid",
                             foreignField: "owner.id",
-                            as: "plots"
+                            as: "plots_owned"
+                        }
+                    }, {
+                        $lookup: {
+                            from: config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS,
+                            localField: "uuid",
+                            foreignField: "trusted._uuid",
+                            as: "plots_trusted"
                         }
                     },{
                         $project: {
@@ -289,13 +296,17 @@ class UwmcPlayer extends Player {
                             votes: 1,
                             lastPlayed: 1,
                             zones: 1,
-                            plots: 1
+                            plots: {
+                                $concatArrays: [ "$plots_owned", "$plots_trusted" ]
+                            }
                         }
                     } ] )
                 .next( function ( err, data ) {
                     assert.equal( err, null );
 
                     if(data){
+
+                        console.log(data);
 
                         let player = new UwmcPlayer( data.uuid );
 
