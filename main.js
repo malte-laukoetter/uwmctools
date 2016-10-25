@@ -5,6 +5,7 @@ const ZoneListRequest = require( './requests/ZoneListRequest' );
 const PlotListRequest = require( './requests/PlotListRequest' );
 const VoteListRequest = require( './requests/VoteListRequest' );
 const FreeZonesCalcRequest = require( './requests/FreeZonesCalcRequest' );
+const MainMapPlotRequest = require( './requests/MainMapPlotRequest' );
 const UwmcPlayer = require( './player/UwmcPlayer' );
 const Player = require( './player/Player' );
 const MainMapZone = require( './zones/MainMapZone' );
@@ -25,6 +26,7 @@ class Main {
         this._plotListRequest = new PlotListRequest();
         this._voteListRequest = new VoteListRequest();
         this._freeZonesCalcRequest = new FreeZonesCalcRequest();
+        this._mainMapPlotRequest = new MainMapPlotRequest();
     }
 
     /*
@@ -71,10 +73,17 @@ class Main {
     }
 
     /*
-     * save the data from the zonelist
+     * save the data from the votelist
      */
     saveVoteListData() {
         return this._saveData( this._voteListRequest );
+    }
+
+    /*
+     * save the data from the zonelist
+     */
+    saveMainMapPlotRequest() {
+        return this._saveData( this._mainMapPlotRequest );
     }
 
     /*

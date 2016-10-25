@@ -5,6 +5,7 @@ const uuidlockup = require( '../uuid' );
 const Player = require( '../player/Player' );
 const PlayerZone = require( '../zones/PlayerZone' );
 const ServerZone = require( '../zones/ServerZone' );
+const MainMapPlot = require( '../zones/MainMapPlot' );
 const Helper = require('../Helper');
 
 
@@ -61,7 +62,6 @@ class ZoneListRequest extends Request {
         });
     }
 
-
     /*
      * converts the player zonelist data into PlayerZones
      */
@@ -71,7 +71,6 @@ class ZoneListRequest extends Request {
             for ( let i in zones ) {
                 players.push(ZoneListRequest._getZoneOwner(zones[i].label).toLowerCase());
             }
-
 
             uuidlockup.getUuids( players ).then( function ( players ) {
                 let zoneList = [];
@@ -94,6 +93,51 @@ class ZoneListRequest extends Request {
 
                         zoneList.push( zone )
                     }
+                }
+
+                resolve(zoneList)
+            } );
+        })
+    }
+
+    /*
+     * converts the plot zonelist data into MainMapPlots
+     */
+    static _convertMainMapPlots( zones ) {
+        return new Promise(function(resolve, reject){
+            let players = [];
+            for ( let i in zones ) {
+                let owner = ZoneListRequest._getMainMapPlotOwner(zones[i].label);
+
+                if(owner){
+                    players.push(owner.toLowerCase());
+                }
+            }
+
+            uuidlockup.getUuids( players ).then( function ( players ) {
+                let zoneList = [];
+
+                for ( let zoneId in zones ) {
+                    let zoneData = zones[ zoneId ];
+
+                    let owner = ZoneListRequest._getMainMapPlotOwner(zoneData.label);
+                    let name = ZoneListRequest._getMainMapPlotName(zoneData.label);
+
+                    let plot = new MainMapPlot(
+                        zoneId,
+                        name.split(/ /)[0],
+                        name.split(/ /)[1],
+                        zoneData.x[0],
+                        zoneData.x[1],
+                        zoneData.z[0],
+                        zoneData.z[1]
+                    );
+
+                    if(owner && players.has(owner)){
+                        plot.addOwner(players.get(owner), new Date(), null);
+                    }
+
+                    zoneList.push(plot);
                 }
 
                 resolve(zoneList)
@@ -126,7 +170,7 @@ class ZoneListRequest extends Request {
     }
 
     /*
-     * generates the zonenumber from the label of a playerzone frome the dynmap
+     * generates the zonenumber from the label of a playerzone from the dynmap
      */
     static _getZoneNumber( label ) {
         let zoneNumber = label.split( /Zonen Nr\.:\s*<b>/ )
@@ -141,7 +185,7 @@ class ZoneListRequest extends Request {
     }
 
     /*
-     * generates the name of the zoneowner from the label of a playerzone frome the dynmap
+     * generates the name of the zoneowner from the label of a playerzone from the dynmap
      */
     static _getZoneOwner( label ) {
         let owner = label.split( /color: #[A-F0-9a-f]{6}">(\[.*\])*/ ) //it's working but i don't know how so better don't touch it ;)

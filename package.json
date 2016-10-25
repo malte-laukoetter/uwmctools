@@ -1,16 +1,16 @@
 {
   "name": "uwmctools",
-  "version": "2.3.6",
+  "version": "2.4.0",
   "description": "convert data from unlimitedworld.de, mostly used for some tools on https://lergin.de",
   "homepage": "https://github.com/Lergin/uwmctools",
   "bugs": {
-      "url": "https://github.com/Lergin/uwmctools/issues"
+    "url": "https://github.com/Lergin/uwmctools/issues"
   },
   "license": "MIT",
   "author": {
-      "name": "Malte Laukötter",
-      "email": "lergin@gmx.de",
-      "url": "Lergin.de"
+    "name": "Malte Laukötter",
+    "email": "lergin@gmx.de",
+    "url": "Lergin.de"
   },
   "main": "main.js",
   "repository": "Lergin/uwmctools",
@@ -20,5 +20,9 @@
   "dependencies": {
     "mongodb": "^2.2.2",
     "request": "^2.73.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.8.1",
+    "eslint-config-google": "^0.7.0"
   }
 }

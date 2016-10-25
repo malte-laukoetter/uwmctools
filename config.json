@@ -7,7 +7,8 @@
                     "PLAYERS": "players",
                     "ZONES": "zones",
                     "PLOTS": "plots",
-                    "MAPSTATS": "mapstats"
+                    "MAPSTATS": "mapstats",
+                    "MAINMAP_PLOTS": "mainmap_plots"
                 }
             }
         }

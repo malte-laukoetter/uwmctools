@@ -33,6 +33,16 @@ class Player {
     static isPlayer( player ) {
         return player instanceof Player;
     }
+
+    /*
+     * converts the Player to JSON
+     */
+    toJson() {
+        return {
+            'uuid': this.uuid,
+            'name': this.name,
+        };
+    }
 }
 
 module.exports = Player;

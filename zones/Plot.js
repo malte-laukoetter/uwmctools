@@ -2,20 +2,30 @@ const config = require('../config.json')
 
 const Zone = require('./Zone');
 const Player = require('../player/Player');
-const MainMapZone = require( './MainMapZone' );
+const CreatableZone = require( './CreatableZone' );
 
 /*
  * a Plot of the Creative Map of unlimitedworld
  */
-class Plot extends MainMapZone {
+class Plot extends CreatableZone {
     constructor( owner, x1, x2, z1, z2, posX, posZ ) {
-        super( `${owner.uuid}-${posX}/${posZ}`, x1, x2, z1, z2, 'plot' );
+        super( x1, x2, z1, z2 );
 
         if ( !Player.isPlayer( owner ) )
             throw new Error( 'no Player' );
+
+        this._id = `${owner.uuid}-${posX}/${posZ}`;
         this._owner = owner;
         this._posX = posX;
         this._posZ = posZ;
+    }
+
+
+    /*
+     * the id of the zone (something like "ebdf264aabda45708f61f2d7a2bb4758-3/-6")
+     */
+    get id() {
+        return this._id;
     }
 
     /*
