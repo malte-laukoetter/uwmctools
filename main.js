@@ -82,7 +82,7 @@ class Main {
     /*
      * save the data from the zonelist
      */
-    saveMainMapPlotRequest() {
+    saveMainMapPlotData() {
         return this._saveData( this._mainMapPlotRequest );
     }
 
