@@ -20,7 +20,6 @@
             "error",
             120
         ],
-        "require-jsdoc": 0,
         "no-console": 0
     }
 }
