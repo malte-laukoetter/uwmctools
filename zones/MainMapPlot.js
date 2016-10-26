@@ -142,7 +142,7 @@ class MainMapPlot extends MainMapZone {
 
 
                 for(let owner of res.previousOwners) {
-                    if(owner.till === null) {
+                    if(!owner.till) {
                         previousOwner = owner;
                     }
                 }
@@ -172,7 +172,10 @@ class MainMapPlot extends MainMapZone {
                         },
                         {
                             $push: {
-                                'previousOwners': plot.owner.toJson(),
+                                'previousOwners': {
+                                    'player': plot.owner,
+                                    'from': new Date()
+                                }
                             },
                         },
                         function(err, res) {
@@ -182,7 +185,7 @@ class MainMapPlot extends MainMapZone {
                             resolve(res);
                         }
                     );
-                }else if(previousOwner.player.uuid != plot.owner.uuid) {
+                }else if(previousOwner.player._uuid != plot.owner.uuid) {
                     // set the current owners end date to the current date and save the new owner
                     db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.MAINMAP_PLOTS ).updateOne(
                         {
@@ -202,7 +205,10 @@ class MainMapPlot extends MainMapZone {
                                 },
                                 {
                                     $push: {
-                                        'previousOwners': plot.owner.toJson(),
+                                        'previousOwners': {
+                                            'player': plot.owner,
+                                            'from': new Date()
+                                        }
                                     },
                                 },
                                 function(err, res) {

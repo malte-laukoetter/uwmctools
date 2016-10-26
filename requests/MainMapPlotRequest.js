@@ -88,8 +88,8 @@ class MainMapPlotRequest extends Request {
                             zoneData.z[1]
                         );
 
-                        if (owner && players.has(owner)) {
-                            plot.addOwner(players.get(owner), new Date(), null);
+                        if (owner && players.has(owner.toLowerCase())) {
+                            plot.addOwner(players.get(owner.toLowerCase()), new Date(), null);
                         }
 
                         zoneList.push(plot);
