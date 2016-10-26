@@ -33,13 +33,13 @@ class MainMapZone extends CreatableZone {
 
         return new Promise( function( resolve, reject ) {
             db.collection( collection ).update( {
-                zoneId: zone.id
+                zoneId: zone.id,
             }, {
                 $currentDate: {
-                    deleted: true
-                }
-            } ).then( function ( res ) {
-                return res
+                    deleted: true,
+                },
+            } ).then( function( res ) {
+                return res;
             } );
         } );
     }

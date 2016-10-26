@@ -41,12 +41,12 @@ class Main {
      */
     connect() {
         let main = this;
-        return new Promise( function ( resolve, reject ) {
-            MongoClient.connect( main.mongoDbUrl, function ( err, db ) {
+        return new Promise( function( resolve, reject ) {
+            MongoClient.connect( main.mongoDbUrl, function( err, db ) {
                 if ( err )
-                    reject( err )
+                    reject( err );
 
-                resolve( db )
+                resolve( db );
             } );
         } );
     }
@@ -97,76 +97,76 @@ class Main {
      * get the information about the player with the given uuid
      */
     getPlayer(uuid) {
-        return this.connect().then(function( db ){
+        return this.connect().then(function( db ) {
             return UwmcPlayer.createFromDb(db, uuid);
-        })
+        });
     }
 
     /*
      * converts the rank id of an rank to the coresponding name
      */
-    static rankToRankName(rank){
-        return UwmcPlayer.rankToRankName(rank)
+    static rankToRankName(rank) {
+        return UwmcPlayer.rankToRankName(rank);
     }
 
     /*
      * save the data of the request
      */
     _saveData( request ) {
-        return this.connect().then( function ( db ) {
-            return request.execute( db ).then( function ( res ) {
+        return this.connect().then( function( db ) {
+            return request.execute( db ).then( function( res ) {
                 db.close();
                 return res;
             } );
-        } )
+        } );
     }
 
     /*
      * gets the UwmcPlayer class
      */
-    static get UwmcPlayer(){
+    static get UwmcPlayer() {
         return UwmcPlayer;
     }
 
     /*
      * gets the Player class
      */
-    static get Player(){
+    static get Player() {
         return Player;
     }
 
     /*
      * gets the MainMapZone class
      */
-    static get MainMapZone(){
+    static get MainMapZone() {
         return MainMapZone;
     }
 
     /*
      * gets the PlayerZone class
      */
-    static get PlayerZone(){
+    static get PlayerZone() {
         return PlayerZone;
     }
 
     /*
      * gets the Plot class
      */
-    static get Plot(){
+    static get Plot() {
         return Plot;
     }
 
     /*
      * gets the ServerZone class
      */
-    static get ServerZone(){
+    static get ServerZone() {
         return ServerZone;
     }
 
     /*
      * gets the Zone class
      */
-    static get Zone(){
+    static get Zone() {
         return Zone;
     }
 }

@@ -9,27 +9,27 @@ const Player = require( '../player/Player' );
  */
 class PlayerZone extends MainMapZone {
     constructor( player, number, id, x1, x2, z1, z2 ) {
-        super( id, x1, x2, z1, z2, 'Player' )
+        super( id, x1, x2, z1, z2, 'Player' );
 
         if ( !Player.isPlayer( player ) )
-            throw new Error( 'no Player' )
+            throw new Error( 'no Player' );
 
-        this._player = player
-        this._number = number
+        this._player = player;
+        this._number = number;
     }
 
     /*
-     * gets the player that ownes the zone (instanceof Player)
+     * gets the player that owns the zone (instanceof Player)
      */
     get player() {
-        return this._player
+        return this._player;
     }
 
     /*
      * gets the number of the zone (uniqe per player)
      */
     get number() {
-        return this._number
+        return this._number;
     }
 
     /*
@@ -41,7 +41,8 @@ class PlayerZone extends MainMapZone {
 
     /*
      * saves the zone to the database
-     * The created time will be set if no element with the zoneid exists in the database an will be set to the current date, the created field of the object is ignored.
+     * The created time will be set if no element with the zoneid exists in the database an will be set to the current
+     * date, the created field of the object is ignored.
      * The deleted time will be unset in the database.
      */
     saveToDb( db ) {
@@ -49,45 +50,45 @@ class PlayerZone extends MainMapZone {
 
         return new Promise( function ( resolve, reject ) {
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES ).updateOne( {
-                    zoneId: zone.id
-                }, {
-                    $set: {
-                        x1: zone.pos.x1,
-                        x2: zone.pos.x2,
-                        z1: zone.pos.z1,
-                        z2: zone.pos.z2,
-                        'owner.id': zone.player.uuid,
-                        'owner.name': zone.player.name,
-                        number: zone.number
-                    },
-                    $unset: {
-                        deleted: ''
-                    },
-                    $currentDate: {
-                        updated: true
-                    },
-                    $setOnInsert: {
-                        created: new Date()
-                    }
-                }, {
-                    upsert: true
+                zoneId: zone.id,
+            }, {
+                $set: {
+                    'x1': zone.pos.x1,
+                    'x2': zone.pos.x2,
+                    'z1': zone.pos.z1,
+                    'z2': zone.pos.z2,
+                    'owner.id': zone.player.uuid,
+                    'owner.name': zone.player.name,
+                    'number': zone.number,
                 },
-                function ( err, results ) {
-                    if ( err )
-                        reject( err );
+                $unset: {
+                    deleted: '',
+                },
+                $currentDate: {
+                    updated: true,
+                },
+                $setOnInsert: {
+                    created: new Date(),
+                },
+            }, {
+                upsert: true,
+            },
+            function( err, results ) {
+                if ( err )
+                    reject( err );
 
-                    resolve( results );
-                } );
+                resolve( results );
+            } );
         } );
     }
 
     /*
      * sets the status of the zone to deleted
      */
-    setToDeleted(db){
+    setToDeleted(db) {
         let zone = this;
 
-        super.setToDeleted(db, config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES).then(function(res){
+        super.setToDeleted(db, config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES).then(function(res) {
             Zone.eventEmitter.emit('zonedelete', zone);
         });
     }
@@ -95,19 +96,19 @@ class PlayerZone extends MainMapZone {
     /*
      * creates a PlayerZone from the database
      */
-    static fromDb(db, zoneId){
-        return new Promise( function ( resolve, reject ) {
+    static fromDb(db, zoneId) {
+        return new Promise( function( resolve, reject ) {
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES ).find( {
-                zoneId: zoneId
-            }).each(function(err, res){
+                zoneId: zoneId,
+            }).each(function(err, res) {
                 if ( err ) {
                     reject( err );
                 }
 
-                if(res){
+                if(res) {
                     resolve(PlayerZone.fromDbObject(res));
                 }
-            })
+            });
         });
     }
 
@@ -121,9 +122,9 @@ class PlayerZone extends MainMapZone {
     /*
      * creates a PlayerZone from the data from the database
      */
-    static fromDbObject(obj){
+    static fromDbObject(obj) {
         if(!obj.owner)
-            return false
+            return false;
 
         let player = new Player(obj.owner.id);
         player.name = obj.owner.name;
@@ -133,7 +134,7 @@ class PlayerZone extends MainMapZone {
         if(obj.deleted)
             zone.deleted = new Date(obj.deleted);
 
-        return zone
+        return zone;
     }
 }
 

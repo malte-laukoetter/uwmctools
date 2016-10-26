@@ -7,11 +7,12 @@ const Helper = require('../Helper');
 
 
 /*
- * request to get the data about players from the playerlist of the webpage of uwmc.de and does the work to convert it and save it to the database
+ * request to get the data about players from the playerlist of the webpage of uwmc.de and does the work to convert it
+ * and save it to the database
  */
 class PlayerListRequest extends Request {
     constructor() {
-        super( config.URLS.UWMC.PLAYERLIST )
+        super( config.URLS.UWMC.PLAYERLIST );
     }
 
     /*
@@ -21,24 +22,31 @@ class PlayerListRequest extends Request {
         let req = this;
 
         return super.execute().then( function ( res ) {
-            //convert it to an key -> value object so we can get a list of the names with Object.keys and can get the data of a specific player without iterating throug the array
-            req._lastResponse = Helper.convertToMap( res.body.data, 'playerName' )
+            // convert it to an key -> value object so we can get a list of the names with Object.keys and can get the
+            // data of a specific player without iterating throug the array
+            req._lastResponse = Helper.convertToMap( res.body.data, 'playerName' );
 
-            return req.lastResponse
-        } ).then( function ( players ) {
-            return new Promise( function ( resolve, reject ) {
-                //get the uuids and names in correct capitalization
+            return req.lastResponse;
+        } ).then( function( players ) {
+            return new Promise( function( resolve, reject ) {
+                // get the uuids and names in correct capitalization
                 uuidlockup.getUuids( [...players.keys()] ).then( function ( res ) {
-                    // array of all the Promises needed to save the data of all players, so it's possible to resolve the current Promise after all are finished
-                    let playerToDbIter = []
+                    // array of all the Promises needed to save the data of all players, so it's possible to resolve the
+                    // current Promise after all are finished
+                    let playerToDbIter = [];
 
                     for ( let player of res.values() ) {
                         playerToDbIter.push(
-                            PlayerListRequest._saveToDb(db, player.uuid, player.name, players.get(player.name.toLowerCase()))
+                            PlayerListRequest._saveToDb(
+                                db,
+                                player.uuid,
+                                player.name,
+                                players.get(player.name.toLowerCase())
+                            )
                         );
                     }
 
-                    resolve(Promise.all(playerToDbIter))
+                    resolve(Promise.all(playerToDbIter));
                 } );
             } );
         } );
@@ -55,20 +63,22 @@ class PlayerListRequest extends Request {
      * saves the data about the player with the given uuid to the database
      */
     static _saveToDb(db, uuid, name, data){
-        return UwmcPlayer.createFromDb( db, uuid ).then( function ( player ) {
+        return UwmcPlayer.createFromDb( db, uuid ).then( function( player ) {
             player.name = name;
 
-            player = PlayerListRequest._addPlayerListDataToPlayer(player, data)
+            player = PlayerListRequest._addPlayerListDataToPlayer(player, data);
 
-            return player.saveToDb( db ).then(function(){return player});
-        })
+            return player.saveToDb( db ).then(() => {
+                return player;
+            });
+        });
     }
 
     /*
      * adds the data we get from the request to the player object
      */
-    static _addPlayerListDataToPlayer(player, data){
-        player.lastPlayed  = new Date();
+    static _addPlayerListDataToPlayer(player, data) {
+        player.lastPlayed = new Date();
 
         let newRank = data.priority;
         if ( player.rank != newRank ) {
@@ -76,9 +86,9 @@ class PlayerListRequest extends Request {
             player.addRankChange( newRank, new Date() );
         }
 
-        player.boardId = data.boardId
+        player.boardId = data.boardId;
 
-        return player
+        return player;
     }
 }
 

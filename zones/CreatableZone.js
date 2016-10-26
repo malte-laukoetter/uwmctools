@@ -15,14 +15,14 @@ class CreatableZone extends Zone {
         if ( !( date instanceof Date ) )
             throw new Error( 'No Date' );
 
-        this._created = date
+        this._created = date;
     }
 
     /*
      * gets the date the zone was created
      */
     get created() {
-        return this._created || new Date( 0 )
+        return this._created || new Date( 0 );
     }
 
     /*
@@ -32,14 +32,14 @@ class CreatableZone extends Zone {
         if ( !( date instanceof Date ) )
             throw new Error( 'No Date' );
 
-        this._deleted = date
+        this._deleted = date;
     }
 
     /*
      * gets the date the zone was deleted or false if the zone isn't deleted
      */
     get deleted() {
-        return this._deleted || false
+        return this._deleted || false;
     }
 }
 

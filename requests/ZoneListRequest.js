@@ -10,11 +10,12 @@ const Helper = require('../Helper');
 
 
 /*
- * request to get the data about the zones from the dynmap of uwmc.de it also converts the data and saves the player zones to the database
+ * request to get the data about the zones from the dynmap of uwmc.de it also converts the data and saves the player
+ * zones to the database
  */
 class ZoneListRequest extends Request {
     constructor() {
-        super( config.URLS.UWMC.ZONELIST_MAIN )
+        super( config.URLS.UWMC.ZONELIST_MAIN );
 
         this._cache = new Map();
     }
@@ -29,26 +30,27 @@ class ZoneListRequest extends Request {
             return ZoneListRequest._convertPlayerZones(res.body.sets.Spielerzonen.areas).then(function(zones){
                 let dbRequests = [];
 
-                //save changed zone data
-                for(let zone of zones){
-                    if(req._cache.get(zone.id) !== zone.hash){
+                // save changed zone data
+                for(let zone of zones) {
+                    if(req._cache.get(zone.id) !== zone.hash) {
                         req._cache.set(zone.id, zone.hash);
                         dbRequests.push(zone.saveToDb(db));
                     }
                 }
 
-                //delete zones that no longer exist
-                for(let cachedZoneId of req._cache.keys()){
+                // delete zones that no longer exist
+                for(let cachedZoneId of req._cache.keys()) {
                     let exist = false;
 
-                    //test if the zoneid of the cached zone is in the results (-> if it exists in the reults the zone still exists)
-                    for(let zone of zones){
-                        if(!exist && zone.id === cachedZoneId){
+                    // test if the zoneid of the cached zone is in the results
+                    // (-> if it exists in the reults the zone still exists)
+                    for(let zone of zones) {
+                        if(!exist && zone.id === cachedZoneId) {
                             exist = true;
                         }
                     }
 
-                    if(!exist){
+                    if(!exist) {
                         dbRequests.push(PlayerZone.fromDb(db, cachedZoneId).then(function(res){
                             return res.setToDeleted(db);
                         }));
@@ -58,7 +60,7 @@ class ZoneListRequest extends Request {
                 }
 
                 return Promise.all(dbRequests);
-            })
+            });
         });
     }
 
@@ -66,84 +68,47 @@ class ZoneListRequest extends Request {
      * converts the player zonelist data into PlayerZones
      */
     static _convertPlayerZones( zones ) {
-        return new Promise(function(resolve, reject){
+        return new Promise(function(resolve, reject) {
             let players = [];
-            for ( let i in zones ) {
-                players.push(ZoneListRequest._getZoneOwner(zones[i].label).toLowerCase());
+            for( let i in zones ) {
+                if ({}.hasOwnProperty.call(zones, i)) {
+                    players.push(ZoneListRequest._getZoneOwner(zones[i].label).toLowerCase());
+                }
             }
 
-            uuidlockup.getUuids( players ).then( function ( players ) {
+            uuidlockup.getUuids( players ).then( function( players ) {
                 let zoneList = [];
 
-                for ( let zoneId in zones ) {
-                    let zoneData = zones[ zoneId ];
+                for( let zoneId in zones ) {
+                    if ({}.hasOwnProperty.call(zones, zoneId)) {
+                        let zoneData = zones[zoneId];
 
-                    let playername = ZoneListRequest._getZoneOwner(zoneData.label).toLowerCase()
+                        let playername = ZoneListRequest._getZoneOwner(zoneData.label).toLowerCase();
 
-                    if(players.has(playername)){
-                        let zone = new PlayerZone(
-                            players.get(playername),
-                            ZoneListRequest._getZoneNumber(zoneData.label),
-                            zoneId,
-                            zoneData.x[0],
-                            zoneData.x[1],
-                            zoneData.z[0],
-                            zoneData.z[1]
-                        );
+                        if (players.has(playername)) {
+                            let zone = new PlayerZone(
+                                players.get(playername),
+                                ZoneListRequest._getZoneNumber(zoneData.label),
+                                zoneId,
+                                zoneData.x[0],
+                                zoneData.x[1],
+                                zoneData.z[0],
+                                zoneData.z[1]
+                            );
 
-                        zoneList.push( zone )
+                            zoneList.push(zone);
+                        }
                     }
                 }
 
-                resolve(zoneList)
+                resolve(zoneList);
             } );
-        })
+        });
     }
 
     /*
      * converts the plot zonelist data into MainMapPlots
      */
-    static _convertMainMapPlots( zones ) {
-        return new Promise(function(resolve, reject){
-            let players = [];
-            for ( let i in zones ) {
-                let owner = ZoneListRequest._getMainMapPlotOwner(zones[i].label);
-
-                if(owner){
-                    players.push(owner.toLowerCase());
-                }
-            }
-
-            uuidlockup.getUuids( players ).then( function ( players ) {
-                let zoneList = [];
-
-                for ( let zoneId in zones ) {
-                    let zoneData = zones[ zoneId ];
-
-                    let owner = ZoneListRequest._getMainMapPlotOwner(zoneData.label);
-                    let name = ZoneListRequest._getMainMapPlotName(zoneData.label);
-
-                    let plot = new MainMapPlot(
-                        zoneId,
-                        name.split(/ /)[0],
-                        name.split(/ /)[1],
-                        zoneData.x[0],
-                        zoneData.x[1],
-                        zoneData.z[0],
-                        zoneData.z[1]
-                    );
-
-                    if(owner && players.has(owner)){
-                        plot.addOwner(players.get(owner), new Date(), null);
-                    }
-
-                    zoneList.push(plot);
-                }
-
-                resolve(zoneList)
-            } );
-        })
-    }
 
     /*
      * converts the server zonelist data into ServerZones
@@ -151,32 +116,36 @@ class ZoneListRequest extends Request {
     static _convertServerZones( zones ) {
         let zoneList = [];
 
-        for ( let zoneId in zones ) {
-            let zoneData = zones[ zoneId ];
+        for( let zoneId in zones ) {
+            if ({}.hasOwnProperty.call(zones, zoneId)) {
+                let zoneData = zones[zoneId];
 
 
-            let zone = new ServerZone(
-                zoneId,
-                zoneData.x[0],
-                zoneData.x[1],
-                zoneData.z[0],
-                zoneData.z[1]
-            );
+                let zone = new ServerZone(
+                    zoneId,
+                    zoneData.x[0],
+                    zoneData.x[1],
+                    zoneData.z[0],
+                    zoneData.z[1]
+                );
 
-            zoneList.push( zone )
+                zoneList.push(zone);
+            }
         }
 
-        return new Promise(function(resolve){resolve(zoneList)})
+        return new Promise(function(resolve) {
+            resolve(zoneList);
+        });
     }
 
     /*
      * generates the zonenumber from the label of a playerzone from the dynmap
      */
     static _getZoneNumber( label ) {
-        let zoneNumber = label.split( /Zonen Nr\.:\s*<b>/ )
+        let zoneNumber = label.split( /Zonen Nr\.:\s*<b>/ );
 
         if ( zoneNumber.length > 1 ) {
-            zoneNumber = parseInt( zoneNumber[ 1 ].split( '</b>' )[ 0 ] );
+            zoneNumber = parseInt( zoneNumber[1].split( '</b>' )[0] );
         } else {
             zoneNumber = 0;
         }
@@ -188,22 +157,25 @@ class ZoneListRequest extends Request {
      * generates the name of the zoneowner from the label of a playerzone from the dynmap
      */
     static _getZoneOwner( label ) {
-        let owner = label.split( /color: #[A-F0-9a-f]{6}">(\[.*\])*/ ) //it's working but i don't know how so better don't touch it ;)
+        // get the owner by some regex (it's so complicated because some names appear in different colors
+        let owner = label.split( /color: #[A-F0-9a-f]{6}">(\[.*])*/ );
 
         if ( owner.length > 2 ) {
-            if ( owner[ 1 ] && owner[ 2 ] == ' </span><span style="' && owner[ 1 ].substring( 0, 1 ) == "[" ) {
-                owner = owner[ 4 ].split( '</span>' )[ 0 ];
+            if ( owner[1] && owner[2] == ' </span><span style="' && owner[1].substring( 0, 1 ) == '[' ) {
+                owner = owner[4].split( '</span>' )[0];
             } else {
-                owner = owner[ 2 ].split( '</span>' )[ 0 ];
+                owner = owner[2].split( '</span>' )[0];
             }
 
             if ( owner.split( ' ' ).length > 1 ) {
-                owner = owner.split( ' ' )[ 1 ]
+                owner = owner.split( ' ' )[1];
             }
 
             return owner.toString();
         } else {
-            return "Server - Communityzone"
+            // if the length is smaler two the zone don't have any information about an owner and therefor is a
+            // community zone
+            return 'Server - Communityzone';
         }
     }
 }

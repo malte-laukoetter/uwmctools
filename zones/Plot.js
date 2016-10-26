@@ -66,21 +66,14 @@ class Plot extends CreatableZone {
      * gets the x coordinate of plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
      */
     get posX() {
-        return this._posX
+        return this._posX;
     }
 
     /*
      * gets the z coordinate of the plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
      */
     get posZ() {
-        return this._posZ
-    }
-
-    /*
-     * gets an identifier for the zone (builded from the plotPos and owner)
-     */
-    get id() {
-        return `${this.owner.uuid}-${this.posX}/${this.posZ}`
+        return this._posZ;
     }
 
     /*
@@ -90,39 +83,39 @@ class Plot extends CreatableZone {
         let plot = this;
         return new Promise( function ( resolve, reject ) {
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS ).updateOne( {
-                    plotId: plot.id
-                }, {
-                    $set: {
-                        x: plot.posX,
-                        z: plot.posZ,
-                        'owner.id': plot.owner.uuid,
-                        'owner.name': plot.owner.name,
-                        length: plot.length,
-                        width: plot.width,
-                        'pos.x1': plot.pos.x1,
-                        'pos.x2': plot.pos.x2,
-                        'pos.z1': plot.pos.z1,
-                        'pos.z2': plot.pos.z2,
-                        trusted: plot.trusted
-                    },
-                    $unset: {
-                        deleted: ''
-                    },
-                    $currentDate: {
-                        updated: true
-                    },
-                    $setOnInsert: {
-                        created: new Date()
-                    }
-                }, {
-                    upsert: true
+                plotId: plot.id,
+            }, {
+                $set: {
+                    'x': plot.posX,
+                    'z': plot.posZ,
+                    'owner.id': plot.owner.uuid,
+                    'owner.name': plot.owner.name,
+                    'length': plot.length,
+                    'width': plot.width,
+                    'pos.x1': plot.pos.x1,
+                    'pos.x2': plot.pos.x2,
+                    'pos.z1': plot.pos.z1,
+                    'pos.z2': plot.pos.z2,
+                    'trusted': plot.trusted,
                 },
-                function ( err, results ) {
-                    if ( err )
-                        reject( err );
+                $unset: {
+                    deleted: '',
+                },
+                $currentDate: {
+                    updated: true,
+                },
+                $setOnInsert: {
+                    created: new Date(),
+                },
+            }, {
+                upsert: true,
+            },
+            function( err, results ) {
+                if ( err )
+                    reject( err );
 
-                    resolve( results );
-                } );
+                resolve( results );
+            } );
         } );
     }
 
@@ -130,19 +123,19 @@ class Plot extends CreatableZone {
     /*
      * sets the status of the zone to deleted
      */
-    setToDeleted(db){
+    setToDeleted(db) {
         let plot = this;
 
         return new Promise( function ( resolve, reject ) {
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS ).update( {
-                plotId: plot.id
+                plotId: plot.id,
             }, {
                 $currentDate: {
-                    deleted: true
-                }
+                    deleted: true,
+                },
             } ).then( function ( res ) {
                 Zone.eventEmitter.emit('plotdelete', plot);
-                return res
+                return res;
             } );
         } );
     }
@@ -150,18 +143,18 @@ class Plot extends CreatableZone {
     /*
      * creates a PlayerZone from the database
      */
-    static fromDb(db, plotId){
-        return new Promise( function ( resolve, reject ) {
+    static fromDb(db, plotId) {
+        return new Promise( function( resolve, reject ) {
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS ).find( {
-                plotId: plotId
-            }).each(function(err, res){
+                plotId: plotId,
+            }).each(function(err, res) {
                 if ( err ) {
                     reject( err );
                 }
-                if(res){
+                if(res) {
                     resolve(Plot.fromDbObject(res));
                 }
-            })
+            });
         });
     }
 
@@ -175,9 +168,9 @@ class Plot extends CreatableZone {
     /*
      * creates a PlayerZone from the data from the database
      */
-    static fromDbObject(obj){
+    static fromDbObject(obj) {
         if(!obj.owner)
-            return false
+            return false;
 
         let player = new Player(obj.owner.id);
         player.name = obj.owner.name;
@@ -187,14 +180,14 @@ class Plot extends CreatableZone {
         if(obj.deleted)
             plot.deleted = new Date(obj.deleted);
 
-        for(let playerObj of obj.trusted){
+        for(let playerObj of obj.trusted) {
             let trusted = new Player(playerObj.id);
             trusted.name = playerObj.name;
 
             plot.addTrusted(trusted);
         }
 
-        return plot
+        return plot;
     }
 }
 

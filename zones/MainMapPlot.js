@@ -207,8 +207,8 @@ class MainMapPlot extends MainMapZone {
                                     $push: {
                                         'previousOwners': {
                                             'player': plot.owner,
-                                            'from': new Date()
-                                        }
+                                            'from': new Date(),
+                                        },
                                     },
                                 },
                                 function(err, res) {

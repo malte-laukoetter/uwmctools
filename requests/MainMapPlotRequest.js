@@ -61,10 +61,12 @@ class MainMapPlotRequest extends Request {
         return new Promise(function(resolve, reject) {
             let players = [];
             for ( let zone in zones ) {
-                let owner = MainMapPlotRequest._getOwner(zones[zone].label);
+                if ({}.hasOwnProperty.call(zones, zone)) {
+                    let owner = MainMapPlotRequest._getOwner(zones[zone].label);
 
-                if(owner) {
-                    players.push(owner.toLowerCase());
+                    if (owner) {
+                        players.push(owner.toLowerCase());
+                    }
                 }
             }
 
