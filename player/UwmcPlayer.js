@@ -9,6 +9,7 @@ const config = require( '../config.json' );
 const Player = require( './Player' );
 const Plot = require( '../zones/Plot' );
 const PlayerZone = require( '../zones/PlayerZone' );
+const MainMapPlot = require('../zones/MainMapPlot');
 
 /*
  * Data about a Player of Unlimitedworld.de
@@ -194,6 +195,38 @@ class UwmcPlayer extends Player {
     }
 
     /*
+     * adds a main map plot to the mainmapplotlist of the player
+     */
+    addMainMapPlot( plot ) {
+        if ( !MainMapPlot.isMainMapPlot( plot ) )
+            throw new Error( 'no MainMapPlot' )
+
+        if ( !this._mainMapPlots )
+            this._mainMapPlots = []
+
+        this._mainMapPlots.push( plot )
+
+        UwmcPlayer.eventEmitter.emit('newmainmapplot', {
+            player: this,
+            plot: plot
+        });
+    }
+
+    /*
+     * overwrites the mainmapplotlist to the value without checking the format (use addMainMapPlot instead)
+     */
+    _setMainMapPlots( plots ) {
+        this._mainMapPlots = plots
+    }
+
+    /*
+     * gets an array of all the mainMapPlots the player owns
+     */
+    get mainMapPlots() {
+        return this._mainMapPlots || []
+    }
+
+    /*
      * gets the days since the players lastPlayed date
      */
     get daysSinceLastPlayed() {
@@ -248,7 +281,8 @@ class UwmcPlayer extends Player {
             'boardId': this.boardId,
             'votes': this.votes,
             'zones': this.zones,
-            'plots': this.plots
+            'plots': this.plots,
+            'mainMapPlots': this.mainMapPlots
         }
     }
 
@@ -258,7 +292,6 @@ class UwmcPlayer extends Player {
      */
     static createFromDb( db, uuid ) {
         return new Promise( function ( resolve, reject ) {
-            //TODO: Sep. 27 add $lookup for zones and plots
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLAYERS ).aggregate(
                     [ {
                         $match: {
@@ -285,6 +318,13 @@ class UwmcPlayer extends Player {
                             foreignField: "trusted._uuid",
                             as: "plots_trusted"
                         }
+                    }, {
+                        $lookup: {
+                            from: config.MONGODB.DATABASE.UWMC.COLLECTION.MAINMAP_PLOTS,
+                            localField: "uuid",
+                            foreignField: "previousOwners.player._uuid",
+                            as: "mainMapPlots"
+                        }
                     },{
                         $project: {
                             _id: 0,
@@ -296,6 +336,7 @@ class UwmcPlayer extends Player {
                             votes: 1,
                             lastPlayed: 1,
                             zones: 1,
+                            mainMapPlots: 1,
                             plots: {
                                 $concatArrays: [ "$plots_owned", "$plots_trusted" ]
                             }
@@ -305,9 +346,6 @@ class UwmcPlayer extends Player {
                     assert.equal( err, null );
 
                     if(data){
-
-                        console.log(data);
-
                         let player = new UwmcPlayer( data.uuid );
 
                         player.name = data.name
@@ -318,6 +356,7 @@ class UwmcPlayer extends Player {
                         player._setRankHistory( data.ranks || [] )
                         player._setZones(data.zones)
                         player._setPlots(data.plots)
+                        player._setMainMapPlots(data.mainMapPlots)
 
                         resolve( player )
                     }else{

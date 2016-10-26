@@ -239,6 +239,14 @@ class MainMapPlot extends MainMapZone {
         });
     }
 
+
+    /*
+     * true if the value is an instanceof MainMapPlot
+     */
+    static isMainMapPlot( plot ) {
+        return plot instanceof MainMapPlot;
+    }
+
     /*
      * creates a MainMapPlot from the data from the database
      */
