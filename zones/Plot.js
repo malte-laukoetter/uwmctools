@@ -1,4 +1,4 @@
-const config = require('../config.json')
+const config = require('../config.json');
 
 const Zone = require('./Zone');
 const Player = require('../player/Player');

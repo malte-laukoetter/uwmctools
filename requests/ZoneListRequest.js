@@ -2,11 +2,8 @@ const config = require( '../config.json' );
 
 const Request = require( './Request' );
 const uuidlockup = require( '../uuid' );
-const Player = require( '../player/Player' );
 const PlayerZone = require( '../zones/PlayerZone' );
 const ServerZone = require( '../zones/ServerZone' );
-const MainMapPlot = require( '../zones/MainMapPlot' );
-const Helper = require('../Helper');
 
 
 /*
