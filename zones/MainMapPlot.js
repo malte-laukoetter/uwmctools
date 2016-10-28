@@ -100,7 +100,7 @@ class MainMapPlot extends MainMapZone {
 
     /**
      * returns whether the zone has a owner or not
-     * @returns {boolean} true if the zone has an owner
+     * @return {boolean} true if the zone has an owner
      */
     get owned() {
         for(let owner of this.previousOwners) {
