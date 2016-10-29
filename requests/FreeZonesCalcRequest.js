@@ -79,9 +79,10 @@ class FreeZonesCalcRequest extends Request {
     }
 
     /**
-     * modified version of https://gist.github.com/Aurelain/e471c0875a105b80db0e78daf6af4939 by Aurelain, algorithm by
-     * Daveed V, this version isn't returning the biggest rectangle but all non overlapping rectangles with at least the
-     * given length and width
+     * modified version of
+     * [MaximalRectangle.js]{@link https://gist.github.com/Aurelain/e471c0875a105b80db0e78daf6af4939}
+     * by Aurelain, algorithm by Daveed V, this version isn't returning the biggest rectangle but all non overlapping
+     * rectangles with at least the given length and width
      *
      * License of this code part: unknown
      *

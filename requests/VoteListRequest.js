@@ -6,10 +6,13 @@ const UwmcPlayer = require( '../player/UwmcPlayer' );
 const Helper = require('../Helper');
 
 
-/*
+/**
  * request to get the data about the votes of unlimitedworld and saves them to the playerobjects of the database
  */
 class VoteListRequest extends Request {
+    /**
+     * creates a new VoteListRequest
+     */
     constructor() {
         super( config.URLS.UWMC.VOTELIST );
     }
