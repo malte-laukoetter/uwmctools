@@ -29,24 +29,27 @@ class PlayerZone extends MainMapZone {
     }
 
     /**
-     * gets the player that owns the zone (instanceof Player)
-     * @return {Player} the owner of the zone
+     * the player that owns the zone
+     * @type {Player}
+     * @readonly
      */
     get player() {
         return this._player;
     }
 
     /**
-     * gets the number of the zone (uniqe per player)
-     * @return {int} the zone number
+     * the number of the zone (uniqe per player)
+     * @type {int}
+     * @readonly
      */
     get number() {
         return this._number;
     }
 
     /**
-     * gets the name of the zone like it is viewed on the dynmap (PlayerName#Number)
-     * @return {string} the name of the zone
+     * the name of the zone like it is viewed on the dynmap (PlayerName#Number)
+     * @type {string}
+     * @readonly
      */
     get name() {
         return `${this.player.name}#${this.number}`;

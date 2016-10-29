@@ -3,20 +3,25 @@ const config = require( '../config.json' );
 const Request = require( './Request' );
 const ZoneListRequest = require( './ZoneListRequest' );
 
-/*
+/**
  * request to get the data from the dynmap and calculates all free areas
  */
 class FreeZonesCalcRequest extends Request {
+    /**
+     * creates a new FreeZoneCalcRequest
+     */
     constructor() {
         super( config.URLS.UWMC.ZONELIST_MAIN );
     }
 
-    /*
+    /**
      * executes the request, converts the data and returns an array of all free zones
-     * the length and width are the size of the zones we are searching for
+     * @param {int} length the length of the zones that should be found
+     * @param {int} width the width of the zones that should be found
+     * @return {Promise.<Array.<Zone>>} all free areas
      */
     execute(length, width) {
-        return super.execute().then( function ( res ) {
+        return super.execute().then( function( res ) {
             return ZoneListRequest._convertServerZones(res.body.sets.Serverzonen.areas).then(function(serverzones) {
                 return ZoneListRequest._convertPlayerZones(res.body.sets.Spielerzonen.areas)
                 .then(function(playerzones) {
@@ -73,12 +78,22 @@ class FreeZonesCalcRequest extends Request {
         });
     }
 
-    /*
-     * modified version of https://gist.github.com/Aurelain/e471c0875a105b80db0e78daf6af4939 by Aurelain, algorith by
-     * Daveed V, this version isn't returning the biggest revtangle but all non overlaping revtangles with at least the
+    /**
+     * modified version of https://gist.github.com/Aurelain/e471c0875a105b80db0e78daf6af4939 by Aurelain, algorithm by
+     * Daveed V, this version isn't returning the biggest rectangle but all non overlapping rectangles with at least the
      * given length and width
      *
      * License of this code part: unknown
+     *
+     * @param {Array.<Array.<int>>} matrix an matrix with a 1 for each free field and a 0 for each occupied field
+     * @param {int} length the length that the free rectangles should have
+     * @param {int} width the width that the free rectangles should have
+     * @return {Array.<Object>} an array of all the free rectangles
+     * @property {int} object.area the size of the area
+     * @property {int} object.ll.col the col of the upper left corner of the rectangle
+     * @property {int} object.ll.row the row of the upper left corner of the rectangle
+     * @property {int} object.ur.col the col of the bottom right corner of the rectangle
+     * @property {int} object.ur.row the row of the bottom right corner of the rectangle
      */
     static biggerRectangle(matrix, length, width) {
         let m; // iterator for columns

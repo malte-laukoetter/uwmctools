@@ -16,9 +16,12 @@ class CreatableZone extends Zone {
     }
 
     /**
-     * sets the date the zone was created
-     * @param {Date} date the date the zone was created
+     * the date the zone was created
+     * @type {Date}
      */
+    get created() {
+        return this._created || new Date( 0 );
+    }
     set created( date ) {
         if ( !( date instanceof Date ) )
             throw new Error( 'No Date' );
@@ -27,30 +30,17 @@ class CreatableZone extends Zone {
     }
 
     /**
-     * gets the date the zone was created
-     * @return {Date} the date the zone was created
+     * the date the zone was deleted, false if the zone isn't deleted
+     * @type {Date|Boolean}
      */
-    get created() {
-        return this._created || new Date( 0 );
+    get deleted() {
+        return this._deleted || false;
     }
-
-    /**
-     * sets the date the zone was deleted
-     * @param {Date|Boolean} date the date the zone was deleted
-     */
     set deleted( date ) {
         if ( !( date instanceof Date || date instanceof Boolean) )
             throw new Error( 'No Date' );
 
         this._deleted = date;
-    }
-
-    /**
-     * gets the date the zone was deleted or false if the zone isn't deleted
-     * @return {Date|Boolean} the date of the deletion or false if it still exist
-     */
-    get deleted() {
-        return this._deleted || false;
     }
 }
 

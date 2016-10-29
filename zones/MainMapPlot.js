@@ -44,8 +44,12 @@ class MainMapPlot extends MainMapZone {
     }
 
     /**
-     * gets a set of the previous owners of the plot
-     * @return {Set} the previous owners in the format {player: UwmcPlayer, from: Date, till: Date}
+     * a set of the previous owners of the plot
+     * @type {Set.<Object>}
+     * @property {Player} obj.player the previous owner
+     * @property {Date} obj.fromDate the date since the player is / was the previous owner
+     * @property {Date} obj.tillDate the date till the player is / was the previous owner
+     * @readonly
      */
     get previousOwners() {
         return this._previousOwners;
@@ -61,8 +65,9 @@ class MainMapPlot extends MainMapZone {
     }
 
     /**
-     * gets the player that ones the plot
-     * @return {Player|boolean} the player if the plot currently has a owner else false
+     * the player that ones the plot, false if no one owns it
+     * @type {Player|boolean}
+     * @readonly
      */
     get owner() {
         // the current owner doesn't have a till date
@@ -75,32 +80,36 @@ class MainMapPlot extends MainMapZone {
     }
 
     /**
-     * gets the number of the plot in the area
-     * @return {int} the number of the plot
+     * the number of the plot in the area
+     * @type {int}
+     * @readonly
      */
     get number() {
         return this._number;
     }
 
     /**
-     * gets the area of the plot (eg. Neustadt)
-     * @return {string} the area the plot is in
+     * the area the plot is placed in (eg. Neustadt)
+     * @type {string}
+     * @readonly
      */
     get area() {
         return this._area;
     }
 
     /**
-     * gets the name of the MainMapPlot like it is viewed on the dynmap (Area Number)
-     * @return {string} the name of the plot
+     * the name of the MainMapPlot like it is viewed on the dynmap (Area Number)
+     * @type {string}
+     * @readonly
      */
     get name() {
         return `${this.area} ${this.number}`;
     }
 
     /**
-     * returns whether the zone has a owner or not
-     * @return {boolean} true if the zone has an owner
+     * if the zone has an owner or not
+     * @type {boolean}
+     * @readonly
      */
     get owned() {
         for(let owner of this.previousOwners) {

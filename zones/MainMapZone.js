@@ -21,15 +21,17 @@ class MainMapZone extends CreatableZone {
 
     /**
      * the zoneid of the zone (something like "uwzone_32123")
-     * @return {string} the zoneid of the zone
+     * @type {string}
+     * @readonly
      */
     get id() {
         return this._id;
     }
 
     /**
-     * gets the type of the zone (eg. Player)
-     * @return {string} the type of the zone
+     * the type of the zone (eg. Player)
+     * @type {string}
+     * @readonly
      */
     get type() {
         return this._type;

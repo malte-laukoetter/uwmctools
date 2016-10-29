@@ -33,15 +33,17 @@ class Plot extends CreatableZone {
 
     /**
      * the id of the plot (something like "ebdf264aabda45708f61f2d7a2bb4758-3/-6")
-     * @return {string} the id of the plot
+     * @type {string}
+     * @readonly
      */
     get id() {
         return this._id;
     }
 
     /**
-     * gets the owner of the plot
-     * @return {Player} the owner of the plot
+     * the player that owns the plot
+     * @type {Player}
+     * @readonly
      */
     get owner() {
         return this._owner;
@@ -62,24 +64,27 @@ class Plot extends CreatableZone {
     }
 
     /**
-     * gets an array of all trusted players of the plot
-     * @return {Array.<Player>} the array of the trusted players
+     * all trusted players of the plot
+     * @type {Array.<Player>}
+     * @readonly
      */
     get trusted() {
         return this._trusted || [];
     }
 
     /**
-     * gets the name of the zone like it is viewed on the dynmap (X/Z)
-     * @return {string} the name of the zone
+     * the name of the zone like it is viewed on the dynmap (X/Z)
+     * @type {string}
+     * @readonly
      */
     get name() {
         return `${this.plotPos.x}/${this.plotPos.z}`;
     }
 
     /**
-     * gets the x coordinate of plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
-     * @return {int} the x coordinate of the plot
+     * the x coordinate of plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
+     * @type {int}
+     * @readonly
      */
     get posX() {
         return this._posX;
@@ -87,7 +92,8 @@ class Plot extends CreatableZone {
 
     /**
      * gets the z coordinate of the plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
-     * @return {int} the z coordinate of the plot
+     * @type {int}
+     * @readonly
      */
     get posZ() {
         return this._posZ;
@@ -185,7 +191,7 @@ class Plot extends CreatableZone {
     }
 
     /**
-     * true if the value is an instanceof a Plot
+     * test if it is a Plot
      * @param {Object} plot the Object that should be tested
      * @return {boolean} true if the object is a Plot
      */
