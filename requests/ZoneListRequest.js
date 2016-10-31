@@ -6,19 +6,24 @@ const PlayerZone = require( '../zones/PlayerZone' );
 const ServerZone = require( '../zones/ServerZone' );
 
 
-/*
+/**
  * request to get the data about the zones from the dynmap of uwmc.de it also converts the data and saves the player
  * zones to the database
  */
 class ZoneListRequest extends Request {
+    /**
+     * creates a new zonelist request
+     */
     constructor() {
         super( config.URLS.UWMC.ZONELIST_MAIN );
 
         this._cache = new Map();
     }
 
-    /*
+    /**
      * executes the request, converts the data and saves the player zones to the database
+     * @param {Db} db the database the data should be saved in
+     * @return {Promise} result of the database query
      */
     execute(db) {
         let req = this;
@@ -61,8 +66,11 @@ class ZoneListRequest extends Request {
         });
     }
 
-    /*
-     * converts the player zonelist data into PlayerZones
+    /**
+     * converts the player zonelist data into {@link PlayerZone}s
+     * @param {Object} zones the zone data from the request
+     * @return {Promise.<Array.<PlayerZone>>} the data converted to {@link PlayerZone}s
+     * @private
      */
     static _convertPlayerZones( zones ) {
         return new Promise(function(resolve, reject) {
@@ -103,12 +111,11 @@ class ZoneListRequest extends Request {
         });
     }
 
-    /*
-     * converts the plot zonelist data into MainMapPlots
-     */
-
-    /*
-     * converts the server zonelist data into ServerZones
+    /**
+     * converts the server zonelist data into {@link ServerZone}s
+     * @param {Object} zones the zone data from the request
+     * @return {Promise.<Array.<ServerZone>>} the data converted to {@link ServerZone}s
+     * @private
      */
     static _convertServerZones( zones ) {
         let zoneList = [];
@@ -135,8 +142,11 @@ class ZoneListRequest extends Request {
         });
     }
 
-    /*
-     * generates the zonenumber from the label of a playerzone from the dynmap
+    /**
+     * generates the zonenumber from the label of a {@link PlayerZone} from the dynmap
+     * @param {string} label the label used by the dynmap about the zone
+     * @return {int} the number of the zone
+     * @private
      */
     static _getZoneNumber( label ) {
         let zoneNumber = label.split( /Zonen Nr\.:\s*<b>/ );
@@ -150,8 +160,11 @@ class ZoneListRequest extends Request {
         return zoneNumber;
     }
 
-    /*
-     * generates the name of the zoneowner from the label of a playerzone from the dynmap
+    /**
+     * generates the name of the zoneowner from the label of a {@link PlayerZone} from the dynmap
+     * @param {string} label the label used by the dynmap about the zone
+     * @return {string} the name of the owner of the zone
+     * @private
      */
     static _getZoneOwner( label ) {
         // get the owner by some regex (it's so complicated because some names appear in different colors
