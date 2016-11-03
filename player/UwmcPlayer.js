@@ -258,23 +258,29 @@ class UwmcPlayer extends Player {
         return this._mainMapPlots || [];
     }
 
-    /*
-     * gets the days since the players lastPlayed date
+    /**
+     * the days since the players lastPlayed date
+     * @type {int}
+     * @readonly
      */
     get daysSinceLastPlayed() {
         return Math.floor(Math.abs(this.lastPlayed().getTime() - new Date().getTime()) / ( 1000 * 3600 * 24 ));
     }
 
-    /*
-     * returns if the player is active (eg. was online within the last 62 Days)
+    /**
+     * is the player is active (eg. was online within the last 62 Days)
+     * @type {boolean}
+     * @readonly
      */
     get active() {
         return this.daysSinceLastPlayed() < 62;
     }
 
-    /*
+    /**
      * saves the data of this player to the database or updates it if there is already a player
      * with this uuid in the database
+     * @param {Db} db the database to use
+     * @return {Promise} the result of the db query
      */
     saveToDb(db) {
         let player = this;
@@ -302,8 +308,9 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
+    /**
      * converts the UwmcPlayer to JSON
+     * @return {Object} the converted data
      */
     toJson() {
         return {
@@ -319,9 +326,13 @@ class UwmcPlayer extends Player {
         };
     }
 
-    /*
+    /**
      * gets the data of the player with the given uuid from the database and creates a new UwmcPlayer object with it.
      * If there is no data about this player in the database it returns a UwmcPlayer object with just the given uuid.
+     *
+     * @param {Db} db the database to use
+     * @param {string} uuid the uuid of the player
+     * @return {Promise.<UwmcPlayer>} the player that is created form the database
      */
     static createFromDb(db, uuid) {
         return new Promise(function(resolve, reject) {
@@ -399,8 +410,10 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
+    /**
      * converts the rank if  to the human readable version (name of the rank)
+     * @param {int} rank
+     * @return {string} the name of the rank
      */
     static rankToRankName(rank) {
         switch (rank) {
@@ -429,8 +442,10 @@ class UwmcPlayer extends Player {
         }
     }
 
-    /*
-     * gets the event emitter for the UwmcPlayer class (not the emitter for an instance of the UwmcPlayer)
+    /**
+     * the event emitter for the UwmcPlayer class (not the emitter for an instance of the UwmcPlayer)
+     * @type {UwmcPlayerEmitter}
+     * @readonly
      */
     static get eventEmitter() {
         return emitter;
