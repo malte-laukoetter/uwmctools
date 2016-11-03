@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: requests/ZoneListRequest.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: requests/ZoneListRequest.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const config = require( '../config.json' );
+
+const Request = require( './Request' );
+const uuidlockup = require( '../uuid' );
+const PlayerZone = require( '../zones/PlayerZone' );
+const ServerZone = require( '../zones/ServerZone' );
+
+
+/**
+ * request to get the data about the zones from the dynmap of uwmc.de it also converts the data and saves the player
+ * zones to the database
+ */
+class ZoneListRequest extends Request {
+    /**
+     * creates a new zonelist request
+     */
+    constructor() {
+        super( config.URLS.UWMC.ZONELIST_MAIN );
+
+        this._cache = new Map();
+    }
+
+    /**
+     * executes the request, converts the data and saves the player zones to the database
+     * @param {Db} db the database the data should be saved in
+     * @return {Promise} result of the database query
+     */
+    execute(db) {
+        let req = this;
+
+        return super.execute().then( function ( res ) {
+            return ZoneListRequest._convertPlayerZones(res.body.sets.Spielerzonen.areas).then(function(zones){
+                let dbRequests = [];
+
+                // save changed zone data
+                for(let zone of zones) {
+                    if(req._cache.get(zone.id) !== zone.hash) {
+                        req._cache.set(zone.id, zone.hash);
+                        dbRequests.push(zone.saveToDb(db));
+                    }
+                }
+
+                // delete zones that no longer exist
+                for(let cachedZoneId of req._cache.keys()) {
+                    let exist = false;
+
+                    // test if the zoneid of the cached zone is in the results
+                    // (-> if it exists in the reults the zone still exists)
+                    for(let zone of zones) {
+                        if(!exist &amp;&amp; zone.id === cachedZoneId) {
+                            exist = true;
+                        }
+                    }
+
+                    if(!exist) {
+                        dbRequests.push(PlayerZone.fromDb(db, cachedZoneId).then(function(res){
+                            return res.setToDeleted(db);
+                        }));
+
+                        req._cache.remove(cachedZoneId);
+                    }
+                }
+
+                return Promise.all(dbRequests);
+            });
+        });
+    }
+
+    /**
+     * converts the player zonelist data into {@link PlayerZone}s
+     * @param {Object} zones the zone data from the request
+     * @return {Promise.&lt;Array.&lt;PlayerZone>>} the data converted to {@link PlayerZone}s
+     * @private
+     */
+    static _convertPlayerZones( zones ) {
+        return new Promise(function(resolve, reject) {
+            let players = [];
+            for( let i in zones ) {
+                if ({}.hasOwnProperty.call(zones, i)) {
+                    players.push(ZoneListRequest._getZoneOwner(zones[i].label).toLowerCase());
+                }
+            }
+
+            uuidlockup.getUuids( players ).then( function( players ) {
+                let zoneList = [];
+
+                for( let zoneId in zones ) {
+                    if ({}.hasOwnProperty.call(zones, zoneId)) {
+                        let zoneData = zones[zoneId];
+
+                        let playername = ZoneListRequest._getZoneOwner(zoneData.label).toLowerCase();
+
+                        if (players.has(playername)) {
+                            let zone = new PlayerZone(
+                                players.get(playername),
+                                ZoneListRequest._getZoneNumber(zoneData.label),
+                                zoneId,
+                                zoneData.x[0],
+                                zoneData.x[1],
+                                zoneData.z[0],
+                                zoneData.z[1]
+                            );
+
+                            zoneList.push(zone);
+                        }
+                    }
+                }
+
+                resolve(zoneList);
+            } );
+        });
+    }
+
+    /**
+     * converts the server zonelist data into {@link ServerZone}s
+     * @param {Object} zones the zone data from the request
+     * @return {Promise.&lt;Array.&lt;ServerZone>>} the data converted to {@link ServerZone}s
+     * @private
+     */
+    static _convertServerZones( zones ) {
+        let zoneList = [];
+
+        for( let zoneId in zones ) {
+            if ({}.hasOwnProperty.call(zones, zoneId)) {
+                let zoneData = zones[zoneId];
+
+
+                let zone = new ServerZone(
+                    zoneId,
+                    zoneData.x[0],
+                    zoneData.x[1],
+                    zoneData.z[0],
+                    zoneData.z[1]
+                );
+
+                zoneList.push(zone);
+            }
+        }
+
+        return new Promise(function(resolve) {
+            resolve(zoneList);
+        });
+    }
+
+    /**
+     * generates the zonenumber from the label of a {@link PlayerZone} from the dynmap
+     * @param {string} label the label used by the dynmap about the zone
+     * @return {int} the number of the zone
+     * @private
+     */
+    static _getZoneNumber( label ) {
+        let zoneNumber = label.split( /Zonen Nr\.:\s*&lt;b>/ );
+
+        if ( zoneNumber.length > 1 ) {
+            zoneNumber = parseInt( zoneNumber[1].split( '&lt;/b>' )[0] );
+        } else {
+            zoneNumber = 0;
+        }
+
+        return zoneNumber;
+    }
+
+    /**
+     * generates the name of the zoneowner from the label of a {@link PlayerZone} from the dynmap
+     * @param {string} label the label used by the dynmap about the zone
+     * @return {string} the name of the owner of the zone
+     * @private
+     */
+    static _getZoneOwner( label ) {
+        // get the owner by some regex (it's so complicated because some names appear in different colors
+        let owner = label.split( /color: #[A-F0-9a-f]{6}">(\[.*])*/ );
+
+        if ( owner.length > 2 ) {
+            if ( owner[1] &amp;&amp; owner[2] == ' &lt;/span>&lt;span style="' &amp;&amp; owner[1].substring( 0, 1 ) == '[' ) {
+                owner = owner[4].split( '&lt;/span>' )[0];
+            } else {
+                owner = owner[2].split( '&lt;/span>' )[0];
+            }
+
+            if ( owner.split( ' ' ).length > 1 ) {
+                owner = owner.split( ' ' )[1];
+            }
+
+            return owner.toString();
+        } else {
+            // if the length is smaler two the zone don't have any information about an owner and therefor is a
+            // community zone
+            return 'Server - Communityzone';
+        }
+    }
+}
+
+module.exports = ZoneListRequest;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CreatableZone.html">CreatableZone</a></li><li><a href="FreeZonesCalcRequest.html">FreeZonesCalcRequest</a></li><li><a href="Helper.html">Helper</a></li><li><a href="MainMapPlot.html">MainMapPlot</a></li><li><a href="MainMapPlotRequest.html">MainMapPlotRequest</a></li><li><a href="MainMapZone.html">MainMapZone</a></li><li><a href="Player.html">Player</a></li><li><a href="PlayerListRequest.html">PlayerListRequest</a></li><li><a href="PlayerZone.html">PlayerZone</a></li><li><a href="Plot.html">Plot</a></li><li><a href="PlotListRequest.html">PlotListRequest</a></li><li><a href="Request.html">Request</a></li><li><a href="ServerZone.html">ServerZone</a></li><li><a href="UwmcPlayer.html">UwmcPlayer</a></li><li><a href="UwmcTool.html">UwmcTool</a></li><li><a href="VoteListRequest.html">VoteListRequest</a></li><li><a href="Zone.html">Zone</a></li><li><a href="ZoneListRequest.html">ZoneListRequest</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Thu Nov 03 2016 16:52:56 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
