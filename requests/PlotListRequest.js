@@ -50,7 +50,7 @@ class PlotListRequest extends Request {
                             return res.setToDeleted(db);
                         }));
 
-                        req._cache.remove(cachedPlotId);
+                        req._cache.delete(cachedPlotId);
                     }
                 }
 

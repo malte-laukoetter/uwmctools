@@ -52,7 +52,7 @@ class ZoneListRequest extends Request {
                             return res.setToDeleted(db);
                         }));
 
-                        req._cache.remove(cachedZoneId);
+                        req._cache.delete(cachedZoneId);
                     }
                 }
 
