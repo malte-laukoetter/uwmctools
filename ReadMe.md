@@ -1,5 +1,7 @@
 # unlimitedworld.de tools of Lergin.de
 
+Documentation available at: https://lergin.github.io/uwmctools/uwmctools/2.4.3/
+
 ## Usage
 
 ``` javascript
