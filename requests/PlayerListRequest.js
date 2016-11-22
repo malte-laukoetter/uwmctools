@@ -6,17 +6,22 @@ const UwmcPlayer = require( '../player/UwmcPlayer' );
 const Helper = require('../Helper');
 
 
-/*
+/**
  * request to get the data about players from the playerlist of the webpage of uwmc.de and does the work to convert it
  * and save it to the database
  */
 class PlayerListRequest extends Request {
+    /**
+     * creates a new PlayerListRequest
+     */
     constructor() {
         super( config.URLS.UWMC.PLAYERLIST );
     }
 
-    /*
+    /**
      * executes the request, converts the data and saves it to the DB
+     * @param {Db} db the database the data should be saved in
+     * @return {Promise} result of the database query
      */
     execute(db) {
         let req = this;
@@ -52,15 +57,23 @@ class PlayerListRequest extends Request {
         } );
     }
 
-    /*
-     * gets the last response of the request (unconverted to player objects)
+    /**
+     * the last response of the request (unconverted to player objects)
+     * @type {Object}
+     * @readonly
      */
     get lastResponse() {
         return this._lastResponse;
     }
 
-    /*
+    /**
      * saves the data about the player with the given uuid to the database
+     * @param {Db} db the database that should be used
+     * @param {string} uuid the uuid of the player
+     * @param {string} name the name of the player
+     * @param {object} data the data about the player
+     * @return {Promise.<UwmcPlayer>} the saved {@see UwmcPlayer
+     * @private
      */
     static _saveToDb(db, uuid, name, data){
         return UwmcPlayer.createFromDb( db, uuid ).then( function( player ) {

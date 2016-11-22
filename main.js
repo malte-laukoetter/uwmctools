@@ -14,10 +14,14 @@ const Plot = require( './zones/Plot' );
 const ServerZone = require( './zones/ServerZone' );
 const Zone = require( './zones/Zone' );
 
-/*
+/**
  * Main Class of the uwmc tools
  */
-class Main {
+class UwmcTool {
+    /**
+     * creates a new UwmcTool
+     * @param {string} mongoDbUrl the connection url of the MongoDb database that should be used by the Requests
+     */
     constructor( mongoDbUrl ) {
         this._mongoDbUrl = mongoDbUrl;
 
@@ -29,15 +33,18 @@ class Main {
         this._mainMapPlotRequest = new MainMapPlotRequest();
     }
 
-    /*
-     * gets the url of the mongodb database
+    /**
+     * the url of the mongodb database
+     * @type {string}
+     * @readonly
      */
     get mongoDbUrl() {
         return this._mongoDbUrl;
     }
 
-    /*
+    /**
      * connect to the database
+     * @return {Promise} the result of the MongoDb connection function
      */
     connect() {
         let main = this;
@@ -51,43 +58,51 @@ class Main {
         } );
     }
 
-    /*
+    /**
      * save the data from the playerlist
+     * @return {Promise.<*>} the response of {@see PlayerListRequest#execute}
      */
     savePlayerListData() {
         return this._saveData( this._playerListRequest );
     }
 
-    /*
+    /**
      * save the data about the zones
+     * @return {Promise.<*>} the response of {@see ZoneListRequest#execute}
      */
     saveZoneListData() {
         return this._saveData( this._zoneListRequest );
     }
 
-    /*
+    /**
      * save the data about the plots
+     * @return {Promise.<*>} the response of {@see PlotListRequest#execute}
      */
     savePlotListData() {
         return this._saveData( this._plotListRequest );
     }
 
-    /*
+    /**
      * save the data from the votelist
+     * @return {Promise.<*>} the response of {@see VoteListRequest#execute}
      */
     saveVoteListData() {
         return this._saveData( this._voteListRequest );
     }
 
-    /*
-     * save the data from the zonelist
+    /**
+     * save the data about the main map plots
+     * @return {Promise.<*>} the response of {@see MainMapPlotRequest#execute}
      */
     saveMainMapPlotData() {
         return this._saveData( this._mainMapPlotRequest );
     }
 
-    /*
+    /**
      * gets all free Zones of the given length and width
+     * @param {int} length the length of the free areas to find
+     * @param {int} width the width of the free areas to find
+     * @return {Promise.<Array.<Zone>>} the free areas
      */
     getFreeZones(length, width) {
         return this._freeZonesCalcRequest.execute(length, width);
@@ -109,66 +124,87 @@ class Main {
         return UwmcPlayer.rankToRankName(rank);
     }
 
-    /*
+    /**
      * save the data of the request
+     * @param {Request} request the request whose data should be saved
+     * @return {Promise.<*>} the result of the request
+     * @private
      */
     _saveData( request ) {
         return this.connect().then( function( db ) {
-            return request.execute( db ).then( function( res ) {
+            return request.execute(db).then( function( res ) {
                 db.close();
                 return res;
             } );
         } );
     }
 
-    /*
-     * gets the UwmcPlayer class
+    /**
+     * the UwmcPlayer class
+     * @Type {Class}
+     * @readonly
      */
     static get UwmcPlayer() {
         return UwmcPlayer;
     }
 
-    /*
-     * gets the Player class
+    /**
+     * the Player class
+     * @Type {Class}
+     * @readonly
      */
     static get Player() {
         return Player;
     }
 
-    /*
-     * gets the MainMapZone class
+    /**
+     * the MainMapZone class
+     * @Type {Class}
+     * @readonly
      */
     static get MainMapZone() {
         return MainMapZone;
     }
 
-    /*
-     * gets the PlayerZone class
+    /**
+     * the PlayerZone class
+     * @Type {Class}
+     * @readonly
      */
     static get PlayerZone() {
         return PlayerZone;
     }
 
-    /*
-     * gets the Plot class
+    /**
+     * the Plot class
+     * @Type {Class}
+     * @readonly
      */
     static get Plot() {
         return Plot;
     }
 
-    /*
-     * gets the ServerZone class
+    /**
+     * the ServerZone class
+     * @Type {Class}
+     * @readonly
      */
     static get ServerZone() {
         return ServerZone;
     }
 
-    /*
-     * gets the Zone class
+    /**
+     * the Zone class
+     * @Type {Class}
+     * @readonly
      */
     static get Zone() {
         return Zone;
     }
 }
 
-module.exports = Main;
+/**
+ * main module of the uwmctools
+ * @type {UwmcTool}
+ */
+module.exports = UwmcTool;

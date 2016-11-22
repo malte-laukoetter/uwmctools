@@ -6,16 +6,21 @@ const UwmcPlayer = require( '../player/UwmcPlayer' );
 const Helper = require('../Helper');
 
 
-/*
+/**
  * request to get the data about the votes of unlimitedworld and saves them to the playerobjects of the database
  */
 class VoteListRequest extends Request {
+    /**
+     * creates a new VoteListRequest
+     */
     constructor() {
         super( config.URLS.UWMC.VOTELIST );
     }
 
-    /*
+    /**
      * executes the request, converts the data and saves it to the DB
+     * @param {Db} db the database the data should be saved in
+     * @return {Promise} result of the database query
      */
     execute(db) {
         let req = this;
@@ -49,15 +54,23 @@ class VoteListRequest extends Request {
         } );
     }
 
-    /*
-     * gets the last response of the request (unconverted)
+    /**
+     * the last response of the request (unconverted to player objects)
+     * @type {Object}
+     * @readonly
      */
     get lastResponse() {
         return this._lastResponse;
     }
 
-    /*
+    /**
      * saves the data about the player and the votes to the database
+     * @param {Db} db the database the data should be saved in
+     * @param {string} uuid the uuid of the player
+     * @param {string} name the name of the player
+     * @param {Object} data the vote data
+     * @return {Promise} the result of the database query
+     * @private
      */
     static _saveToDb(db, uuid, name, data) {
         return UwmcPlayer.createFromDb( db, uuid ).then( function( player ) {
@@ -70,7 +83,13 @@ class VoteListRequest extends Request {
     }
 
     /*
+     */
+    /**
      * adds the data we get from the votelist to the player object
+     * @param {UwmcPlayer} player the player the vote data should be added to
+     * @param {Object} data the vote data about the player
+     * @return {UwmcPlayer} the given Player including the vote data
+     * @private
      */
     static _addVoteListDataToPlayer(player, data) {
         player.setVotes(new Date().getFullYear(), new Date().getMonth(), 'v1', data.s1);

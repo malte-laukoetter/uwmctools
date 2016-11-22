@@ -1,37 +1,42 @@
 const requestjs = require('request');
 
-/*
+/**
  * a request.js request that uses Promises and uses json by default
  */
 class Request {
+    /**
+     * creates a new Request
+     * @param {string} url the url of the request
+     */
     constructor(url) {
         this._url = url;
         this._json = true;
     }
 
-    /*
-     * get the url that can be requested
+    /**
+     * the url that can be requested
+     * @type {string}
      */
     get url() {
         return this._url;
     }
 
-    /*
-     * sets if the response of the request should be parsed as json
-     */
-    set json(isJson) {
-        this._json = isJson;
-    }
-
-    /*
-     * gets the current json setting
+    /**
+     * if the response of the request should be parsed as json
+     * @type {boolean}
      */
     get json() {
         return this._json;
     }
+    set json(isJson) {
+        this._json = isJson;
+    }
 
-    /*
-     * gets the options object of the request
+    /**
+     * the options object of the request
+     * @type {object}
+     * @property {string} url
+     * @property {boolean} json
      */
     get options() {
         return {
@@ -40,8 +45,9 @@ class Request {
         };
     }
 
-    /*
-     * executes the request and returns a Promise with the response of the request
+    /**
+     * executes the request
+     * @return {Promise} the response of the request
      */
     execute() {
         const req = this;

@@ -1,9 +1,5 @@
 const assert = require('assert');
-
 const EventEmitter = require('events');
-class UwmcPlayerEmitter extends EventEmitter {
-}
-const emitter = new UwmcPlayerEmitter();
 
 const config = require('../config.json');
 
@@ -12,65 +8,72 @@ const Plot = require('../zones/Plot');
 const PlayerZone = require('../zones/PlayerZone');
 const MainMapPlot = require('../zones/MainMapPlot');
 
-/*
- * Data about a Player of Unlimitedworld.de
+/**
+ * the {@link EventEmitter} for the {@link UwmcPlayer}
+ * @private
+ */
+class UwmcPlayerEmitter extends EventEmitter {}
+const emitter = new UwmcPlayerEmitter();
+
+
+/**
+ * A Player of Unlimitedworld.de
  */
 class UwmcPlayer extends Player {
+    /**
+     * creates a new Player
+     * @param {string} uuid the uuid of the player
+     */
     constructor(uuid) {
         super(uuid);
     }
 
-    /*
-     * sets the current rank of the player
-     */
-    set rank(rank) {
-        this._rank = rank;
-    }
-
-    /*
-     * gets the rank of the player
+    /**
+     * the current rank of the player
+     * @type {int}
      */
     get rank() {
         return this._rank;
     }
+    set rank(rank) {
+        this._rank = rank;
+    }
 
-    /*
-     * gets the rankname of the player
+    /**
+     * the rankname of the player
+     * @type {string}
+     * @readonly
      */
     get rankName() {
         UwmcPlayer.rankToRankName(this.rank);
     }
 
     /*
-     * sets the id of the forum account)
+     * the id of the forum account
+     * @type {int}
      */
+    get boardId() {
+        return this._boardId;
+    }
     set boardId(boardId) {
         this._boardId = boardId;
     }
 
     /*
-     * gets the id of the forum account
-     */
-    get boardId() {
-        return this._boardId;
-    }
-
-    /*
-     * sets the date the player was last online on the server
-     */
-    set lastPlayed(date) {
-        this._lastPlayed = date;
-    }
-
-    /*
-     * gets the date the player was last online on the server
+     * the date the player was last online on the server
+     * @type {Date}
      */
     get lastPlayed() {
         return this._lastPlayed || new Date(0);
     }
+    set lastPlayed(date) {
+        this._lastPlayed = date;
+    }
 
-    /*
+    /**
      * adds a rank change to the rank history
+     * @param {int} rank the rank changed to
+     * @param {Date} date the {@link Date} of the rankchange
      */
     addRankChange(rank, date) {
         if (!this._rankHistory)
@@ -87,22 +90,32 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
-     * gets the rank history (an array of rankchanges)
+    /**
+     * the rank history
+     * @type {Array.<Object>}
+     * @property {int} obj.rank
+     * @property {Date} obj.date
+     * @readonly
      */
     get rankHistory() {
         return this._rankHistory || [];
     }
 
-    /*
-     * overwrites the rank history to the value without checking the format (use addRankChange instead)
+    /**
+     * overwrites the rank history to the value without checking the format (use {@link addRankChange} instead)
+     * @param {Array.<Object>} rankHistory the rankhistory
+     * @private
      */
     _setRankHistory(rankHistory) {
         this._rankHistory = rankHistory;
     }
 
-    /*
+    /**
      * sets the votes for a specific month and votesite
+     * @param {int} year the year of the votes
+     * @param {int} month the month of the votes
+     * @param {string} site the vote site of the votes
+     * @param {int} votes the amount of votes
      */
     setVotes(year, month, site, votes) {
         if (!this._votes)
@@ -117,22 +130,26 @@ class UwmcPlayer extends Player {
         this._votes[year][month][site] = votes;
     }
 
-    /*
+    /**
      * overwrites the vote history to the value without checking the format (use setVotes instead)
+     * @param {Array.<Object>} votes the votedata to overwrite by
      */
     _setVotes(votes) {
         this._votes = votes;
     }
 
-    /*
-     * get the vote history
+    /**
+     * the vote history
+     * @type {Array.<Object>}
+     * @readonly
      */
     get votes() {
         return this._votes || {};
     }
 
-    /*
+    /**
      * adds a Plot to the plotlist
+     * @param {Plot} plot the plot to add
      */
     addPlot(plot) {
         if (!Plot.isPlot(plot))
@@ -149,22 +166,27 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
-     * overwrites the plotlist to the value without checking the format (use addPlot instead)
+    /**
+     * overwrites the plotlist to the value without checking the format (use {@link addPlot} instead)
+     * @param {Array.<Plot>} plots the data to overwrite by
+     * @private
      */
     _setPlots(plots) {
         this._plots = plots;
     }
 
-    /*
-     * gets an array of all plots the player is assosiated with
+    /**
+     * all plots the player is associated with
+     * @type {Array.<Plot>}
+     * @readonly
      */
     get plots() {
         return this._plots || [];
     }
 
-    /*
+    /**
      * adds a zone to the zonelist of the player
+     * @param {PlayerZone} zone the zone to add
      */
     addZone(zone) {
         if (!PlayerZone.isPlayerZone(zone))
@@ -181,22 +203,27 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
-     * overwrites the zonelist to the value without checking the format (use addZone instead)
+    /**
+     * overwrites the zonelist to the value without checking the format (use {@link addZone} instead)
+     * @param {Array.<PlayerZone>} zones the data to overwrite by
+     * @private
      */
     _setZones(zones) {
         this._zones = zones;
     }
 
-    /*
-     * gets an array of all the zones the player owns
+    /**
+     * all the zones the player owns
+     * @type {Array.<PlayerZone>}
+     * @readonly
      */
     get zones() {
         return this._zones || [];
     }
 
-    /*
+    /**
      * adds a main map plot to the mainmapplotlist of the player
+     * @param {MainMapPlot} plot the {@link MainMapPlot} to add
      */
     addMainMapPlot(plot) {
         if (!MainMapPlot.isMainMapPlot(plot))
@@ -213,37 +240,47 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
-     * overwrites the mainmapplotlist to the value without checking the format (use addMainMapPlot instead)
+    /**
+     * overwrites the mainmapplotlist to the value without checking the format (use {@link addMainMapPlot} instead)
+     * @param {Array.<MainMapPlot>} plots the data to overwrite by
+     * @private
      */
     _setMainMapPlots(plots) {
         this._mainMapPlots = plots;
     }
 
-    /*
-     * gets an array of all the mainMapPlots the player owns
+    /**
+     * all the mainMapPlots the player owns
+     * @type {Array.<MainMapPlot>}
+     * @readonly
      */
     get mainMapPlots() {
         return this._mainMapPlots || [];
     }
 
-    /*
-     * gets the days since the players lastPlayed date
+    /**
+     * the days since the players lastPlayed date
+     * @type {int}
+     * @readonly
      */
     get daysSinceLastPlayed() {
         return Math.floor(Math.abs(this.lastPlayed().getTime() - new Date().getTime()) / ( 1000 * 3600 * 24 ));
     }
 
-    /*
-     * returns if the player is active (eg. was online within the last 62 Days)
+    /**
+     * is the player is active (eg. was online within the last 62 Days)
+     * @type {boolean}
+     * @readonly
      */
     get active() {
         return this.daysSinceLastPlayed() < 62;
     }
 
-    /*
+    /**
      * saves the data of this player to the database or updates it if there is already a player
      * with this uuid in the database
+     * @param {Db} db the database to use
+     * @return {Promise} the result of the db query
      */
     saveToDb(db) {
         let player = this;
@@ -271,8 +308,9 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
+    /**
      * converts the UwmcPlayer to JSON
+     * @return {Object} the converted data
      */
     toJson() {
         return {
@@ -288,9 +326,13 @@ class UwmcPlayer extends Player {
         };
     }
 
-    /*
+    /**
      * gets the data of the player with the given uuid from the database and creates a new UwmcPlayer object with it.
      * If there is no data about this player in the database it returns a UwmcPlayer object with just the given uuid.
+     *
+     * @param {Db} db the database to use
+     * @param {string} uuid the uuid of the player
+     * @return {Promise.<UwmcPlayer>} the player that is created form the database
      */
     static createFromDb(db, uuid) {
         return new Promise(function(resolve, reject) {
@@ -368,8 +410,10 @@ class UwmcPlayer extends Player {
         });
     }
 
-    /*
+    /**
      * converts the rank if  to the human readable version (name of the rank)
+     * @param {int} rank
+     * @return {string} the name of the rank
      */
     static rankToRankName(rank) {
         switch (rank) {
@@ -398,8 +442,10 @@ class UwmcPlayer extends Player {
         }
     }
 
-    /*
-     * gets the event emitter for the UwmcPlayer class (not the emitter for an instance of the UwmcPlayer)
+    /**
+     * the event emitter for the UwmcPlayer class (not the emitter for an instance of the UwmcPlayer)
+     * @type {UwmcPlayerEmitter}
+     * @readonly
      */
     static get eventEmitter() {
         return emitter;

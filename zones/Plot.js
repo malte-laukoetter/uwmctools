@@ -4,10 +4,20 @@ const Zone = require('./Zone');
 const Player = require('../player/Player');
 const CreatableZone = require( './CreatableZone' );
 
-/*
+/**
  * a Plot of the Creative Map of unlimitedworld
  */
 class Plot extends CreatableZone {
+    /**
+     * creates a new Plot of the creative map
+     * @param {Player} owner the player that owns the zone
+     * @param {int} x1 the x1 coordinate of the plot
+     * @param {int} x2 the x2 coordinate of the plot
+     * @param {int} z1 the z1 coordinate of the plot
+     * @param {int} z2 the z2 coordinate of the plot
+     * @param {int} posX the x position of the plot in the creative world
+     * @param {int} posZ the z position of the plot in the creative world
+     */
     constructor( owner, x1, x2, z1, z2, posX, posZ ) {
         super( x1, x2, z1, z2 );
 
@@ -21,22 +31,27 @@ class Plot extends CreatableZone {
     }
 
 
-    /*
-     * the id of the zone (something like "ebdf264aabda45708f61f2d7a2bb4758-3/-6")
+    /**
+     * the id of the plot (something like "ebdf264aabda45708f61f2d7a2bb4758-3/-6")
+     * @type {string}
+     * @readonly
      */
     get id() {
         return this._id;
     }
 
-    /*
-     * gets the owner of the plot (is a Player object)
+    /**
+     * the player that owns the plot
+     * @type {Player}
+     * @readonly
      */
     get owner() {
         return this._owner;
     }
 
-    /*
+    /**
      * adds a player to the list of trusted players
+     * @param {Player} player the player that should be added
      */
     addTrusted( player ) {
         if ( !Player.isPlayer( player ) )
@@ -48,36 +63,46 @@ class Plot extends CreatableZone {
         this._trusted.push( player );
     }
 
-    /*
-     * gets an array of all tursted players of the plot
+    /**
+     * all trusted players of the plot
+     * @type {Array.<Player>}
+     * @readonly
      */
     get trusted() {
         return this._trusted || [];
     }
 
-    /*
-     * gets the name of the zone like it is viewed on the dynmap (X/Z)
+    /**
+     * the name of the zone like it is viewed on the dynmap (X/Z)
+     * @type {string}
+     * @readonly
      */
     get name() {
         return `${this.plotPos.x}/${this.plotPos.z}`;
     }
 
-    /*
-     * gets the x coordinate of plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
+    /**
+     * the x coordinate of plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
+     * @type {int}
+     * @readonly
      */
     get posX() {
         return this._posX;
     }
 
-    /*
+    /**
      * gets the z coordinate of the plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
+     * @type {int}
+     * @readonly
      */
     get posZ() {
         return this._posZ;
     }
 
-    /*
+    /**
      * saves the plot to the database
+     * @param {Db} db the database to that the plot should be saved
+     * @return {Promise} the result of the database query
      */
     saveToDb(db) {
         let plot = this;
@@ -120,28 +145,35 @@ class Plot extends CreatableZone {
     }
 
 
-    /*
-     * sets the status of the zone to deleted
+    /**
+     * sets the status of the plot to deleted
+     * @param {Db} db the database in that the plot should be set to deleted
+     * @return {Promise} the result of the database query
      */
     setToDeleted(db) {
         let plot = this;
 
-        return new Promise( function ( resolve, reject ) {
+        return new Promise( function( resolve, reject ) {
             db.collection( config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS ).update( {
                 plotId: plot.id,
             }, {
                 $currentDate: {
                     deleted: true,
                 },
-            } ).then( function ( res ) {
+            } ).then( function( res ) {
                 Zone.eventEmitter.emit('plotdelete', plot);
-                return res;
-            } );
+                resolve(res);
+            } ).catch(function(err) {
+                reject(err);
+            });
         } );
     }
 
-    /*
-     * creates a PlayerZone from the database
+    /**
+     * creates a Plot from the database
+     * @param {Db} db the database that should be used
+     * @param {string} plotId the plotid of the plot that should be created
+     * @return {Promise.<Plot, Error>} a promise of the Plot with the given plotId
      */
     static fromDb(db, plotId) {
         return new Promise( function( resolve, reject ) {
@@ -158,15 +190,19 @@ class Plot extends CreatableZone {
         });
     }
 
-    /*
-     * true if the value is an instanceof a Plot
+    /**
+     * test if it is a Plot
+     * @param {Object} plot the Object that should be tested
+     * @return {boolean} true if the object is a Plot
      */
     static isPlot( plot ) {
         return plot instanceof Plot;
     }
 
-    /*
-     * creates a PlayerZone from the data from the database
+    /**
+     * creates a Plot from the data from the database
+     * @param {Object} obj the data that is returned from the database about a Plot
+     * @return {Plot|Boolean} the created Plot or false if the data can't be converted to a Plot
      */
     static fromDbObject(obj) {
         if(!obj.owner)

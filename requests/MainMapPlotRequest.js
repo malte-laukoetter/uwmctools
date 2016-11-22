@@ -4,18 +4,23 @@ const Request = require( './Request' );
 const uuidlockup = require( '../uuid' );
 const MainMapPlot = require('../zones/MainMapPlot');
 
-/*
+/**
  * request to get the data from the dynmap and calculates all free areas
  */
 class MainMapPlotRequest extends Request {
+    /**
+     * creates a new MainMapPlotRequest
+     */
     constructor() {
         super( config.URLS.UWMC.ZONELIST_MAIN );
 
         this._cache = new Map();
     }
 
-    /*
+    /**
      * executes the request, converts the data and saves the player zones to the database
+     * @param {Db} db the database the data should be saved in
+     * @return {Promise} result of the database query
      */
     execute(db) {
         let req = this;
@@ -54,8 +59,11 @@ class MainMapPlotRequest extends Request {
         });
     }
 
-    /*
-     * converts the plot plotlist data into MainMapPlots
+    /**
+     * converts the plot plotlist data into {@see MainMapPlots}
+     * @param {Object} zones the zone data from the request
+     * @return {Promise.<Array.<MainMapPlot>>} the MainMapPlots that can be created with the data
+     * @private
      */
     static _convertMainMapPlots( zones ) {
         return new Promise(function(resolve, reject) {
@@ -103,9 +111,11 @@ class MainMapPlotRequest extends Request {
         });
     }
 
-
-    /*
+    /**
      * generates the name of the owner of a main map plot from the label of a main map plot from the dynmap
+     * @param {string} label the label used by the dynmap about the plot
+     * @return {boolean|string} the name of the owner or false if the plot dosn't have an owner
+     * @private
      */
     static _getOwner( label ) {
         let owner = label.split( 'font-weight:bold">' )[1].split('</span')[0];
@@ -113,8 +123,11 @@ class MainMapPlotRequest extends Request {
         return (owner === 'Plot verfügbar') ? false : owner;
     }
 
-    /*
-     * generates the area of a main map plot from the label of a main map plot from the dynmap
+    /**
+     * generates the name of a main map plot from the label of a main map plot from the dynmap
+     * @param {string} label the label used by the dynmap about the plot
+     * @return {string} the name of the plot
+     * @private
      */
     static _getName( label ) {
         return label.split( 'font-size:16px">' )[1].split('</p')[0];
