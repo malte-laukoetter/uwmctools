@@ -30,7 +30,7 @@ class FreeZonesCalcRequest extends Request {
                     // create an 2d-array with an element of value 1 for each block of the world. With this array we
                     // will later calculate the free areas (each free field will still have the value 1 because we are
                     // setting the fields there assigned blocks of the world are filled with zones to 0
-                    for(let i = 0; i < 4000; i++) {
+                    for(let i = 0; i < 6000; i++) {
                         area[i] = [];
                         for (let j = 0; j < 8000; j++) {
                             area[i][j] = 1;
@@ -59,18 +59,16 @@ class FreeZonesCalcRequest extends Request {
 
                     // here we are calculating all free areas that have a equal length and widht with the given values
                     let areas = FreeZonesCalcRequest.biggerRectangle( area, length, width);
-                    let niceFormatedAreas = [];
 
-                    // reformat the areas so they are better to process later, also change the coordinates back to the
-                    // positive and negative ones
-                    for(let area of areas) {
-                        niceFormatedAreas.push({
-                            z1: area.ll.col-4000,
-                            z2: (area.ll.col + length)-4000,
-                            x1: area.ur.row-2000,
-                            x2: (area.ur.row + width)-2000,
-                        });
-                    }
+                    let niceFormatedAreas = areas.map((area) => {
+                        return {
+                        z1: area.ll.col-4000,
+                        z2: (area.ll.col + length)-4000,
+                        x1: area.ur.row-2000,
+                        x2: (area.ur.row + width)-2000
+                    }}).filter((area) => {
+                        return area.x1 <= 2000 || (area.z1 <= 2000 && area.z2 > -2000)
+                    });
 
                     return niceFormatedAreas;
                 });
