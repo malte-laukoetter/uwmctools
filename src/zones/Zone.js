@@ -20,7 +20,7 @@ class Zone {
      * @param {int} z1 the z1 coordinate of the zone
      * @param {int} z2 the z2 coordinate of the zone
      */
-    constructor( x1, x2, z1, z2 ) {
+    constructor( x1=0, x2=0, z1=0, z2=0 ) {
         this.setPos( x1, x2, z1, z2 );
     }
 

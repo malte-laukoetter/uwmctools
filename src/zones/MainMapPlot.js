@@ -17,7 +17,7 @@ class MainMapPlot extends MainMapZone {
      * @param {int} z1 the z1 coordinate of the area
      * @param {int} z2 the z2 coordinate of the area
      */
-    constructor( id, area, number, x1, x2, z1, z2 ) {
+    constructor(id='', area='', number=0, x1=0, x2=0, z1=0, z2=0) {
         super( id, x1, x2, z1, z2, 'MainMapPlot' );
 
         this._number = number;
@@ -82,19 +82,23 @@ class MainMapPlot extends MainMapZone {
     /**
      * the number of the plot in the area
      * @type {int}
-     * @readonly
      */
     get number() {
         return this._number;
+    }
+    set number(number) {
+        this._number = number;
     }
 
     /**
      * the area the plot is placed in (eg. Neustadt)
      * @type {string}
-     * @readonly
      */
     get area() {
         return this._area;
+    }
+    set area(area) {
+        this._area = area;
     }
 
     /**

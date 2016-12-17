@@ -11,12 +11,14 @@ class MainMapZone extends CreatableZone {
      * @param {int} x2 the x2 coordinate of the area
      * @param {int} z1 the z1 coordinate of the area
      * @param {int} z2 the z2 coordinate of the area
-     * @param {string} type the type of the zone (eg. player or server)
      */
-    constructor( id, x1, x2, z1, z2, type ) {
+    constructor( id='', x1=0, x2=0, z1=0, z2=0 ) {
         super( x1, x2, z1, z2 );
         this._id = id;
-        this._type = type;
+    }
+
+    set id(value) {
+        this._id = value;
     }
 
     /**

@@ -10,7 +10,6 @@ const Player = require( '../player/Player' );
 class PlayerZone extends MainMapZone {
     /**
      * creates a new Player Zone
-     * @param {Player} player the player that owns the zone
      * @param {int} number the zonenumber of the zone (unique per player)
      * @param {string} id the id of the zone (eg. uwzone_23131)
      * @param {int} x1 the x1 coordinate of the area
@@ -18,23 +17,24 @@ class PlayerZone extends MainMapZone {
      * @param {int} z1 the z1 coordinate of the area
      * @param {int} z2 the z2 coordinate of the area
      */
-    constructor( player, number, id, x1, x2, z1, z2 ) {
+    constructor( number=0, id='', x1=0, x2=0, z1=0, z2=0 ) {
         super( id, x1, x2, z1, z2, 'Player' );
 
-        if ( !Player.isPlayer( player ) )
-            throw new Error( 'no Player' );
-
-        this._player = player;
         this._number = number;
     }
 
     /**
      * the player that owns the zone
      * @type {Player}
-     * @readonly
      */
     get player() {
         return this._player;
+    }
+    set player(player) {
+        if(!(player instanceof Player))
+            throw new Error('no Player');
+
+        this._player = player;
     }
 
     /**
@@ -44,6 +44,9 @@ class PlayerZone extends MainMapZone {
      */
     get number() {
         return this._number;
+    }
+    set number(number) {
+        this._number = number;
     }
 
     /**

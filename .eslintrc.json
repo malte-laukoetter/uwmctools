@@ -1,11 +1,11 @@
 {
     "env": {
-        "es6": true,
         "node": true
     },
     "extends": [ "google"],
     "parserOptions": {
-        "sourceType": "script"
+        "sourceType": "script",
+        "ecmaVersion": 8
     },
     "rules": {
         "indent": [
