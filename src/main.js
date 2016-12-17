@@ -6,6 +6,7 @@ const PlotListRequest = require( './requests/PlotListRequest' );
 const VoteListRequest = require( './requests/VoteListRequest' );
 const FreeZonesCalcRequest = require( './requests/FreeZonesCalcRequest' );
 const MainMapPlotRequest = require( './requests/MainMapPlotRequest' );
+const ZoneMapStatRequest = require( './requests/ZoneMapStatRequest' );
 const UwmcPlayer = require( './player/UwmcPlayer' );
 const Player = require( './player/Player' );
 const MainMapZone = require( './zones/MainMapZone' );
@@ -31,6 +32,7 @@ class UwmcTool {
         this._voteListRequest = new VoteListRequest();
         this._freeZonesCalcRequest = new FreeZonesCalcRequest();
         this._mainMapPlotRequest = new MainMapPlotRequest();
+        this._zoneMapStatRequest = new ZoneMapStatRequest();
     }
 
     /**
@@ -96,6 +98,13 @@ class UwmcTool {
      */
     saveMainMapPlotData() {
         return this._saveData( this._mainMapPlotRequest );
+    }
+    /**
+     * save the statistic data about the zones of the main map
+     * @return {Promise.<*>} the response of {@see ZoneMapStatRequest#execute}
+     */
+    saveZoneMapStatData() {
+        return this._saveData( this._zoneMapStatRequest );
     }
 
     /**

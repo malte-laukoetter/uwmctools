@@ -79,6 +79,8 @@ class ZoneMapStatRequest extends Request {
                 data: data,
                 date: new Date(),
             } );
+
+            return data;
         });
     }
 }
