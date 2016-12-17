@@ -12,7 +12,10 @@
     "email": "lergin@gmx.de",
     "url": "Lergin.de"
   },
-  "main": "main.js",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "babel src -d lib && node lib/test.js"
+  },
   "repository": "Lergin/uwmctools",
   "engines": {
     "node": ">=6.3.0"
