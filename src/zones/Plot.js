@@ -18,14 +18,9 @@ class Plot extends CreatableZone {
      * @param {int} posX the x position of the plot in the creative world
      * @param {int} posZ the z position of the plot in the creative world
      */
-    constructor( owner, x1, x2, z1, z2, posX, posZ ) {
+    constructor( x1=0, x2=0, z1=0, z2=0, posX=0, posZ=0 ) {
         super( x1, x2, z1, z2 );
 
-        if ( !Player.isPlayer( owner ) )
-            throw new Error( 'no Player' );
-
-        this._id = `${owner.uuid}-${posX}/${posZ}`;
-        this._owner = owner;
         this._posX = posX;
         this._posZ = posZ;
     }
@@ -39,6 +34,9 @@ class Plot extends CreatableZone {
     get id() {
         return this._id;
     }
+    set id(id) {
+        this._id = id;
+    }
 
     /**
      * the player that owns the plot
@@ -47,6 +45,9 @@ class Plot extends CreatableZone {
      */
     get owner() {
         return this._owner;
+    }
+    set owner(player){
+        this._owner = player;
     }
 
     /**
@@ -84,19 +85,23 @@ class Plot extends CreatableZone {
     /**
      * the x coordinate of plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
      * @type {int}
-     * @readonly
      */
     get posX() {
         return this._posX;
+    }
+    set posX(posX){
+        this._posX = posX;
     }
 
     /**
      * gets the z coordinate of the plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
      * @type {int}
-     * @readonly
      */
     get posZ() {
         return this._posZ;
+    }
+    set posZ(posZ){
+        this._posZ = posZ;
     }
 
     /**

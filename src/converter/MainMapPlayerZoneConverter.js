@@ -53,7 +53,7 @@ function getZoneNumber( zone ) {
     return zoneNumber;
 }
 
-async function convertMainMapPlayerZones(data, Type=PlayerZone) {
+module.exports = async (data, Type=PlayerZone) => {
     const zoneList = zoneConverter(data, Type);
     const playerNames = Object.values(data).map(getZoneOwner);
     const players = await playerConverter(playerNames);
@@ -68,6 +68,4 @@ async function convertMainMapPlayerZones(data, Type=PlayerZone) {
         zone.number = getZoneNumber(data[zone.id]);
         return zone;
     });
-}
-
-module.exports = convertMainMapPlayerZones;
+};

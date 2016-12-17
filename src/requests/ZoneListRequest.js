@@ -2,7 +2,6 @@ const config = require( '../config.json' );
 
 const Request = require( './Request' );
 const PlayerZone = require( '../zones/PlayerZone' );
-const ServerZone = require( '../zones/ServerZone' );
 const playerZoneConverter = require('../converter/MainMapPlayerZoneConverter');
 
 /**
@@ -62,37 +61,6 @@ class ZoneListRequest extends Request {
 
                 return Promise.all(dbRequests);
             });
-        });
-    }
-
-    /**
-     * converts the server zonelist data into {@link ServerZone}s
-     * @param {Object} zones the zone data from the request
-     * @return {Promise.<Array.<ServerZone>>} the data converted to {@link ServerZone}s
-     * @private
-     */
-    static _convertServerZones( zones ) {
-        let zoneList = [];
-
-        for( let zoneId in zones ) {
-            if ({}.hasOwnProperty.call(zones, zoneId)) {
-                let zoneData = zones[zoneId];
-
-
-                let zone = new ServerZone(
-                    zoneId,
-                    zoneData.x[0],
-                    zoneData.x[1],
-                    zoneData.z[0],
-                    zoneData.z[1]
-                );
-
-                zoneList.push(zone);
-            }
-        }
-
-        return new Promise(function(resolve) {
-            resolve(zoneList);
         });
     }
 }

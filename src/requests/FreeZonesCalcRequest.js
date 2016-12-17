@@ -1,7 +1,8 @@
 const config = require( '../config.json' );
 
 const Request = require( './Request' );
-const ZoneListRequest = require( './ZoneListRequest' );
+const playerZoneConverter = require('../converter/MainMapPlayerZoneConverter');
+const serverZoneConverter = require('../converter/MainMapServerZoneConverter');
 
 /**
  * request to get the data from the dynmap and calculates all free areas
@@ -22,8 +23,8 @@ class FreeZonesCalcRequest extends Request {
      */
     execute(length, width) {
         return super.execute().then( function( res ) {
-            return ZoneListRequest._convertServerZones(res.body.sets.Serverzonen.areas).then(function(serverzones) {
-                return ZoneListRequest._convertPlayerZones(res.body.sets.Spielerzonen.areas)
+            return serverZoneConverter(res.body.sets.Serverzonen.areas).then(function(serverzones) {
+                return playerZoneConverter(res.body.sets.Spielerzonen.areas)
                 .then(function(playerzones) {
                     let area = [];
 
@@ -60,17 +61,16 @@ class FreeZonesCalcRequest extends Request {
                     // here we are calculating all free areas that have a equal length and widht with the given values
                     let areas = FreeZonesCalcRequest.biggerRectangle( area, length, width);
 
-                    let niceFormatedAreas = areas.map((area) => {
+                    return areas.map((area) => {
                         return {
-                        z1: area.ll.col-4000,
-                        z2: (area.ll.col + length)-4000,
-                        x1: area.ur.row-2000,
-                        x2: (area.ur.row + width)-2000
-                    }}).filter((area) => {
-                        return area.x1 <= 2000 || (area.z1 <= 2000 && area.z2 > -2000)
+                            z1: area.ll.col-4000,
+                            z2: (area.ll.col + length)-4000,
+                            x1: area.ur.row-2000,
+                            x2: (area.ur.row + width)-2000,
+                        };
+                    }).filter((area) => {
+                        return area.x1 <= 2000 || (area.z1 <= 2000 && area.z2 > -2000);
                     });
-
-                    return niceFormatedAreas;
                 });
             });
         });

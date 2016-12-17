@@ -3,7 +3,7 @@ const uuidLockup = require( '../uuid' );
 
 // TODO support other player types (needs a rewrite of uuid.js)
 module.exports = (names, Type=Player) => {
-    names = names.map((name) => name.toLowerCase());
+    names = names.map((name) => name.toString().toLowerCase());
 
     return uuidLockup.getUuids( names );
 
