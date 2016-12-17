@@ -4,9 +4,9 @@
 class Player {
     /**
      * creates a new Player
-     * @param uuid
+     * @param {string} uuid uuid of the player
      */
-    constructor( uuid ) {
+    constructor( uuid='' ) {
         this._uuid = uuid;
     }
 
@@ -18,6 +18,9 @@ class Player {
     get uuid() {
         return this._uuid;
     }
+    set uuid(name) {
+        this._uuid = name;
+    }
 
     /**
      * the name of the player, an empty string if no name is set
@@ -26,7 +29,7 @@ class Player {
     get name() {
         return this._name || '';
     }
-    set name( name ) {
+    set name(name) {
         this._name = name;
     }
 
