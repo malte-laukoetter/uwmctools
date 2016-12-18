@@ -1,0 +1,18 @@
+<script>
+    /**
+    @polymerBehavior
+    */
+    uwmctoolsChartViewBehavior = {
+      properties: {
+        dataId: {
+            type: String,
+            value: ''
+        }
+      },
+
+      redraw: function() {
+        for(var elem of Polymer.dom(this.root).querySelectorAll('uwmctools-time-chart'))
+          elem.redraw();
+      }
+    };
+</script>

@@ -1,0 +1,192 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/platinum-sw/platinum-sw-elements.html">
+<link rel="import" href="my-icons.html">
+
+<dom-module id="uwmctools-app">
+  <template>
+    <style>
+      :host {
+        --dark-primary-color:       #1976D2;
+        --default-primary-color:    #2196F3;
+        --light-primary-color:      #BBDEFB;
+        --text-primary-color:       #FFFFFF;
+        --accent-color:             #FFC107;
+        --light-accent-color:       #FFECB3;
+        --primary-background-color: #BBDEFB;
+        --primary-text-color:       #212121;
+        --secondary-text-color:     #BDBDBD;
+        --disabled-text-color:      #BDBDBD;
+        --divider-color:            #BDBDBD;
+
+
+        /* Components */
+
+        /* paper-drawer-panel */
+        --drawer-menu-color:           #ffffff;
+        --drawer-border-color:         1px solid #ccc;
+        --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
+
+        /* paper-menu */
+        --paper-menu-background-color: #fff;
+        --menu-link-color:             #111111;
+
+        /* paper-input */
+        --paper-input-container-color:       rgba(255, 255, 255, 0.64);
+        --paper-input-container-focus-color: rgba(255, 255, 255, 1);
+        --paper-input-container-input-color: #fff;
+
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+
+        display: block;
+      }
+
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      app-drawer a {
+        text-decoration: none;
+
+        color: var(--app-secondary-color);
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+
+        padding: 0 16px;
+
+        text-decoration: none;
+
+        color: var(--app-secondary-color);
+
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+
+        font-weight: bold;
+      }
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <firebase-app
+      api-key="AIzaSyBr2_BiRET53JK44D3WBDqGx6HKqmAVatg"
+      auth-domain="dashboard-196e4.firebaseapp.com"
+      database-url="https://dashboard-196e4.firebaseio.com"
+      storage-bucket="dashboard-196e4.appspot.com"
+      messageing-sender-id="359812903483"
+    ></firebase-app>
+
+    <platinum-sw-register id="sw"
+                            auto-register
+                            skip-waiting
+                            clients-claim>
+        <platinum-sw-cache default-cache-strategy="networkFirst"
+                           precache="{{precacheList}}"></platinum-sw-cache>
+   </platinum-sw-register>
+
+    <app-drawer-layout fullbleed opened-when-narrow>
+      <app-drawer swipe-open>
+        <a href="/"><app-toolbar>Menu</app-toolbar></a>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="default" href="/">Übersicht</a>
+          <a name="zonerank" href="/zoneranks/">Zonenrangliste</a>
+          <a name="world" href="/world/">Weltstatistiken</a>
+          <a name="free" href="/freeareas/">Freie Gebiete</a>
+          <a name="player" href="/player/">Spieler Infos</a>
+          <a name="players" href="/players/">Spieler Liste</a>
+          <a name="faq" href="/faq/">FAQ</a>
+          <span></span>
+          <a href="https://lergin.de">zurück zu Lergin.de</a>
+          <a href="https://unlimitedworld.de">zu uwmc.de</a>
+        </iron-selector>
+      </app-drawer>
+      <iron-pages
+            selected="{{page}}"
+            attr-for-selected="name"
+            fallback-selection="404"
+            role="main">
+          <uwmctools-view-users name="players"></uwmctools-view-users>
+          <uwmctools-view-faq name="faq"></uwmctools-view-faq>
+          <uwmctools-view-default name="default"></uwmctools-view-default>
+          <uwmctools-view-404 name="404"></uwmctools-view-404>
+      </iron-pages>
+    </app-drawer-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-app',
+
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        }
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)',
+        '_subRouteChanged(subroute)',
+        '_mainPage(isMainPage)'
+      ],
+
+      _routePageChanged: function(page) {
+        this.page = page || 'default';
+      },
+
+      _pageChanged: function(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('uwmctools-view-' + page + '.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      _showPage404: function() {
+        this.page = '404';
+      },
+
+      _subRouteChanged: function(subroute){
+        // the subroute need to be non empty so the route databinding works
+        if (this.subroute.prefix != '/' && !this.subroute.path) {
+          this.set('subroute.path', '/');
+        }
+      },
+
+      ready: function() {
+        this.async(function() {
+          // If the path is blank, redirect to /
+          if (!this.route.path) {
+            this.set('route.path', '/');
+          }
+        });
+    }
+    });
+  </script>
+</dom-module>

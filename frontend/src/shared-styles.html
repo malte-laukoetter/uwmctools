@@ -1,0 +1,59 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<!-- shared styles for all views -->
+<dom-module id="shared-styles">
+  <template>
+    <style>
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-toolbar {
+        height: 200px;
+        position: initial;
+      }
+
+      [main-title] {
+        color: #fff;
+        font-weight: 300;
+        font-size: 45px;
+        margin: 0;
+        margin-left: 180px;
+        margin-bottom: -40px;
+      }
+
+      uwmctools-time-chart {
+        padding: 20px;
+      }
+
+      .content {
+        @apply(--layout-flex);
+      }
+
+      @media (max-width: 1300px) {
+        [main-title] {
+          margin-left: 20px;    
+          font-size: 35px;
+        }
+
+        :host {
+          --app-grid-columns: 2;
+        }
+      }
+
+      @media (max-width: 639px) {
+        [main-title] {
+          margin-left: 20px;    
+          font-size: 25px;
+        }
+
+        :host {
+          --app-grid-columns: 1;
+        }
+      }
+
+    </style>
+  </template>
+</dom-module>
