@@ -23,10 +23,20 @@ function getName( data ) {
     return data.label.split( 'font-size:16px">' )[1].split('</p')[0];
 }
 
+/**
+ * generates the areas the plot is located in
+ * @param {object} data the data of the dynmap about the plot
+ * @return {string} the name of the area
+ */
 function getArea( data ) {
     return getName(data).split(/ /)[0];
 }
 
+/**
+ * generates the number of the plot
+ * @param {object} data the data of the dynmap about the plot
+ * @return {int} the number of the plot
+ */
 function getNumber( data ) {
     return getName(data).split(/ /)[1];
 }

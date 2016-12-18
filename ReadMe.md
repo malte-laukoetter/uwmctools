@@ -47,7 +47,3 @@ uwmctool.getPlayer('ebdf264aabda45708f61f2d7a2bb4758').then(function(player){
 * request
 * mongodb
 
-
-## TODO
-
-* WorldStats
