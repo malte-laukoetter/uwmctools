@@ -21,7 +21,7 @@ function isInArea(area) {
  */
 function createStats( plots ) {
     return {
-        amount: plots.length,
+        free: plots.filter((plot) => !plot.owned).length,
         full: plots.filter((plot) => plot.owned).length,
     };
 }
