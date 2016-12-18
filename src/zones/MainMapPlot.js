@@ -191,12 +191,12 @@ class MainMapPlot extends MainMapZone {
                         db.collection(config.MONGODB.DATABASE.UWMC.COLLECTION.MAINMAP_PLOTS).updateOne(
                             {
                                 '_id': plot.id,
-                                'previousOwners.$.till': null,
+                                'previousOwners.till': null,
                             },
                             {
                                 $set: {'previousOwners.$.till': new Date()},
                             },
-                            function (err) {
+                            function(err) {
                                 if (err)
                                     reject(err);
 
