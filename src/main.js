@@ -8,6 +8,7 @@ const FreeZonesCalcRequest = require( './requests/FreeZonesCalcRequest' );
 const MainMapPlotRequest = require( './requests/MainMapPlotRequest' );
 const ZoneMapStatRequest = require( './requests/ZoneMapStatRequest' );
 const MainMapPlotStatRequest = require( './requests/MainMapPlotStatRequest' );
+const RuleRequest = require( './requests/RuleRequest' );
 const UwmcPlayer = require( './player/UwmcPlayer' );
 const Player = require( './player/Player' );
 const MainMapZone = require( './zones/MainMapZone' );
@@ -35,6 +36,7 @@ class UwmcTool {
         this._mainMapPlotRequest = new MainMapPlotRequest();
         this._zoneMapStatRequest = new ZoneMapStatRequest();
         this._mainMapPlotStatRequest = new MainMapPlotStatRequest();
+        this._ruleRequest = new RuleRequest();
     }
 
     /**
@@ -116,6 +118,14 @@ class UwmcTool {
      */
     getMainMapPlotStatData() {
         return this._mainMapPlotStatRequest.execute();
+    }
+
+    /**
+     * get the current rules
+     * @return {Promise.<*>} the response of {@see RuleRequest#execute}
+     */
+    getRuleData() {
+        return this._ruleRequest.execute();
     }
 
     /**

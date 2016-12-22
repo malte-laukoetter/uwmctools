@@ -1,0 +1,50 @@
+const htmlparser = require("htmlparser2");
+
+const config = require( '../config.json' );
+const Request = require( './Request' );
+
+/**
+ * request to get the current rules of the server
+ * the database
+ */
+class RuleRequest extends Request {
+    /**
+     * creates a new RuleRequest
+     */
+    constructor() {
+        super( config.URLS.UWMC.RULES );
+        this.json = false;
+    }
+
+    /**
+     * executes the request and extracts the data
+     * @return {Promise} the current rules
+     */
+    execute(db) {
+        let req = this;
+
+        return super.execute().then( function( res ) {
+            var parser = new htmlparser.Parser({
+                onopentag: function(name, attribs){
+                    if(name === "div" && attribs.id === "regeln-div"){
+                        console.log("JS! Hooray!");
+                    }
+                },
+                ontext: function(text){
+                    console.log("-->", text);
+                },
+                onclosetag: function(tagname){
+                    if(tagname === "script"){
+                        console.log("That's it?!");
+                    }
+                }
+            }, {decodeEntities: true});
+            parser.write(res);
+
+            console.log(parser)
+            parser.end();
+        });
+    }
+}
+
+module.exports = PlotListRequest;

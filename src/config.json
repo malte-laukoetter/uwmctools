@@ -18,7 +18,8 @@
             "ZONELIST_MAIN": "https://unlimitedworld.de/dynmap/tiles/_markers_/marker_main.json",
             "ZONELIST_CREATIVE": "https://unlimitedworld.de/dynmap/tiles/_markers_/marker_creative.json",
             "VOTELIST": "https://unlimitedworld.de/server_api/ajax.php?req=player_votes",
-            "PLAYERLIST": "https://unlimitedworld.de/server_api/ajax.php?req=player_list"
+            "PLAYERLIST": "https://unlimitedworld.de/server_api/ajax.php?req=player_list",
+            "RULES": "https://unlimitedworld.de/server_api/regeln_text.php?html"
         },
         "MOJANG": {
             "PLAYERS_TO_UUID": "https://api.mojang.com/profiles/minecraft"
