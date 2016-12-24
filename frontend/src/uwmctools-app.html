@@ -109,15 +109,16 @@
                             clients-claim>
         <platinum-sw-cache default-cache-strategy="networkFirst"
                            precache="{{precacheList}}"></platinum-sw-cache>
-   </platinum-sw-register>
+    </platinum-sw-register>
 
     <app-drawer-layout fullbleed opened-when-narrow>
       <app-drawer swipe-open>
         <a href="/"><app-toolbar>Menu</app-toolbar></a>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="default" href="/">Übersicht</a>
-          <a name="zonerank" href="/zoneranks/">Zonenrangliste</a>
-          <a name="world" href="/world/">Weltstatistiken</a>
+          <a name="zonerank" href="/zoneranks/">Rangliste: Zonen</a>
+          <a name="worldstats" href="/worldstats/">Statistiken: Zonen</a>
+          <a name="plotstats" href="/plotstats/">Statistiken: Neulingszonen</a>
           <a name="free" href="/freeareas/">Freie Gebiete</a>
           <a name="player" href="/player/">Spieler Infos</a>
           <a name="players" href="/players/">Spieler Liste</a>
@@ -135,6 +136,7 @@
           <uwmctools-view-users name="players"></uwmctools-view-users>
           <uwmctools-view-faq name="faq"></uwmctools-view-faq>
           <uwmctools-view-default name="default"></uwmctools-view-default>
+          <uwmctools-view-plotstats name="plotstats" route="{{subroute}}"></uwmctools-view-plotstats>
           <uwmctools-view-404 name="404"></uwmctools-view-404>
       </iron-pages>
     </app-drawer-layout>

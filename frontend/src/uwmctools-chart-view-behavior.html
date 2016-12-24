@@ -2,7 +2,7 @@
     /**
     @polymerBehavior
     */
-    uwmctoolsChartViewBehavior = {
+    UwmctoolsChartViewBehavior = {
       properties: {
         dataId: {
             type: String,
@@ -11,8 +11,13 @@
       },
 
       redraw: function() {
-        for(var elem of Polymer.dom(this.root).querySelectorAll('uwmctools-time-chart'))
-          elem.redraw();
+        for(var elem of Polymer.dom(this.root).querySelectorAll('uwmctools-time-chart')){
+          if(elem.redraw) elem.redraw()
+        }
+
+        for(var elem of Polymer.dom(this.root).querySelectorAll('uwmctools-ratio-chart')){
+          if(elem.redraw) elem.redraw()
+        }
       }
     };
 </script>
