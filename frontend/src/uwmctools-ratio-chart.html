@@ -35,11 +35,7 @@
       properties: {
         options: {
             type: Object,
-            value: {
-              legend: {
-                  position: 'bottom'
-              }
-            }
+            computed: 'computeOptions(showValue)'
         },
         title: {
           type: String,
@@ -67,6 +63,10 @@
         _data: {
           type: Array,
           computed: 'computeData(data, cols,subproperty, exclude, labels)'
+        },
+        showValue: {
+          type: Boolean,
+          value: false
         }
       },
       computeData: function(data, cols, subproperty, exclude, labels){
@@ -87,6 +87,14 @@
         }
 
         return res;
+      },
+      computeOptions: function(showValue){
+        return {
+          legend: {
+            position: 'bottom',
+          },
+          pieSliceText: showValue?'value':'percentage'
+        }
       },
       redraw() {
         this.$.chart.redraw();

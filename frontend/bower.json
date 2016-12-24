@@ -31,6 +31,7 @@
     "platinum-sw": "PolymerElements/platinum-sw#^1.3.0",
     "paper-expansion-panel": "^1.0.5",
     "juicy-html": "Juicy/juicy-html#^1.1.0",
-    "math-tex": "mathiasbynens/math-tex#^1.0.0"
+    "math-tex": "mathiasbynens/math-tex#^1.0.0",
+    "paper-tabs": "PolymerElements/paper-tabs#^1.7.0"
   }
 }
