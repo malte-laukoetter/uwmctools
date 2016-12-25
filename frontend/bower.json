@@ -20,7 +20,6 @@
     "google-chart": "GoogleWebComponents/google-chart#^1.1.1",
     "polymerfire": "^0.10.3",
     "paper-card": "PolymerElements/paper-card#^1.1.4",
-    "paper-search": "Collaborne/paper-search#^1.2.1",
     "lunr-js": "marcus7777/lunr-js#^0.0.2",
     "paper-item": "^1.2.1",
     "iron-overlay-behavior": "^1.10.1",
@@ -32,6 +31,7 @@
     "paper-expansion-panel": "^1.0.5",
     "juicy-html": "Juicy/juicy-html#^1.1.0",
     "math-tex": "mathiasbynens/math-tex#^1.0.0",
-    "paper-tabs": "PolymerElements/paper-tabs#^1.7.0"
+    "paper-tabs": "PolymerElements/paper-tabs#^1.7.0",
+    "paper-input": "^1.1.22"
   }
 }

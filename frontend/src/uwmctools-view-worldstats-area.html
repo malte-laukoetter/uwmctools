@@ -1,0 +1,77 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="uwmctools-time-chart.html">
+<link rel="import" href="uwmctools-chart-view-behavior.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="uwmctools-ratio-chart.html">
+
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<dom-module id="uwmctools-view-worldstats-area">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/[[area]]" data="{{timeline}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/current/[[area]]" data="{{current}}"></firebase-indexeddb-link>
+
+    <div class="app-grid">
+        <uwmctools-time-chart
+            cols='["Zonen"]'
+            timeline='[[timeline.playerzoneAmount]]'
+            title="Spielerzonen Anzahl"
+        ></uwmctools-time-chart>
+        <uwmctools-time-chart
+            cols='["Zonen"]'
+            timeline="[[timeline.playerzoneAmount]]"
+            title="Spielerzonen Anzahl (Änderungsrate)"
+            difference            
+        ></uwmctools-time-chart>
+        <uwmctools-time-chart
+            cols='["Spieler (in Blöcken)", "Server (in Blöcken)", "Frei (in Blöcken)"]'
+            timeline="[[zoneAreas]]"
+            title="Zonen Flächen"
+        ></uwmctools-time-chart>
+        <uwmctools-time-chart
+            cols='["Spieler (in Blöcken)", "Server (in Blöcken)", "Frei (in Blöcken)"]'
+            timeline="[[zoneAreas]]"
+            title="Zonen Flächen (Änderungsrate)"
+            difference
+        ></uwmctools-time-chart>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-worldstats-area',
+      behaviors: [UwmctoolsChartViewBehavior],
+      properties: {
+        zoneAreas: {
+            type: Object,
+            computed: 'computeZoneAreas(timeline.playerzoneArea, timeline.serverzoneArea, timeline.area)'
+        },
+      },
+      computeZoneAreas: function(player, server, full){
+        let areas = {};
+
+        for(let date in player){
+          areas[date] = [
+            player[date],
+            server[date],
+            full[date] - player[date] - server[date]
+          ]
+        }
+
+        if(Object.keys(areas).length === 0)
+          areas = {"2000-01-01": [0, 0, 0]}
+
+        return areas;
+      }
+    });
+  </script>
+</dom-module>

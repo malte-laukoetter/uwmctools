@@ -91,8 +91,13 @@
         let rows = [];
 
         if(difference){
-          for(var i = 1; i < dates.length; i++)
-            rows.push([new Date(dates[i]), data[i] - data[i-1]])
+          for(var i = 1; i < dates.length; i++){
+            if(Array.isArray(data[i])){
+              rows.push([new Date(dates[i])].concat(data[i].map((curr, j) => curr - data[i-1][j])));
+            }else{
+              rows.push([new Date(dates[i]), data[i] - data[i-1]])
+            }
+          }
         }else{
           for(var i = 0; i < dates.length; i++){
             if(Array.isArray(data[i])){
@@ -102,6 +107,12 @@
             }
           }
         } 
+
+        for(let row of rows){
+          while(row.length <= this.cols.length){
+            row.push(0);
+          }
+        }
 
         return rows;
       },
@@ -118,7 +129,7 @@
         var res = [];
 
         for(let date in timeline)
-          res.push(timeline[date]);
+            res.push(timeline[date]);
 
         return res;
       },

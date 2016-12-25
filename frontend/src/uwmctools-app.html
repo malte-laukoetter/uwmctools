@@ -19,15 +19,15 @@
   <template>
     <style>
       :host {
-        --dark-primary-color:       #1976D2;
-        --default-primary-color:    #2196F3;
-        --light-primary-color:      #BBDEFB;
-        --text-primary-color:       #FFFFFF;
-        --accent-color:             #FFC107;
-        --light-accent-color:       #FFECB3;
-        --primary-background-color: #BBDEFB;
+        --dark-primary-color:       #F57C00;
+        --default-primary-color:    #FF9800;
+        --light-primary-color:      #FFE0B2;
+        --text-primary-color:       #212121;
+        --accent-color:             #448AFF;
+        --light-accent-color:       #BBDEFB;
+        --primary-background-color: #FFE0B2;
         --primary-text-color:       #212121;
-        --secondary-text-color:     #BDBDBD;
+        --secondary-text-color:     #757575;
         --disabled-text-color:      #BDBDBD;
         --divider-color:            #BDBDBD;
 
@@ -48,7 +48,7 @@
         --paper-input-container-focus-color: rgba(255, 255, 255, 1);
         --paper-input-container-input-color: #fff;
 
-        --app-primary-color: #4285f4;
+        --app-primary-color: var(--default-primary-color);
         --app-secondary-color: black;
 
         display: block;
@@ -137,6 +137,7 @@
           <uwmctools-view-faq name="faq"></uwmctools-view-faq>
           <uwmctools-view-default name="default"></uwmctools-view-default>
           <uwmctools-view-plotstats name="plotstats" route="{{subroute}}"></uwmctools-view-plotstats>
+          <uwmctools-view-worldstats name="worldstats" route="{{subroute}}"></uwmctools-view-worldstats>
           <uwmctools-view-404 name="404"></uwmctools-view-404>
       </iron-pages>
     </app-drawer-layout>

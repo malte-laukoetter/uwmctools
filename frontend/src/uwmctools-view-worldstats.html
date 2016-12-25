@@ -43,11 +43,11 @@
       <app-header condenses fixed effects="waterfall">
         <uwmctools-search-bar></uwmctools-search-bar>
         <app-toolbar>
-          <h1 main-title>Weltstatistiken</h1>
+          <h1 main-title>Zonen Statistiken - [[_toName(data.tab)]]</h1>
         </app-toolbar>
         <paper-tabs sticky selected="{{data.tab}}" attr-for-selected="name" class="drawer-list" role="navigation">
           <paper-tab name="overview">Übersicht</paper-tab>
-          <paper-tab name="map">Gesammte Karte</paper-tab>
+          <paper-tab name="map">Ganze Karte</paper-tab>
           <paper-tab name="center">Center</paper-tab>
           <paper-tab name="north">Norden</paper-tab>
           <paper-tab name="south">Süden</paper-tab>
@@ -59,10 +59,12 @@
           selected="[[data.tab]]"
           attr-for-selected="id"
           fallback-selection="overview">
-          <uwmctools-view-plugin-overview id="overview"></uwmctools-view-plugin-overview>
-          <uwmctools-view-plugin-downloads id="map" data-id="[[data.plugin]]"></uwmctools-view-plugin-downloads>
-          <uwmctools-view-plugin-views id="center" data-id="[[data.plugin]]"></uwmctools-view-plugin-views>
-          <uwmctools-view-plugin-stars id="north" data-id="[[data.plugin]]"></uwmctools-view-plugin-stars>
+          <uwmctools-view-worldstats-overview id="overview"></uwmctools-view-worldstats-overview>
+          <uwmctools-view-worldstats-area-main id="map"></uwmctools-view-worldstats-area-main>
+          <uwmctools-view-worldstats-area-center id="center"></uwmctools-view-worldstats-area-center>
+          <uwmctools-view-worldstats-area-north id="north"></uwmctools-view-worldstats-area-north>
+          <uwmctools-view-worldstats-area-south id="south"></uwmctools-view-worldstats-area-south>
+          <uwmctools-view-worldstats-area-east id="east"></uwmctools-view-worldstats-area-east>
         </iron-pages>  
       </div>
       <uwmctools-footer></uwmctools-footer>
@@ -70,6 +72,14 @@
   </template>
 
   <script>
+    const tabs = new Map();
+    tabs.set('overview', 'Übersicht');
+    tabs.set('map', 'Ganze Karte');
+    tabs.set('center', 'Center');
+    tabs.set('north', 'Norden');
+    tabs.set('south', 'Süden');
+    tabs.set('east', 'Osten');
+
     Polymer({
       is: 'uwmctools-view-worldstats',
 
@@ -80,6 +90,16 @@
         },
         _oldTab: {
             type: String
+        },
+        tabToView : {
+          value: {
+            'overview': 'overview',
+            'map': 'area-main',
+            'center': 'area-center',
+            'north': 'area-north',
+            'south': 'area-south',
+            'east': 'area-east',
+          }
         }
       },
 
@@ -97,7 +117,13 @@
 
       _tabChanged: function(tab){
         if(tab != this._oldTab){
-          var resolvedPageUrl = this.resolveUrl('uwmctools-view-worldstats-' + tab + '.html');
+          let resolvedPageUrl;
+
+          if(this.tabToView[tab]){
+            resolvedPageUrl = this.resolveUrl('uwmctools-view-worldstats-' + this.tabToView[tab] + '.html');
+          }else{
+            resolvedPageUrl = this.resolveUrl('uwmctools-view-worldstats-area.html');
+          }
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
 
           // redraw the charts of the tab so they fit the card
@@ -107,6 +133,9 @@
               this.$[tab].redraw();
           }
         }
+      },
+      _toName: function(tab){
+        return tabs.get(tab);
       }
     });
   </script>
