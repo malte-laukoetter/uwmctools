@@ -32,6 +32,7 @@
     "juicy-html": "Juicy/juicy-html#^1.1.0",
     "math-tex": "mathiasbynens/math-tex#^1.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^1.7.0",
-    "paper-input": "^1.1.22"
+    "paper-input": "^1.1.22",
+    "paper-datatable-api": "^0.1.20"
   }
 }

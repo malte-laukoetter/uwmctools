@@ -1,4 +1,15 @@
 <script>
+    const elementsToMatch = [
+      'uwmctools-time-chart',
+      'uwmctools-ratio-chart',
+      'uwmctools-view-worldstats-area',
+      'uwmctools-view-worldstats-area-center',
+      'uwmctools-view-worldstats-area-north',
+      'uwmctools-view-worldstats-area-east',
+      'uwmctools-view-worldstats-area-south',
+      'uwmctools-view-worldstats-area-full',
+    ]
+
     /**
     @polymerBehavior
     */
@@ -11,12 +22,8 @@
       },
 
       redraw: function() {
-        for(var elem of Polymer.dom(this.root).querySelectorAll('uwmctools-time-chart')){
-          if(elem.redraw) elem.redraw()
-        }
-
-        for(var elem of Polymer.dom(this.root).querySelectorAll('uwmctools-ratio-chart')){
-          if(elem.redraw) elem.redraw()
+        for(var elem of Polymer.dom(this.root).querySelectorAll(elementsToMatch)){
+          if(elem.redraw) elem.redraw();
         }
       }
     };

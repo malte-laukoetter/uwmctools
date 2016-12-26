@@ -181,7 +181,7 @@ class MainMapPlot extends MainMapZone {
                     // set the old owners till date to null
                     db.collection(config.MONGODB.DATABASE.UWMC.COLLECTION.MAINMAP_PLOTS).updateOne({
                         '_id': plot.id,
-                        'previousOwners.$.till': null
+                        'previousOwners.till': null
                     }, {
                         $set: { 'previousOwners.$.till': new Date() }
                     }, function (err) {

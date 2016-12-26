@@ -88,10 +88,9 @@ class ZoneMapStatRequest extends Request {
 
     /**
      * executes the request, converts the data, saves it to the database and returns the statistic data
-     * @param {Db} db the database the data should be saved in
      * @return {Promise} the current statistics
      * */
-    execute(db) {
+    execute() {
         return super.execute().then((() => {
             var _ref = _asyncToGenerator(function* (res) {
                 const zoneListData = [yield playerZoneConverter(res.body.sets.Spielerzonen.areas), serverZoneConverter(res.body.sets.Serverzonen.areas)];
@@ -115,14 +114,7 @@ class ZoneMapStatRequest extends Request {
             return function (_x) {
                 return _ref.apply(this, arguments);
             };
-        })()).then(data => {
-            /* db.collection(config.MONGODB.DATABASE.UWMC.COLLECTION.MAPSTATS).insertOne({
-                 data: data,
-                 date: new Date(),
-             });
-            */
-            return data;
-        });
+        })());
     }
 }
 

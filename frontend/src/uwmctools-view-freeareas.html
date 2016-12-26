@@ -1,0 +1,81 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-datatable-api/dist/paper-datatable-api-column.html">
+<link rel="import" href="../bower_components/paper-datatable-api/dist/paper-datatable-api.html">
+
+<link rel="import" href="uwmctools-search-bar.html">
+<link rel="import" href="uwmctools-footer.html">
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="uwmctools-view-freeareas">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+      }
+
+      .content {
+        padding: 10px;
+      }
+    </style>
+
+    <app-header-layout fullbleed>
+      <app-header condenses fixed effects="waterfall">
+        <uwmctools-search-bar></uwmctools-search-bar>
+        <app-toolbar>
+          <h1 main-title>Freie 100*100 Zonen</h1>
+        </app-toolbar>
+      </app-header>
+      <div class="content">
+        <firebase-indexeddb-link path="uwmctools/freeareas" data="{{freeareas}}"></firebase-indexeddb-link>
+
+        <paper-datatable-api data="[[freeareas]]" filters>
+          <paper-datatable-api-column header="X1" property="x1">
+            <template>
+                <span>{{value}}</span>
+            </template>
+          </paper-datatable-api-column>
+          <paper-datatable-api-column header="X2" property="x2">
+            <template>
+              <span>{{value}}</span>
+            </template>
+          </paper-datatable-api-column>
+          <paper-datatable-api-column header="Z1" property="z1">
+            <template>
+              <span>{{value}}</span>
+            </template>
+          </paper-datatable-api-column>
+          <paper-datatable-api-column header="Z2" property="z2">
+            <template>
+              <span>{{value}}</span>
+            </template>
+          </paper-datatable-api-column>
+          <paper-datatable-api-column header="DynMap" property="z1" other-properties='["x1"]'>
+            <template>
+              <a href="https://unlimitedworld.de/dynmap/?worldname=main&mapname=flat&zoom=6&x=[[_add50(otherValues.x1)]]&y=64&z=[[_add50(value)]]" target="_blank">
+                <paper-button>Zonenkarte</paper-button>
+              </a>
+            </template>
+          </paper-datatable-api-column>
+        </paper-datatable-api>
+      </div>
+      <uwmctools-footer></uwmctools-footer>
+    </app-header-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-freeareas',
+      _add50: function(num){
+        return num+50;
+      }
+    });
+  </script>
+</dom-module>

@@ -108,13 +108,6 @@ class ZoneMapStatRequest extends Request {
             }
 
             return data;
-        }).then((data) => {
-           /* db.collection(config.MONGODB.DATABASE.UWMC.COLLECTION.MAPSTATS).insertOne({
-                data: data,
-                date: new Date(),
-            });
-*/
-            return data;
         });
     }
 }

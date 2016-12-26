@@ -45,5 +45,5 @@ bower_components
 .idea
 
 test.js
-
+firebase_credentials.json
 images

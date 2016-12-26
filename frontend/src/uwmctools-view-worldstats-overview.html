@@ -1,0 +1,116 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="uwmctools-time-chart.html">
+<link rel="import" href="uwmctools-chart-view-behavior.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="uwmctools-ratio-chart.html">
+
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<dom-module id="uwmctools-view-worldstats-overview">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/east" data="{{timeline_east}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/north" data="{{timeline_north}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/south" data="{{timeline_south}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/main" data="{{timeline_main}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/full" data="{{timeline_full}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/current/east/playerzoneAmount" data="{{current_east}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/current/north/playerzoneAmount" data="{{current_north}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/current/south/playerzoneAmount" data="{{current_south}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/current/main/playerzoneAmount" data="{{current_main}}"></firebase-indexeddb-link>
+
+    <div class="app-grid">
+        <uwmctools-time-chart
+            cols='["Gesamt", "Center", "Süden", "Norden", "Osten"]'
+            timeline="[[zoneAreasAvgSize]]"
+            title="Durchschnittliche Zonengröße"
+        ></uwmctools-time-chart>
+        <uwmctools-time-chart
+            cols='["Gesamt", "Center", "Süden", "Norden", "Osten"]'
+            timeline="[[playerZoneAmounts]]"
+            title="Anzahl: Spielerzonen"
+        ></uwmctools-time-chart>
+        <uwmctools-ratio-chart
+            data="[[zoneDistribution]]"
+            labels='["Center", "Süden", "Norden", "Osten"]'
+            title="Spielerzonen Verteilung"
+        ></uwmctools-ratio-chart>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-worldstats-overview',
+      behaviors: [UwmctoolsChartViewBehavior],
+      properties: {
+        zoneDistribution: {
+            type: Object,
+            computed: 'computeZoneDistribution(current_main,current_north,current_south,current_east)'
+        },
+        playerZoneAmounts: {
+            type: Object,
+            computed: 'computeCombinedTimeline(timeline_full.playerzoneAmount,timeline_main.playerzoneAmount,timeline_north.playerzoneAmount,timeline_south.playerzoneAmount,timeline_east.playerzoneAmount)'
+        },
+        zoneAreasAvgSize: {
+            type: Object,
+            computed: 'computeCombinedTimeline(zoneAreaAvgSizeFull,zoneAreaAvgSizeCenter,zoneAreaAvgSizeNorth,zoneAreaAvgSizeSouth,zoneAreaAvgSizeEast)'
+        },
+        zoneAreaAvgSizeEast: {
+          type: Object,
+          computed: 'computeAvgZoneAreaTimeline(timeline_east.playerzoneArea, timeline_east.playerzoneAmount)'
+        },
+        zoneAreaAvgSizeNorth: {
+          type: Object,
+          computed: 'computeAvgZoneAreaTimeline(timeline_north.playerzoneArea, timeline_north.playerzoneAmount)'
+        },
+        zoneAreaAvgSizeSouth: {
+          type: Object,
+          computed: 'computeAvgZoneAreaTimeline(timeline_south.playerzoneArea, timeline_south.playerzoneAmount)'
+        },
+        zoneAreaAvgSizeCenter: {
+          type: Object,
+          computed: 'computeAvgZoneAreaTimeline(timeline_main.playerzoneArea, timeline_main.playerzoneAmount)'
+        },
+        zoneAreaAvgSizeFull: {
+          type: Object,
+          computed: 'computeAvgZoneAreaTimeline(timeline_full.playerzoneArea, timeline_full.playerzoneAmount)'
+        },
+      },
+      computeCombinedTimeline: function(... areas){
+        let data = {};
+
+        for(let date in areas[0]){
+          data[date] = [];
+          for(let area in areas){
+            data[date].push(areas[area][date]);
+          }
+        }
+
+        return data;
+      },
+      computeAvgZoneAreaTimeline: function(size, amount){
+        let areas = {};
+
+        for(let date in size){
+          areas[date] = size[date] / amount[date];
+        }
+
+        if(Object.keys(areas).length === 0)
+          areas = {"2000-01-01": 0}
+
+        return areas;
+      },
+      computeZoneDistribution: function(... areas){
+        return areas
+      }
+    });
+  </script>
+</dom-module>

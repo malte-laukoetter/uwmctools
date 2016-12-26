@@ -12,6 +12,7 @@
 
       google-chart {
         width: 100%;
+        height: 400px;
       }
 
       paper-card {
@@ -92,10 +93,12 @@
 
         if(difference){
           for(var i = 1; i < dates.length; i++){
-            if(Array.isArray(data[i])){
-              rows.push([new Date(dates[i])].concat(data[i].map((curr, j) => curr - data[i-1][j])));
-            }else{
-              rows.push([new Date(dates[i]), data[i] - data[i-1]])
+            if(dates[i] != '2016-12-12'){ //date after the end of the crash -> difference values are not making much sense
+              if(Array.isArray(data[i])){
+                rows.push([new Date(dates[i])].concat(data[i].map((curr, j) => curr - data[i-1][j])));
+              }else{
+                rows.push([new Date(dates[i]), data[i] - data[i-1]])
+              }
             }
           }
         }else{

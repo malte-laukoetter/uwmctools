@@ -105,8 +105,8 @@ class UwmcTool {
      * save the statistic data about the zones of the main map
      * @return {Promise.<*>} the response of {@see ZoneMapStatRequest#execute}
      */
-    saveZoneMapStatData() {
-        return this._saveData(this._zoneMapStatRequest);
+    getZoneMapStatData() {
+        return this._zoneMapStatRequest.execute();
     }
 
     /**
