@@ -1,0 +1,78 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<dom-module id="uwmctools-view-player-zones">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      .app-grid div {
+        padding: 20px;
+      }
+
+      paper-card {
+        width: 100%;
+      }
+
+      paper-item {
+        background-color: #fff;
+      }
+      
+      paper-card {
+        --paper-card-header-image: {
+              width: 30%;
+              margin-left: 35%;
+              margin-top: 20px;
+              margin-bottom: 20px;
+        }
+      }
+    </style>
+
+    <div class="app-grid">
+      <div>
+        <paper-card 
+          heading="Übersicht"
+          image="https://crafatar.com/renders/head/[[uuid]]?overlay&scale=10"
+          fade-image
+          placeholfer-image="https://crafatar.com/renders/head/MHF_STEAVE?overlay&scale=10">
+          <paper-item>[[uuid]]</paper-item>
+          <paper-item>[[_computeUwmcRank(player.rank)]]</paper-item>
+          <template is="dom-if" if="[[player.boardId]]">
+            <a href="https://unlimitedworld.de/member.php?[[player.boardId]]">
+              <paper-item>Zur Forenseite</paper-item>
+            </a>
+          </template>
+        </paper-card>
+      </div>
+      <div>
+        <paper-card heading="Rangänderungen">
+          <template is="dom-repeat" items="[[_convertToArray(player.rankchanges)]]" sort="_sortByKey">
+              <paper-item>[[_computeDate(item.key)]] - [[_computeUwmcRank(item.val)]]</paper-item>
+          </template>
+        </paper-card>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-player-zones',
+      properties: {
+        zoneIds: {
+            type: Array,
+            value: []
+        }
+      },
+    });
+  </script>
+</dom-module>

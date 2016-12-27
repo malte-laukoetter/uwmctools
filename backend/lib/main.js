@@ -62,11 +62,11 @@ class UwmcTool {
     }
 
     /**
-     * save the data from the playerlist
+     * gets the data from the playerlist
      * @return {Promise.<*>} the response of {@see PlayerListRequest#execute}
      */
-    savePlayerListData() {
-        return this._saveData(this._playerListRequest);
+    getPlayerListData() {
+        return this._playerListRequest.execute();
     }
 
     /**

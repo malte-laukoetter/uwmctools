@@ -33,26 +33,18 @@ class PlayerListRequest extends Request {
 
             return req.lastResponse;
         } ).then( function( players ) {
-            return new Promise( function( resolve, reject ) {
-                // get the uuids and names in correct capitalization
-                uuidlockup.getUuids( [...players.keys()] ).then( function ( res ) {
-                    // array of all the Promises needed to save the data of all players, so it's possible to resolve the
-                    // current Promise after all are finished
-                    let playerToDbIter = [];
+           // get the uuids and names in correct capitalization
+            return uuidlockup.getUuids( [...players.keys()] ).then( function ( res ) {
+                // array of all the Promises needed to save the data of all players, so it's possible to resolve the
+                // current Promise after all are finished
+                let uwmcPlayers = [];
 
-                    for ( let player of res.values() ) {
-                        playerToDbIter.push(
-                            PlayerListRequest._saveToDb(
-                                db,
-                                player.uuid,
-                                player.name,
-                                players.get(player.name.toLowerCase())
-                            )
-                        );
-                    }
-
-                    resolve(Promise.all(playerToDbIter));
-                } );
+                for ( let player of res.values() ) {
+                    let p = new UwmcPlayer(player.uuid);
+                    p.name = player.name;
+                    uwmcPlayers.push(PlayerListRequest._addPlayerListDataToPlayer(p, players.get(player.name.toLowerCase())));
+                }
+                return uwmcPlayers;
             } );
         } );
     }

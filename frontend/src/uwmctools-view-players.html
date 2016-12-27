@@ -38,7 +38,7 @@
         }
       }
 
-      uwmctools-user-card {
+      uwmctools-player-card {
           padding: 20px
       }
 
@@ -50,15 +50,15 @@
     <firebase-indexeddb-link path="uwmctools/players/search" data="{{players}}"></firebase-indexeddb-link>
 
     <app-header-layout fullbleed>
-      <app-header condenses reveals effects="waterfall">
+      <app-header condenses fixed effects="waterfall">
         <uwmctools-search-bar></uwmctools-search-bar>
         <app-toolbar>
           <h1 main-title>Spieler</h1>
           <paper-menu-button horizontal-align="right">
             <paper-icon-button icon="sort" class="dropdown-trigger"></paper-icon-button>
             <paper-menu class="dropdown-content" selected="{{sortType}}" attr-for-selected="sorttype">
-              <paper-item sorttype="n">Name</paper-item>
-              <paper-item sorttype="key">UUID</paper-item>
+              <paper-item sorttype="key">Name</paper-item>
+              <paper-item sorttype="uuid">UUID</paper-item>
             </paper-menu>
           </paper-menu-button>
         </app-toolbar>
@@ -66,7 +66,7 @@
       <div class="content">
         <div class="app-grid">
           <template is="dom-repeat" items="[[_convertToArray(players)]]" sort="[[sortList]]" observe="n key">
-              <uwmctools-player-card name=[[item.n]] uuid=[[item.key]]></uwmctools-player-card>
+              <uwmctools-player-card name=[[item.key]] uuid=[[item.uuid]]></uwmctools-player-card>
           </template>
         </div>
       </div>
@@ -76,11 +76,11 @@
 
   <script>
     Polymer({
-      is: 'uwmctools-view-users',
+      is: 'uwmctools-view-players',
       properties: {
         sortType: {
           type: "String",
-          value: 'p'
+          value: 'key'
         },
         sortList: {
           type: "Function",
@@ -90,7 +90,8 @@
       _convertToArray: function(objs) {
         var array = [];
         for(var obj in objs){
-          var res = objs[obj];
+          let res = {};
+          res.uuid = objs[obj];
           res.key = obj
           array.push(res);
         }

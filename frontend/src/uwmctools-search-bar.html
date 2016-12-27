@@ -34,21 +34,23 @@
         @apply(--shadow-elevation-2dp);
       }
     </style>
-    <firebase-indexeddb-link path="uwmctools/player/search" data="{{players}}"></firebase-indexeddb-link>
+    <template is="dom-if" if="[[search]]">
+      <firebase-indexeddb-link path="uwmctools/players/search" data="{{players}}"></firebase-indexeddb-link>
 
-    <lunr-js
-      data="[[_convertToArray(players)]]"
-      search="{{search}}"
-      output="{{output}}"
-      fields="[[searchFields]]" >
-    </lunr-js>
+      <lunr-js
+        data="[[_convertToArray(players)]]"
+        search="{{search}}"
+        output="{{output}}"
+        fields="[[searchFields]]" log>
+      </lunr-js>
+    </template>
 
     <paper-search-bar placeholder="Name eines Spielers" query="{{search}}" hide-filter-button></paper-search-bar>
 
     <div class="results">
-    <template is="dom-repeat" items="[[output]]">
-      <uwmctools-player-card on-tap="clearSearch" name=[[item.n]] uuid=[[item.key]]></uwmctools-player-card>
-    </template>
+      <template is="dom-repeat" items="[[output]]">
+        <uwmctools-player-card on-tap="clearSearch" name=[[item.key]] uuid=[[item.uuid]]></uwmctools-player-card>
+      </template>
     </div>
   </template>
 
@@ -58,13 +60,14 @@
       properties: {
         searchFields : {
           type: Array,
-          value: ['n', 'key']
+          value: ['uuid', 'key']
         }
       },
       _convertToArray: function(objs) {
         var array = [];
         for(var obj in objs){
-          var res = objs[obj];
+          let res = {};
+          res.uuid = objs[obj];
           res.key = obj
           array.push(res);
         }
