@@ -1,7 +1,6 @@
 const config = require('../config.json');
 
 const Request = require('./Request');
-const PlayerZone = require('../zones/PlayerZone');
 const playerZoneConverter = require('../converter/MainMapPlayerZoneConverter');
 
 /**
@@ -23,44 +22,9 @@ class ZoneListRequest extends Request {
      * @param {Db} db the database the data should be saved in
      * @return {Promise} result of the database query
      */
-    execute(db) {
-        let req = this;
-
+    execute() {
         return super.execute().then(function (res) {
-            return playerZoneConverter(res.body.sets.Spielerzonen.areas).then(function (zones) {
-                let dbRequests = [];
-
-                // save changed zone data
-                for (let zone of zones) {
-                    if (req._cache.get(zone.id) !== zone.hash) {
-                        req._cache.set(zone.id, zone.hash);
-                        dbRequests.push(zone.saveToDb(db));
-                    }
-                }
-
-                // delete zones that no longer exist
-                for (let cachedZoneId of req._cache.keys()) {
-                    let exist = false;
-
-                    // test if the zoneid of the cached zone is in the results
-                    // (-> if it exists in the reults the zone still exists)
-                    for (let zone of zones) {
-                        if (!exist && zone.id === cachedZoneId) {
-                            exist = true;
-                        }
-                    }
-
-                    if (!exist) {
-                        dbRequests.push(PlayerZone.fromDb(db, cachedZoneId).then(function (res) {
-                            return res.setToDeleted(db);
-                        }));
-
-                        req._cache.delete(cachedZoneId);
-                    }
-                }
-
-                return Promise.all(dbRequests);
-            });
+            return playerZoneConverter(res.body.sets.Spielerzonen.areas);
         });
     }
 }

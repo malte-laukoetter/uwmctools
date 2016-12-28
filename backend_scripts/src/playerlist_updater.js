@@ -22,12 +22,11 @@ const UwmcTools = require('../../backend/lib/main');
         playerDataRef.child('name').set(player.name);
 
         playerDataRef.child('rank').once('value', function(data) {
-            if(data !== player.rank) {
+            if(data.val() !== player.rank) {
                 playerDataRef.child('rank').set(player.rank);
                 playerDataRef.child('rankchanges').child(new Date().getTime()).set(player.rank);
             }
         });
-        playerDataRef.child('rank').set(player.rank);
         if(player.boardId) {
             playerDataRef.child('boardId').set(player.boardId);
         }

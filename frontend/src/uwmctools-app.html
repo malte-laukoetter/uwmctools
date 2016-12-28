@@ -108,8 +108,11 @@
                             skip-waiting
                             clients-claim
                             href="/sw-import.js">
-        <platinum-sw-cache default-cache-strategy="networkFirst"
+        <platinum-sw-cache default-cache-strategy="fastest"
                            precache="{{precacheList}}"></platinum-sw-cache>
+        <platinum-sw-import-script href="/to-index-fetch-handler.js"></platinum-sw-import-script>
+        <platinum-sw-fetch handler="toIndexFetchHandler"
+                     path="/(player|worldstats|plotstats|players|faq|zoneranks|freeareas)(.*)"></platinum-sw-fetch>
     </platinum-sw-register>
 
     <app-drawer-layout fullbleed opened-when-narrow>
@@ -159,10 +162,6 @@
         precacheList: {
           type: Array,
           value: [
-            '/worldstats/overview',
-            '/worldstats',
-            '/plotstats/overview',
-            '/plotstats/',
             '/',
           ]
         }

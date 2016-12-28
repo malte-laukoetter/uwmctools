@@ -74,8 +74,8 @@ class UwmcTool {
      * save the data about the zones
      * @return {Promise.<*>} the response of {@see ZoneListRequest#execute}
      */
-    saveZoneListData() {
-        return this._saveData( this._zoneListRequest );
+    getZoneListData() {
+        return this._zoneListRequest.execute();
     }
 
     /**

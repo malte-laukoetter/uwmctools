@@ -10,28 +10,24 @@ _asyncToGenerator(function* () {
     });
 
     const db = firebase.database();
-    const ref = db.ref('uwmctools/players');
-    const searchRef = ref.child('search');
+    const ref = db.ref('uwmctools/zones');
     const dataRef = ref.child('data');
 
     const uwmcTool = new UwmcTools('');
 
-    const playerListData = yield uwmcTool.getPlayerListData();
+    const zoneListData = yield uwmcTool.getZoneListData();
 
-    playerListData.forEach(function (player) {
-        searchRef.child(player.name).set(player.uuid);
-        let playerDataRef = dataRef.child(player.uuid);
-        playerDataRef.child('name').set(player.name);
+    zoneListData.forEach(function (zone) {
+        let zoneDataRef = dataRef.child(zone.id);
 
-        playerDataRef.child('rank').once('value', function (data) {
-            if (data.val() !== player.rank) {
-                playerDataRef.child('rank').set(player.rank);
-                playerDataRef.child('rankchanges').child(new Date().getTime()).set(player.rank);
+        zoneDataRef.child('created').once('value', function (data) {
+            if (!data.val()) {
+                zoneDataRef.child('pos').set(zone.pos);
+                zoneDataRef.child('number').set(zone.number);
+                zoneDataRef.child('created').set(new Date().getTime());
+                zoneDataRef.child('owner').set(zone.player.uuid);
             }
         });
-        if (player.boardId) {
-            playerDataRef.child('boardId').set(player.boardId);
-        }
     });
 })();
 
