@@ -10,22 +10,32 @@ _asyncToGenerator(function* () {
     });
 
     const db = firebase.database();
-    const ref = db.ref('uwmctools/players');
-    const dataRef = ref.child('data');
+    const ref = db.ref('uwmctools/stats/mainmapplots');
+    const timelineRef = ref.child('timeline');
+    const currentRef = ref.child('current');
 
     const uwmcTool = new UwmcTools('');
 
-    const playerListData = yield uwmcTool.getVoteListData();
+    const data = yield uwmcTool.getMainMapPlotStatData();
 
-    playerListData.forEach(function (player) {
-        let playerVoteDataRef = dataRef.child(player.uuid).child('votes');
-
-        for (let year in player.votes) {
-            for (let month in player.votes[year]) {
-                playerVoteDataRef.child(`${ year }-${ parseInt(month) + 1 }`).set([player.votes[year][month].v1, player.votes[year][month].v2]);
-            }
+    for (const item in data) {
+        if ({}.hasOwnProperty.call(data, item)) {
+            timelineRef.child(item).child('free').child(getDateString(new Date())).set(data[item].free);
+            timelineRef.child(item).child('full').child(getDateString(new Date())).set(data[item].full);
+            currentRef.child(item).child('free').set(data[item].free);
+            currentRef.child(item).child('full').set(data[item].full);
+            currentRef.child(item).child('all').set(data[item].full + data[item].free);
         }
-    });
+    }
 })();
+
+/**
+ * generates a string of the date
+ * @param {Date} date
+ * @return {string}
+ */
+function getDateString(date) {
+    return date.toISOString().substring(0, 10);
+}
 
 setTimeout(() => process.exit(), 60000);

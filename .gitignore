@@ -47,3 +47,4 @@ bower_components
 test.js
 firebase_credentials.json
 images
+firebase_cloud_messaging.json

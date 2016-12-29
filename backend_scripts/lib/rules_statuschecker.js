@@ -2,6 +2,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 const firebase = require('firebase-admin');
 const UwmcTools = require('../../backend/lib/main');
+const PushService = require('./pushservice.js');
 
 _asyncToGenerator(function* () {
     firebase.initializeApp({
@@ -10,22 +11,22 @@ _asyncToGenerator(function* () {
     });
 
     const db = firebase.database();
-    const ref = db.ref('uwmctools/players');
-    const dataRef = ref.child('data');
+    const ref = db.ref('uwmctools/rules');
 
     const uwmcTool = new UwmcTools('');
 
-    const playerListData = yield uwmcTool.getVoteListData();
+    const data = yield uwmcTool.getRuleData();
 
-    playerListData.forEach(function (player) {
-        let playerVoteDataRef = dataRef.child(player.uuid).child('votes');
+    const oldRules = yield ref.once('value');
 
-        for (let year in player.votes) {
-            for (let month in player.votes[year]) {
-                playerVoteDataRef.child(`${ year }-${ parseInt(month) + 1 }`).set([player.votes[year][month].v1, player.votes[year][month].v2]);
-            }
-        }
-    });
+    if (oldRules.val() !== data) {
+        ref.set(data);
+        PushService.push('/topics/UWMC_RULE_UPDATE', {
+            'title': 'Regeländerung UWMC',
+            'body': 'Es gab eine Änderung der Regeln von UnlimitedWorld.de',
+            'click_action': 'https://uwmc.de/rules'
+        });
+    }
 })();
 
 setTimeout(() => process.exit(), 60000);

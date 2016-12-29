@@ -36,7 +36,6 @@ const UwmcTools = require('../../backend/lib/main');
         });
 
         plotDataRef.child('owners').orderByKey().limitToLast(1).once('child_added', function(data) {
-            console.log(data.val())
             if(!plot.owner || data.val().uuid !== plot.owner.uuid) {
                 if(!data.val().till) {
                     data.ref.child('till').set(new Date().getTime());
