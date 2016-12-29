@@ -1,0 +1,86 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="shared-styles.html">
+
+<link rel="import" href="firebase-indexeddb-link.html">
+<link rel="import" href="uwmctools-player.html">
+
+<dom-module id="uwmctools-zone-card">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 20px;
+      }
+
+      paper-card {
+        width: 100%;
+      }
+
+      paper-item {
+        background-color: #fff;
+      }
+    </style>
+    <firebase-indexeddb-link path="uwmctools/zones/data/[[zoneId]]" data="{{zone}}"></firebase-indexeddb-link>
+
+    <paper-card heading="[[ownerName]]#[[zone.number]]">
+      <paper-item>
+        <uwmctools-player uuid="[[zone.owner]]" name="{{ownerName}}"></uwmctools-player>
+      </paper-item>
+      <paper-item>
+        [[zoneSize(zone.pos)]] Blöcke ([[zoneWidth(zone.pos)]]*[[zoneHeight(zone.pos)]])
+      </paper-item>
+      <paper-item>
+        [[zoneCenterX(zone.pos)]] / [[zoneCenterZ(zone.pos)]]
+      </paper-item>
+      <paper-item>
+        Erstellt: [[timestampToDate(zone.created)]]
+      </paper-item>
+      <paper-item>
+        [[zoneId]]
+      </paper-item>
+    </paper-card>   
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-zone-card',
+      properties: {
+        zoneId: {
+          type: String,
+          value: "" 
+        },
+      },
+      zoneSize(pos){
+        if(!pos) return 0;
+
+        return (pos.x2 - pos.x1) * (pos.z2 - pos.z1);
+      },
+      zoneWidth(pos){
+        if(!pos) return 0;
+          
+        return pos.x2 - pos.x1;
+      },
+      zoneHeight(pos){
+        if(!pos) return 0;
+          
+        return pos.z2 - pos.z1;
+      },
+      zoneCenterX(pos){
+        if(!pos) return 0;
+          
+        return Math.floor(pos.x1 + (pos.x2 - pos.x1) / 2);
+      },
+      zoneCenterZ(pos){
+        if(!pos) return 0;
+          
+        return Math.floor(pos.z1 + (pos.z2 - pos.z1) / 2);
+      },
+      timestampToDate(timestamp){
+        return new Date(parseInt(timestamp)).toLocaleDateString();
+      }
+    });
+  </script>
+</dom-module>

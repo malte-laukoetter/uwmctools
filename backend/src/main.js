@@ -71,7 +71,7 @@ class UwmcTool {
     }
 
     /**
-     * save the data about the zones
+     * gets the data about the zones
      * @return {Promise.<*>} the response of {@see ZoneListRequest#execute}
      */
     getZoneListData() {
@@ -79,11 +79,11 @@ class UwmcTool {
     }
 
     /**
-     * save the data about the plots
+     * gets the data about the plots
      * @return {Promise.<*>} the response of {@see PlotListRequest#execute}
      */
-    savePlotListData() {
-        return this._saveData( this._plotListRequest );
+    getPlotListData() {
+        return this._plotListRequest.execute();
     }
 
     /**

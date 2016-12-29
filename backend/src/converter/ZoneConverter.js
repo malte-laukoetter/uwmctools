@@ -7,7 +7,7 @@ const Zone = require('../zones/Zone');
  * @return {int} the coordinate of the zone
  */
 function getCoords(data, num) {
-    if(num > 1 && data.length > 2) {
+    if(num > 0 && data.length > 2) {
         return data[0] == data[1] ? data[2] : data[1];
     }else{
         return data[num];

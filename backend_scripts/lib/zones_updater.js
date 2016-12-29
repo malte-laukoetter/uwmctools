@@ -10,8 +10,10 @@ _asyncToGenerator(function* () {
     });
 
     const db = firebase.database();
-    const ref = db.ref('uwmctools/zones');
-    const dataRef = ref.child('data');
+    const dataRef = db.ref('uwmctools/zones/data');
+    const playerRef = db.ref('uwmctools/players/data');
+
+    dataRef.remove();
 
     const uwmcTool = new UwmcTools('');
 
@@ -26,6 +28,7 @@ _asyncToGenerator(function* () {
                 zoneDataRef.child('number').set(zone.number);
                 zoneDataRef.child('created').set(new Date().getTime());
                 zoneDataRef.child('owner').set(zone.player.uuid);
+                playerRef.child(zone.player.uuid).child('zones').child(zone.id).set(true);
             }
         });
     });

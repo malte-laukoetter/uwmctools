@@ -3,16 +3,16 @@
 
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="firebase-indexeddb-link.html">
-<link rel="import" href="uwmctools-zone-card.html">
+<link rel="import" href="uwmctools-plot-card.html">
 
-<dom-module id="uwmctools-view-player-zones">
+<dom-module id="uwmctools-view-player-plots">
   <template>
     <style include="shared-styles app-grid-style">
       :host {
         display: block;
 
         padding: 10px;
-        
+
         --app-grid-columns: 3;
       }
 
@@ -30,20 +30,27 @@
     </style>
 
     <div class="app-grid">
-      <template is="dom-repeat" items="[[_toKeyArray(zoneIds)]]">
-        <uwmctools-zone-card zone-id="[[item]]"></uwmctools-zone-card>
+      <template is="dom-repeat" items="[[_toKeyArray(ownedIds)]]">
+        <uwmctools-plot-card plot-id="[[item]]"></uwmctools-plot-card>
+      </template>
+      <template is="dom-repeat" items="[[_toKeyArray(trustedIds)]]">
+        <uwmctools-plot-card plot-id="[[item]]"></uwmctools-plot-card>
       </template>
     </div>
   </template>
 
   <script>
     Polymer({
-      is: 'uwmctools-view-player-zones',
+      is: 'uwmctools-view-player-plots',
       properties: {
-        zoneIds: {
+        ownedIds: {
             type: Array,
             value: []
-        }
+        },
+        trustedIds: {
+            type: Array,
+            value: []
+        },
       },
       _toKeyArray(obj){
         if(!obj) return [];

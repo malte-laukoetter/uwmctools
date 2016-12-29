@@ -20,47 +20,14 @@ class PlotListRequest extends Request {
     }
 
     /**
-     * executes the request and initilized the convertion and saving of the data
-     * @param {Db} db the database the data should be saved in
+     * executes the request and converts the data
      * @return {Promise} result of the database query
      */
-    execute(db) {
+    execute() {
         let req = this;
 
         return super.execute().then(function (res) {
-            return plotConverter(res.body.sets['plot2.markerset'].areas).then(function (plots) {
-                let dbRequests = [];
-
-                // save changed zone data
-                for (let plot of plots) {
-                    if (req._cache.get(plot.id) !== plot.hash) {
-                        req._cache.set(plot.id, plot.hash);
-                        dbRequests.push(plot.saveToDb(db));
-                    }
-                }
-
-                for (let cachedPlotId of req._cache.keys()) {
-                    let exist = false;
-
-                    // tests if the plotid of the cached plot is in the results (-> if it exists in the results the
-                    // plot still exists)
-                    for (let plot of plots) {
-                        if (!exist && plot.id === cachedPlotId) {
-                            exist = true;
-                        }
-                    }
-
-                    if (!exist) {
-                        dbRequests.push(Plot.fromDb(db, cachedPlotId).then(function (res) {
-                            return res.setToDeleted(db);
-                        }));
-
-                        req._cache.delete(cachedPlotId);
-                    }
-                }
-
-                return Promise.all(dbRequests);
-            });
+            return plotConverter(res.body.sets['plot2.markerset'].areas);
         });
     }
 }

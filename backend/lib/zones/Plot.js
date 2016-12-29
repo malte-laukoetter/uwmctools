@@ -31,7 +31,7 @@ class Plot extends CreatableZone {
      * @readonly
      */
     get id() {
-        return this._id;
+        return `${ this.posX }|${ this.posZ }`;
     }
     set id(id) {
         this._id = id;
