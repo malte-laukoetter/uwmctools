@@ -47,13 +47,13 @@
       }
     </style>
 
-    <firebase-indexeddb-link path="uwmctools/players/search" data="{{players}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/players/online" data="{{players}}"></firebase-indexeddb-link>
 
     <app-header-layout fullbleed>
       <app-header condenses fixed effects="waterfall">
         <uwmctools-search-bar></uwmctools-search-bar>
         <app-toolbar>
-          <h1 main-title>Spieler</h1>
+          <h1 main-title>Online Spieler</h1>
           <paper-menu-button horizontal-align="right">
             <paper-icon-button icon="sort" class="dropdown-trigger"></paper-icon-button>
             <paper-menu class="dropdown-content" selected="{{sortType}}" attr-for-selected="sorttype">

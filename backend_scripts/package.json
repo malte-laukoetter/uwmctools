@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "babel src -d lib --copy-files && node lib/rules_statuschecker.js"
+    "test": "babel src -d lib --copy-files && node lib/playerlist_updater.js"
   },
   "engines": {
     "node": ">=6.3.0"
