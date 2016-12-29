@@ -8,7 +8,7 @@
 <link rel="import" href="uwmctools-player.html">
 <link rel="import" href="uwmctools-zone-behavior.html">
 
-<dom-module id="uwmctools-plot-card">
+<dom-module id="uwmctools-mapplot-card">
   <template>
     <style include="shared-styles">
       :host {
@@ -28,37 +28,49 @@
         background-color: inherit;
       }
     </style>
-    <firebase-indexeddb-link path="uwmctools/plots/data/[[plotId]]" data="{{plot}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/mapplots/data/[[plotId]]" data="{{plot}}"></firebase-indexeddb-link>
 
-    <paper-card heading="[[plot.posX]]/[[plot.posZ]]">
-      <paper-item>
-        <uwmctools-player uuid="[[plot.owner]]"></uwmctools-player>
-      </paper-item>
+    <paper-card heading="[[plot.area]] [[plot.number]]">
+      <template is="dom-if" if="[[owner(plot.owners)]]">
+        <paper-item>
+          <uwmctools-player uuid="[[owner(plot.owners)]]"></uwmctools-player>
+        </paper-item>
+      </template>
       <paper-item>
         [[zoneSize(plot.pos)]] Blöcke ([[zoneWidth(plot.pos)]]*[[zoneHeight(plot.pos)]])
       </paper-item>
       <paper-item>
         [[zoneCenterX(plot.pos)]] / [[zoneCenterZ(plot.pos)]]
       </paper-item>
-      <paper-item>
-        Erstellt: [[timestampToDate(plot.created)]]
-      </paper-item>
-      <paper-item class="title">Trusted:</paper-item>
-      <template is="dom-repeat" items="[[plot.trusted]]">
-        <paper-item><uwmctools-player uuid="[[item]]"></uwmctools-player></paper-item>
+      <paper-item class="title">Ehemalige Besitzer:</paper-item>
+      <template is="dom-repeat" items="[[toArray(plot.owners)]]" filter="excludeCurrendOwner">
+        <paper-item><uwmctools-player uuid="[[item.uuid]]"></uwmctools-player> ([[timestampToDate(item.from)]] - [[date(item.till)]])</paper-item>
       </template>
     </paper-card>   
   </template>
 
   <script>
     Polymer({
-      is: 'uwmctools-plot-card',
+      is: 'uwmctools-mapplot-card',
       behaviors: [UwmctoolsZoneBehavior],
       properties: {
         plotId: {
           type: String,
           value: "" 
         },
+      },
+      excludeCurrendOwner: function(owner){
+        return owner.till
+      },
+      owner: function(owners) {
+        if(!owners) return false;
+
+        for(let i of Object.keys(owners)) {
+          if(!owners[i].till)
+            return owners[i].uuid
+        }
+
+        return false;
       }
     });
   </script>

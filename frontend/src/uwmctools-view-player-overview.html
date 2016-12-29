@@ -4,7 +4,7 @@
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
-
+<link rel="import" href="uwmctools-column-timeline-chart.html">
 <link rel="import" href="firebase-indexeddb-link.html">
 
 <dom-module id="uwmctools-view-player-overview">
@@ -14,6 +14,8 @@
         display: block;
 
         padding: 10px;
+
+        --app-grid-columns: 3;
       }
 
       .app-grid div {
@@ -34,6 +36,18 @@
               margin-left: 35%;
               margin-top: 20px;
               margin-bottom: 20px;
+        }
+      }
+
+      @media (max-width: 1300px) {
+        :host {
+          --app-grid-columns: 2;
+        }
+      }
+
+      @media (max-width: 900px) {
+        :host {
+          --app-grid-columns: 1;
         }
       }
     </style>
@@ -61,6 +75,11 @@
           </template>
         </paper-card>
       </div>
+      <uwmctools-column-timeline-chart 
+        cols='["Votes (Vote 1)", "Votes (Vote 2)"]'
+        timeline='[[player.votes]]'
+        title="Votes pro Monat">
+      </uwmctools-column-timeline-chart>
     </div>
   </template>
 

@@ -15,8 +15,6 @@ class PlotListRequest extends Request {
      */
     constructor() {
         super(config.URLS.UWMC.ZONELIST_CREATIVE);
-
-        this._cache = new Map();
     }
 
     /**
@@ -24,8 +22,6 @@ class PlotListRequest extends Request {
      * @return {Promise} result of the database query
      */
     execute() {
-        let req = this;
-
         return super.execute().then(function (res) {
             return plotConverter(res.body.sets['plot2.markerset'].areas);
         });

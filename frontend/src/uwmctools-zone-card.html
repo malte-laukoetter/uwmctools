@@ -6,6 +6,7 @@
 
 <link rel="import" href="firebase-indexeddb-link.html">
 <link rel="import" href="uwmctools-player.html">
+<link rel="import" href="uwmctools-zone-behavior.html">
 
 <dom-module id="uwmctools-zone-card">
   <template>
@@ -47,39 +48,12 @@
   <script>
     Polymer({
       is: 'uwmctools-zone-card',
+      behaviors: [UwmctoolsZoneBehavior],
       properties: {
         zoneId: {
           type: String,
           value: "" 
         },
-      },
-      zoneSize(pos){
-        if(!pos) return 0;
-
-        return (pos.x2 - pos.x1) * (pos.z2 - pos.z1);
-      },
-      zoneWidth(pos){
-        if(!pos) return 0;
-          
-        return pos.x2 - pos.x1;
-      },
-      zoneHeight(pos){
-        if(!pos) return 0;
-          
-        return pos.z2 - pos.z1;
-      },
-      zoneCenterX(pos){
-        if(!pos) return 0;
-          
-        return Math.floor(pos.x1 + (pos.x2 - pos.x1) / 2);
-      },
-      zoneCenterZ(pos){
-        if(!pos) return 0;
-          
-        return Math.floor(pos.z1 + (pos.z2 - pos.z1) / 2);
-      },
-      timestampToDate(timestamp){
-        return new Date(parseInt(timestamp)).toLocaleDateString();
       }
     });
   </script>

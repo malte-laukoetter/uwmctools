@@ -5,7 +5,7 @@ const uuidLockup = require('../uuid');
 module.exports = (names, Type = Player) => {
     names = names.map(name => name.toString().toLowerCase());
 
-    return uuidLockup.getUuids(names);
+    return uuidLockup.getUuids(names, Type);
 
     /*
     .then((players) => {

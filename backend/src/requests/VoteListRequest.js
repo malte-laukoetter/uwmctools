@@ -22,68 +22,30 @@ class VoteListRequest extends Request {
      * @param {Db} db the database the data should be saved in
      * @return {Promise} result of the database query
      */
-    execute(db) {
-        let req = this;
-
+    execute() {
         return super.execute().then( function( res ) {
             // convert it to an key -> value object so we can get a list of the names with Object.keys and can get the
             // data of a specific player without iterating throug the array
-            req._lastResponse = Helper.convertToMap( res.body.data, 'user' );
-
-            return req.lastResponse;
+            return Helper.convertToMap( res.body.data, 'user' );
         } ).then( function( players ) {
             return new Promise( function( resolve, reject ) {
                 // get the uuids and names in correct capitalization (to get an array of the keys we need to spread the
                 // iteratable and add all items to an array)
-                uuidlockup.getUuids( [...players.keys()] ).then( function( res ) {
-                    // array of all the Promises needed to save the data of all players, so it's possible to resolve the
-                    // current Promise after all are finished
-                    let playerToDbIter = [];
+                uuidlockup.getUuids( [...players.keys()], UwmcPlayer ).then( function( res ) {
 
-                    for( let i in res ) {
-                        if ({}.hasOwnProperty.call(res, i)) {
-                            playerToDbIter.push(
-                                VoteListRequest._saveToDb(db, res[i].id, res[i].name, players.get(i))
-                            );
-                        }
-                    }
+                    res = [... res.entries()].map(([name, player]) => {
+                        player.setVotes(new Date().getFullYear(), new Date().getMonth(), 'v1', players.get(name).s1);
+                        player.setVotes(new Date().getFullYear(), new Date().getMonth(), 'v2', players.get(name).s2);
 
-                    resolve(Promise.all(playerToDbIter));
+                        return player;
+                    });
+
+                    resolve(res);
                 } );
             } );
         } );
     }
 
-    /**
-     * the last response of the request (unconverted to player objects)
-     * @type {Object}
-     * @readonly
-     */
-    get lastResponse() {
-        return this._lastResponse;
-    }
-
-    /**
-     * saves the data about the player and the votes to the database
-     * @param {Db} db the database the data should be saved in
-     * @param {string} uuid the uuid of the player
-     * @param {string} name the name of the player
-     * @param {Object} data the vote data
-     * @return {Promise} the result of the database query
-     * @private
-     */
-    static _saveToDb(db, uuid, name, data) {
-        return UwmcPlayer.createFromDb( db, uuid ).then( function( player ) {
-            player.name = name;
-
-            player = VoteListRequest._addVoteListDataToPlayer(player, data);
-
-            return player.saveToDb( db );
-        });
-    }
-
-    /*
-     */
     /**
      * adds the data we get from the votelist to the player object
      * @param {UwmcPlayer} player the player the vote data should be added to

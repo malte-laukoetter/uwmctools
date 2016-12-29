@@ -89,16 +89,16 @@ class UwmcTool {
      * save the data from the votelist
      * @return {Promise.<*>} the response of {@see VoteListRequest#execute}
      */
-    saveVoteListData() {
-        return this._saveData(this._voteListRequest);
+    getVoteListData() {
+        return this._voteListRequest.execute();
     }
 
     /**
      * save the data about the main map plots
      * @return {Promise.<*>} the response of {@see MainMapPlotRequest#execute}
      */
-    saveMainMapPlotData() {
-        return this._saveData(this._mainMapPlotRequest);
+    getMainMapPlotData() {
+        return this._mainMapPlotRequest.execute();
     }
 
     /**

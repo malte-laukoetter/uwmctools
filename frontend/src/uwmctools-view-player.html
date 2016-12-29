@@ -51,9 +51,15 @@
         </app-toolbar>
         <paper-tabs sticky selected="{{data.tab}}" attr-for-selected="name" class="drawer-list" role="navigation">
           <paper-tab name="overview">Übersicht</paper-tab>
-          <paper-tab name="zones">Zonen</paper-tab>
-          <paper-tab name="plots">Creative Plots</paper-tab>
-          <paper-tab name="newbee">Neulingszonen</paper-tab>
+          <template is="dom-if" if="[[player.zones]]">
+            <paper-tab name="zones">Zonen</paper-tab>
+          </template>
+          <template is="dom-if" if="[[player.plots]]">
+            <paper-tab name="plots">Creative Plots</paper-tab>
+          </template>
+          <template is="dom-if" if="[[player.mapplots]]">
+            <paper-tab name="mapplots">Neulingszonen</paper-tab>
+          </template>
         </paper-tabs>
       </app-header>
       <div class="content">
@@ -64,6 +70,7 @@
           <uwmctools-view-player-overview id="overview" player="[[player]]" uuid="[[uuid]]"></uwmctools-view-player-overview>
           <uwmctools-view-player-zones id="zones" zone-ids="[[player.zones]]"></uwmctools-view-player-zones>
           <uwmctools-view-player-plots id="plots" owned-ids="[[player.plots.owned]]" trusted-ids="[[player.plots.trusted]]"></uwmctools-view-player-plots>
+          <uwmctools-view-player-mapplots id="mapplots" plot-ids="[[player.mapplots]]"></uwmctools-view-player-mapplots>
         </iron-pages>
       </div>
       <uwmctools-footer></uwmctools-footer>

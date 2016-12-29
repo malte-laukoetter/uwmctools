@@ -5,7 +5,7 @@ const Player = require('./player/Player');
 let playerToUuid = new Map();
 
 // players instanceof Set
-function getUuids( players ) {
+function getUuids( players, Type=Player ) {
     let unresolvedPlayers = new Set();
     let resolvedPlayers = new Map();
 
@@ -69,7 +69,7 @@ function getUuids( players ) {
 
                         for(let i in body) {
                             if ({}.hasOwnProperty.call(body, i)) {
-                                let player = new Player(body[i].id);
+                                let player = new Type(body[i].id);
                                 player.name = body[i].name;
 
                                 let name = player.name.toLowerCase();
@@ -106,7 +106,7 @@ function getUuids( players ) {
 }
 
 module.exports = {
-    getUuids: function( players ) {
-        return getUuids( players );
+    getUuids: function( players, Type ) {
+        return getUuids( players, Type );
     },
 };
