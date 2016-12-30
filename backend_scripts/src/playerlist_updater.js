@@ -18,13 +18,13 @@ const UwmcTools = require('uwmctools');
     const playerListData = await uwmcTool.getPlayerListData();
 
     await onlineRef.once('value').then((onlineplayers) => {
+        if(!onlineplayers.val()) return;
+
         const names = new Set(Object.keys(onlineplayers.val()));
 
         playerListData.forEach((player) => {
             names.delete(player.name);
         });
-
-        console.log(names);
 
         names.forEach((name) => {
             onlineRef.child(name).remove();

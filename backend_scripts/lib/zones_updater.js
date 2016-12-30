@@ -13,8 +13,6 @@ _asyncToGenerator(function* () {
     const dataRef = db.ref('uwmctools/zones/data');
     const playerRef = db.ref('uwmctools/players/data');
 
-    dataRef.remove();
-
     const uwmcTool = new UwmcTools('');
 
     const zoneListData = yield uwmcTool.getZoneListData();

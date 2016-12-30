@@ -20,13 +20,13 @@ _asyncToGenerator(function* () {
     const playerListData = yield uwmcTool.getPlayerListData();
 
     yield onlineRef.once('value').then(function (onlineplayers) {
+        if (!onlineplayers.val()) return;
+
         const names = new Set(Object.keys(onlineplayers.val()));
 
         playerListData.forEach(function (player) {
             names.delete(player.name);
         });
-
-        console.log(names);
 
         names.forEach(function (name) {
             onlineRef.child(name).remove();
