@@ -1,6 +1,6 @@
 {
   "name": "uwmctools",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "description": "convert data from unlimitedworld.de, mostly used for some tools on https://lergin.de",
   "homepage": "https://github.com/Lergin/uwmctools",
   "bugs": {
@@ -14,7 +14,7 @@
   },
   "main": "lib/main.js",
   "scripts": {
-    "test": "babel src -d lib --copy-files && node lib/test.js"
+    "test": "babel src -d lib --copy-files"
   },
   "repository": "Lergin/uwmctools",
   "engines": {

@@ -2,6 +2,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 const zoneConverter = require('./MainMapZoneConverter');
 const MainMapPlot = require('../zones/MainMapPlot');
+const Player = require('../player/Player');
 const playerConverter = require('./PlayerConverter');
 
 /**
@@ -52,8 +53,12 @@ module.exports = (() => {
         return zoneList.map(function (zone) {
             const owner = getOwner(data[zone.id]);
 
-            if (owner && players.has(owner)) {
-                zone.addOwner(players.get(owner), new Date(), null);
+            if (owner) {
+                if (players.has(owner)) {
+                    zone.addOwner(players.get(owner), new Date(), null);
+                } else {
+                    zone.addOwner(new Player(), new Date(), null);
+                }
             }
 
             return zone;
