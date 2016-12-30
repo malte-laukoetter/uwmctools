@@ -93,7 +93,6 @@
 
         for(var i = 0; i < dates.length; i++){
           if(Array.isArray(data[i])){
-            console.log(rows)
             rows.push([dates[i]].concat(data[i]));
           }else{
             rows.push([dates[i], data[i]])

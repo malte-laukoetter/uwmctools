@@ -12,6 +12,8 @@ _asyncToGenerator(function* () {
     const fdb = firebase.database();
     const playerRef = fdb.ref('uwmctools/players/data');
     const zonesRef = fdb.ref('uwmctools/zones/data');
+    const zonesListRef = fdb.ref('uwmctools/zones/list');
+    zonesListRef.remove();
 
     const db = yield MongoClient.connect(''); //TODO: add MongoDb Url
 
@@ -24,7 +26,11 @@ _asyncToGenerator(function* () {
 
             if (item.created) zoneRef.child('created').set(item.created.getTime());
 
-            if (item.deleted) zoneRef.child('deleted').set(item.deleted.getTime());
+            if (item.deleted) {
+                zoneRef.child('deleted').set(item.deleted.getTime());
+            } else {
+                zonesListRef.child(item.zoneId).set(true);
+            }
 
             if (item.owner) {
                 zoneRef.child('owner').set(item.owner.id);

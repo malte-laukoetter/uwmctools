@@ -14,10 +14,7 @@ _asyncToGenerator(function* () {
     const plotsRef = fdb.ref('uwmctools/plots/data');
 
     const db = yield MongoClient.connect(''); //TODO: add MongoDb Url
-    /*
-        const data = await db.collection('plots').find(
-            {x: {$ne: null}, z: {$ne: null}, owner: {$ne: null}, pos: {$ne: null}},
-            {x: 1, z: 1, owner: 1, pos: 1, trusted: 1, created: 1, _id: 0}).toArray();*/
+
     const data = yield db.collection('plots').aggregate([{
         $group: {
             '_id': {

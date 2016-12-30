@@ -11,6 +11,8 @@ const MongoClient = require( 'mongodb' ).MongoClient;
     const fdb = firebase.database();
     const playerRef = fdb.ref('uwmctools/players/data');
     const zonesRef = fdb.ref('uwmctools/zones/data');
+    const zonesListRef = fdb.ref('uwmctools/zones/list');
+    zonesListRef.remove();
 
     const db = await MongoClient.connect(''); //TODO: add MongoDb Url
 
@@ -26,8 +28,11 @@ const MongoClient = require( 'mongodb' ).MongoClient;
             if(item.created)
                 zoneRef.child('created').set(item.created.getTime());
 
-            if(item.deleted)
+            if(item.deleted) {
                 zoneRef.child('deleted').set(item.deleted.getTime());
+            }else{
+                zonesListRef.child(item.zoneId).set(true);
+            }
 
             if(item.owner) {
                 zoneRef.child('owner').set(item.owner.id);

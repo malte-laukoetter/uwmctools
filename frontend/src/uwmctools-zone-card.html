@@ -39,6 +39,11 @@
       <paper-item>
         Erstellt: [[timestampToDate(zone.created)]]
       </paper-item>
+      <template is="dom-if" if="[[zone.deleted]]">
+        <paper-item>
+          Gelöscht: [[timestampToDate(zone.deleted)]]
+        </paper-item>
+      </template>
       <paper-item>
         [[zoneId]]
       </paper-item>

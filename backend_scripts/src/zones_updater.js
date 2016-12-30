@@ -13,10 +13,9 @@ const UwmcTools = require('uwmctools');
     const playerRef = db.ref('uwmctools/players/data');
 
     const uwmcTool = new UwmcTools('');
-
     const zoneListData = await uwmcTool.getZoneListData();
     listRef.once('value', function(arr) {
-        let oldZoneSet = arr ? new Set(arr.val()) : [];
+        let oldZoneSet = arr.val() ? new Set(Object.keys(arr.val())) : new Set();
 
         zoneListData.forEach((zone) => {
             let zoneDataRef = dataRef.child(zone.id);

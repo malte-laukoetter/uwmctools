@@ -29,6 +29,8 @@
         return Math.floor(pos.z1 + (pos.z2 - pos.z1) / 2);
       },
       timestampToDate(timestamp){
+        if(!timestamp) return timestamp;
+        
         return new Date(parseInt(timestamp)).toLocaleDateString();
       },
       toArray(objs){
