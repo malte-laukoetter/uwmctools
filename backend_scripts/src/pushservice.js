@@ -1,4 +1,4 @@
-const config = require('./firebase_cloud_messaging.json');
+const config = require(__dirname + '/firebase_cloud_messaging.json');
 
 const request = require('request');
 

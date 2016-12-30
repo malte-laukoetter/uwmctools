@@ -1,0 +1,8 @@
+*/10 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/playerlist_updater.js
+5 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/votes_updater.js
+15 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/mainmapplots_updater.js
+25 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/mainmapplotstats_updater.js
+35 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/plots_updater.js
+45 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/worldstats_updater.js
+55 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/zones_updater.js
+30 * * * * /package/host/localhost/nodejs-6.9.1/bin/node ~/apps/uwmctools/rules_statuschecker.js

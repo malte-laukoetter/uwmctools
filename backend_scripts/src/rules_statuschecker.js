@@ -1,10 +1,10 @@
 const firebase = require('firebase-admin');
-const UwmcTools = require('../../backend/lib/main');
-const PushService = require('./pushservice.js');
+const UwmcTools = require('uwmctools');
+const PushService = require(__dirname + '/pushservice.js');
 
 (async function() {
     firebase.initializeApp({
-        credential: firebase.credential.cert('./firebase_credentials.json'),
+        credential: firebase.credential.cert(__dirname + '/firebase_credentials.json'),
         databaseURL: 'https://dashboard-196e4.firebaseio.com',
     });
 

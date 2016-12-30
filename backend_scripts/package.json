@@ -1,16 +1,16 @@
 {
   "scripts": {
-    "test": "babel src -d lib --copy-files && node lib/playerlist_updater.js"
+    "test": "babel src -d lib --copy-files"
   },
   "engines": {
     "node": ">=6.3.0"
   },
   "dependencies": {
     "firebase-admin": "^4.0.4",
-    "uwmctools": "^2.7.1"
+    "uwmctools": "^2.8.0"
   },
   "devDependencies": {
-    "babel": "^6.5.2",
+    "babel-cli": "^6.5.2",
     "babel-preset-es2017": "^6.16.0",
     "eslint": "^3.9.0",
     "eslint-config-google": "^0.7.0"

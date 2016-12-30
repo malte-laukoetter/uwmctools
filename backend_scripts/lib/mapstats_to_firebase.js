@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 _asyncToGenerator(function* () {
     firebase.initializeApp({
-        credential: firebase.credential.cert('./firebase_credentials.json'),
+        credential: firebase.credential.cert(__dirname + '/firebase_credentials.json'),
         databaseURL: 'https://dashboard-196e4.firebaseio.com'
     });
 

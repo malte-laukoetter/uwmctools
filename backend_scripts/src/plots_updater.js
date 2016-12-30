@@ -1,5 +1,5 @@
 const firebase = require('firebase-admin');
-const UwmcTools = require('../../backend/lib/main');
+const UwmcTools = require('uwmctools');
 
 function createNewFirebasePlot(dataRef, playerRef, plot) {
     dataRef.child('pos').set(plot.pos);
@@ -20,7 +20,7 @@ function createNewFirebasePlot(dataRef, playerRef, plot) {
 
 (async function() {
     firebase.initializeApp({
-        credential: firebase.credential.cert('./firebase_credentials.json'),
+        credential: firebase.credential.cert(__dirname + '/firebase_credentials.json'),
         databaseURL: 'https://dashboard-196e4.firebaseio.com',
     });
 

@@ -1,7 +1,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const firebase = require('firebase-admin');
-const UwmcTools = require('../../backend/lib/main');
+const UwmcTools = require('uwmctools');
 
 function createNewFirebasePlot(dataRef, playerRef, plot) {
     dataRef.child('pos').set(plot.pos);
@@ -22,7 +22,7 @@ function createNewFirebasePlot(dataRef, playerRef, plot) {
 
 _asyncToGenerator(function* () {
     firebase.initializeApp({
-        credential: firebase.credential.cert('./firebase_credentials.json'),
+        credential: firebase.credential.cert(__dirname + '/firebase_credentials.json'),
         databaseURL: 'https://dashboard-196e4.firebaseio.com'
     });
 
