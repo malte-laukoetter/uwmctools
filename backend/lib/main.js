@@ -1,5 +1,3 @@
-const MongoClient = require('mongodb').MongoClient;
-
 const PlayerListRequest = require('./requests/PlayerListRequest');
 const ZoneListRequest = require('./requests/ZoneListRequest');
 const PlotListRequest = require('./requests/PlotListRequest');
@@ -23,11 +21,8 @@ const Zone = require('./zones/Zone');
 class UwmcTool {
     /**
      * creates a new UwmcTool
-     * @param {string} mongoDbUrl the connection url of the MongoDb database that should be used by the Requests
      */
-    constructor(mongoDbUrl) {
-        this._mongoDbUrl = mongoDbUrl;
-
+    constructor() {
         this._playerListRequest = new PlayerListRequest();
         this._zoneListRequest = new ZoneListRequest();
         this._plotListRequest = new PlotListRequest();
@@ -37,30 +32,6 @@ class UwmcTool {
         this._zoneMapStatRequest = new ZoneMapStatRequest();
         this._mainMapPlotStatRequest = new MainMapPlotStatRequest();
         this._ruleRequest = new RuleRequest();
-    }
-
-    /**
-     * the url of the mongodb database
-     * @type {string}
-     * @readonly
-     */
-    get mongoDbUrl() {
-        return this._mongoDbUrl;
-    }
-
-    /**
-     * connect to the database
-     * @return {Promise} the result of the MongoDb connection function
-     */
-    connect() {
-        let main = this;
-        return new Promise(function (resolve, reject) {
-            MongoClient.connect(main.mongoDbUrl, function (err, db) {
-                if (err) reject(err);
-
-                resolve(db);
-            });
-        });
     }
 
     /**
@@ -138,34 +109,10 @@ class UwmcTool {
     }
 
     /*
-     * get the information about the player with the given uuid
-     */
-    getPlayer(uuid) {
-        return this.connect().then(function (db) {
-            return UwmcPlayer.createFromDb(db, uuid);
-        });
-    }
-
-    /*
      * converts the rank id of an rank to the coresponding name
      */
     static rankToRankName(rank) {
         return UwmcPlayer.rankToRankName(rank);
-    }
-
-    /**
-     * save the data of the request
-     * @param {Request} request the request whose data should be saved
-     * @return {Promise.<*>} the result of the request
-     * @private
-     */
-    _saveData(request) {
-        return this.connect().then(function (db) {
-            return request.execute(db).then(function (res) {
-                db.close();
-                return res;
-            });
-        });
     }
 
     /**

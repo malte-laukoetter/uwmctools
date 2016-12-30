@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: player/UwmcPlayer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: player/UwmcPlayer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const EventEmitter = require('events');
+
+const config = require('../config.json');
+
+const Player = require('./Player');
+const Plot = require('../zones/Plot');
+const PlayerZone = require('../zones/PlayerZone');
+const MainMapPlot = require('../zones/MainMapPlot');
+
+/**
+ * the {@link EventEmitter} for the {@link UwmcPlayer}
+ * @private
+ */
+class UwmcPlayerEmitter extends EventEmitter {}
+const emitter = new UwmcPlayerEmitter();
+
+/**
+ * A Player of Unlimitedworld.de
+ */
+class UwmcPlayer extends Player {
+    /**
+     * creates a new Player
+     * @param {string} uuid the uuid of the player
+     */
+    constructor(uuid) {
+        super(uuid);
+    }
+
+    /**
+     * the current rank of the player
+     * @type {int}
+     */
+    get rank() {
+        return this._rank;
+    }
+    set rank(rank) {
+        this._rank = rank;
+    }
+
+    /**
+     * the rankname of the player
+     * @type {string}
+     * @readonly
+     */
+    get rankName() {
+        UwmcPlayer.rankToRankName(this.rank);
+    }
+
+    /*
+     * the id of the forum account
+     * @type {int}
+     */
+    get boardId() {
+        return this._boardId;
+    }
+    set boardId(boardId) {
+        this._boardId = boardId;
+    }
+
+    /*
+     * the date the player was last online on the server
+     * @type {Date}
+     */
+    get lastPlayed() {
+        return this._lastPlayed || new Date(0);
+    }
+    set lastPlayed(date) {
+        this._lastPlayed = date;
+    }
+
+    /**
+     * adds a rank change to the rank history
+     * @param {int} rank the rank changed to
+     * @param {Date} date the {@link Date} of the rankchange
+     */
+    addRankChange(rank, date) {
+        if (!this._rankHistory) this._rankHistory = [];
+
+        this._rankHistory.push({
+            rank: rank,
+            date: date
+        });
+
+        UwmcPlayer.eventEmitter.emit('rankchange', {
+            player: this,
+            rank: rank
+        });
+    }
+
+    /**
+     * the rank history
+     * @type {Array.&lt;Object>}
+     * @property {int} obj.rank
+     * @property {Date} obj.date
+     * @readonly
+     */
+    get rankHistory() {
+        return this._rankHistory || [];
+    }
+
+    /**
+     * overwrites the rank history to the value without checking the format (use {@link addRankChange} instead)
+     * @param {Array.&lt;Object>} rankHistory the rankhistory
+     * @private
+     */
+    _setRankHistory(rankHistory) {
+        this._rankHistory = rankHistory;
+    }
+
+    /**
+     * sets the votes for a specific month and votesite
+     * @param {int} year the year of the votes
+     * @param {int} month the month of the votes
+     * @param {string} site the vote site of the votes
+     * @param {int} votes the amount of votes
+     */
+    setVotes(year, month, site, votes) {
+        if (!this._votes) this._votes = {};
+
+        if (!this._votes[year]) this._votes[year] = {};
+
+        if (!this._votes[year][month]) this._votes[year][month] = {};
+
+        this._votes[year][month][site] = votes;
+    }
+
+    /**
+     * overwrites the vote history to the value without checking the format (use setVotes instead)
+     * @param {Array.&lt;Object>} votes the votedata to overwrite by
+     */
+    _setVotes(votes) {
+        this._votes = votes;
+    }
+
+    /**
+     * the vote history
+     * @type {Array.&lt;Object>}
+     * @readonly
+     */
+    get votes() {
+        return this._votes || {};
+    }
+
+    /**
+     * adds a Plot to the plotlist
+     * @param {Plot} plot the plot to add
+     */
+    addPlot(plot) {
+        if (!Plot.isPlot(plot)) throw new Error('no Plot');
+
+        if (!this._plots) this._plots = [];
+
+        this._plots.push(plot);
+
+        UwmcPlayer.eventEmitter.emit('newplot', {
+            player: this,
+            plot: plot
+        });
+    }
+
+    /**
+     * overwrites the plotlist to the value without checking the format (use {@link addPlot} instead)
+     * @param {Array.&lt;Plot>} plots the data to overwrite by
+     * @private
+     */
+    _setPlots(plots) {
+        this._plots = plots;
+    }
+
+    /**
+     * all plots the player is associated with
+     * @type {Array.&lt;Plot>}
+     * @readonly
+     */
+    get plots() {
+        return this._plots || [];
+    }
+
+    /**
+     * adds a zone to the zonelist of the player
+     * @param {PlayerZone} zone the zone to add
+     */
+    addZone(zone) {
+        if (!PlayerZone.isPlayerZone(zone)) throw new Error('no PlayerZone');
+
+        if (!this._zones) this._zones = [];
+
+        this._zones.push(zone);
+
+        UwmcPlayer.eventEmitter.emit('newzone', {
+            player: this,
+            zone: zone
+        });
+    }
+
+    /**
+     * overwrites the zonelist to the value without checking the format (use {@link addZone} instead)
+     * @param {Array.&lt;PlayerZone>} zones the data to overwrite by
+     * @private
+     */
+    _setZones(zones) {
+        this._zones = zones;
+    }
+
+    /**
+     * all the zones the player owns
+     * @type {Array.&lt;PlayerZone>}
+     * @readonly
+     */
+    get zones() {
+        return this._zones || [];
+    }
+
+    /**
+     * adds a main map plot to the mainmapplotlist of the player
+     * @param {MainMapPlot} plot the {@link MainMapPlot} to add
+     */
+    addMainMapPlot(plot) {
+        if (!MainMapPlot.isMainMapPlot(plot)) throw new Error('no MainMapPlot');
+
+        if (!this._mainMapPlots) this._mainMapPlots = [];
+
+        this._mainMapPlots.push(plot);
+
+        UwmcPlayer.eventEmitter.emit('newmainmapplot', {
+            player: this,
+            plot: plot
+        });
+    }
+
+    /**
+     * overwrites the mainmapplotlist to the value without checking the format (use {@link addMainMapPlot} instead)
+     * @param {Array.&lt;MainMapPlot>} plots the data to overwrite by
+     * @private
+     */
+    _setMainMapPlots(plots) {
+        this._mainMapPlots = plots;
+    }
+
+    /**
+     * all the mainMapPlots the player owns
+     * @type {Array.&lt;MainMapPlot>}
+     * @readonly
+     */
+    get mainMapPlots() {
+        return this._mainMapPlots || [];
+    }
+
+    /**
+     * the days since the players lastPlayed date
+     * @type {int}
+     * @readonly
+     */
+    get daysSinceLastPlayed() {
+        return Math.floor(Math.abs(this.lastPlayed().getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+    }
+
+    /**
+     * is the player is active (eg. was online within the last 62 Days)
+     * @type {boolean}
+     * @readonly
+     */
+    get active() {
+        return this.daysSinceLastPlayed() &lt; 62;
+    }
+
+    /**
+     * converts the UwmcPlayer to JSON
+     * @return {Object} the converted data
+     */
+    toJson() {
+        return {
+            'uuid': this.uuid,
+            'name': this.name,
+            'rank': this.rank,
+            'ranks': this.rankHistory,
+            'boardId': this.boardId,
+            'votes': this.votes,
+            'zones': this.zones,
+            'plots': this.plots,
+            'mainMapPlots': this.mainMapPlots
+        };
+    }
+
+    /**
+     * converts the rank if  to the human readable version (name of the rank)
+     * @param {int} rank
+     * @return {string} the name of the rank
+     */
+    static rankToRankName(rank) {
+        switch (rank) {
+            case 10:
+                return 'Owner';
+            case 20:
+                return 'Dev';
+            case 30:
+                return 'Admin';
+            case 40:
+                return 'Mod';
+            case 45:
+                return 'Builder';
+            case 50:
+                return 'Buddy';
+            case 60:
+                return 'Guard';
+            case 70:
+                return 'Trusty';
+            case 80:
+                return 'Spieler';
+            case 90:
+                return 'Gast';
+            default:
+                return 'unknown';
+        }
+    }
+
+    /**
+     * the event emitter for the UwmcPlayer class (not the emitter for an instance of the UwmcPlayer)
+     * @type {UwmcPlayerEmitter}
+     * @readonly
+     */
+    static get eventEmitter() {
+        return emitter;
+    }
+}
+
+module.exports = UwmcPlayer;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CreatableZone.html">CreatableZone</a></li><li><a href="FreeZonesCalcRequest.html">FreeZonesCalcRequest</a></li><li><a href="Helper.html">Helper</a></li><li><a href="MainMapPlot.html">MainMapPlot</a></li><li><a href="MainMapPlotRequest.html">MainMapPlotRequest</a></li><li><a href="MainMapPlotStatRequest.html">MainMapPlotStatRequest</a></li><li><a href="MainMapZone.html">MainMapZone</a></li><li><a href="Player.html">Player</a></li><li><a href="PlayerListRequest.html">PlayerListRequest</a></li><li><a href="PlayerZone.html">PlayerZone</a></li><li><a href="Plot.html">Plot</a></li><li><a href="PlotListRequest.html">PlotListRequest</a></li><li><a href="Request.html">Request</a></li><li><a href="RuleRequest.html">RuleRequest</a></li><li><a href="ServerZone.html">ServerZone</a></li><li><a href="UwmcPlayer.html">UwmcPlayer</a></li><li><a href="UwmcTool.html">UwmcTool</a></li><li><a href="VoteListRequest.html">VoteListRequest</a></li><li><a href="Zone.html">Zone</a></li><li><a href="ZoneListRequest.html">ZoneListRequest</a></li><li><a href="ZoneMapStatRequest.html">ZoneMapStatRequest</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createStats">createStats</a></li><li><a href="global.html#getArea">getArea</a></li><li><a href="global.html#getCoords">getCoords</a></li><li><a href="global.html#getName">getName</a></li><li><a href="global.html#getNumber">getNumber</a></li><li><a href="global.html#getOwner">getOwner</a></li><li><a href="global.html#getTrusted">getTrusted</a></li><li><a href="global.html#isBetween">isBetween</a></li><li><a href="global.html#isInArea">isInArea</a></li><li><a href="global.html#totalZoneArea">totalZoneArea</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Fri Dec 30 2016 20:56:24 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

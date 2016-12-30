@@ -20,10 +20,9 @@ class PlayerListRequest extends Request {
 
     /**
      * executes the request, converts the data and saves it to the DB
-     * @param {Db} db the database the data should be saved in
      * @return {Promise} result of the database query
      */
-    execute(db) {
+    execute() {
         let req = this;
 
         return super.execute().then( function ( res ) {
@@ -42,7 +41,8 @@ class PlayerListRequest extends Request {
                 for ( let player of res.values() ) {
                     let p = new UwmcPlayer(player.uuid);
                     p.name = player.name;
-                    uwmcPlayers.push(PlayerListRequest._addPlayerListDataToPlayer(p, players.get(player.name.toLowerCase())));
+                    uwmcPlayers.push(
+                        PlayerListRequest._addPlayerListDataToPlayer(p, players.get(player.name.toLowerCase())));
                 }
                 return uwmcPlayers;
             } );
@@ -56,27 +56,6 @@ class PlayerListRequest extends Request {
      */
     get lastResponse() {
         return this._lastResponse;
-    }
-
-    /**
-     * saves the data about the player with the given uuid to the database
-     * @param {Db} db the database that should be used
-     * @param {string} uuid the uuid of the player
-     * @param {string} name the name of the player
-     * @param {object} data the data about the player
-     * @return {Promise.<UwmcPlayer>} the saved {@see UwmcPlayer
-     * @private
-     */
-    static _saveToDb(db, uuid, name, data){
-        return UwmcPlayer.createFromDb( db, uuid ).then( function( player ) {
-            player.name = name;
-
-            player = PlayerListRequest._addPlayerListDataToPlayer(player, data);
-
-            return player.saveToDb( db ).then(() => {
-                return player;
-            });
-        });
     }
 
     /*

@@ -36,7 +36,7 @@ class CreatableZone extends Zone {
     get deleted() {
         return this._deleted || false;
     }
-    set deleted( date ) {
+    set deleted(date) {
         if ( !( date instanceof Date || date instanceof Boolean) )
             throw new Error( 'No Date' );
 

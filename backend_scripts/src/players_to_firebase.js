@@ -41,7 +41,9 @@ const MongoClient = require( 'mongodb' ).MongoClient;
 
             for(let year in item.votes) {
                 for(let month in item.votes[year]) {
-                    playerRef.child('votes').child(`${year}-${parseInt(month) + 1}`).set([
+                    let n = parseInt(month) + 1;
+
+                    playerRef.child('votes').child(`${year}-${(n < 10) ? ("0" + n) : n}`).set([
                         item.votes[year][month].v1,
                         item.votes[year][month].v2,
                     ]);

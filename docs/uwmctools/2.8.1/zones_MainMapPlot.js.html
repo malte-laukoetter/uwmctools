@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: zones/MainMapPlot.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: zones/MainMapPlot.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const config = require('../config.json');
+
+const MainMapZone = require('./MainMapZone');
+const Player = require('../player/Player');
+
+/**
+ * a plot in one of the plot areas of the mainmap of unlimitedworld
+ */
+class MainMapPlot extends MainMapZone {
+    /**
+     * constructor for a MainMapPlot
+     * @param {string} id the id of the plot (eg. uwzone_23131)
+     * @param {string} area the area where the plot is located (eg. Neustadt)
+     * @param {int} number the plot number in the area
+     * @param {int} x1 the x1 coordinate of the area
+     * @param {int} x2 the x2 coordinate of the area
+     * @param {int} z1 the z1 coordinate of the area
+     * @param {int} z2 the z2 coordinate of the area
+     */
+    constructor(id = '', area = '', number = 0, x1 = 0, x2 = 0, z1 = 0, z2 = 0) {
+        super(id, x1, x2, z1, z2, 'MainMapPlot');
+
+        this._number = number;
+        this._area = area;
+
+        this._previousOwners = new Set();
+    }
+
+    /**
+     * adds the player as a owner of the zone
+     * @param {Player} player the new owner
+     * @param {Date} fromDate the date since the player is / was the owner
+     * @param {Date} tillDate the date till the player is / was the owner
+     */
+    addOwner(player, fromDate, tillDate) {
+        if (!Player.isPlayer(player)) throw new Error('no Player');
+
+        this._previousOwners.add({
+            player: player,
+            from: fromDate,
+            till: tillDate
+        });
+    }
+
+    /**
+     * a set of the previous owners of the plot
+     * @type {Set.&lt;Object>}
+     * @property {Player} obj.player the previous owner
+     * @property {Date} obj.fromDate the date since the player is / was the previous owner
+     * @property {Date} obj.tillDate the date till the player is / was the previous owner
+     * @readonly
+     */
+    get previousOwners() {
+        return this._previousOwners;
+    }
+
+    /**
+     * overwrites the set of previousOwners to the value without checking the format (use addOwner instead)
+     * @param {Set} previousOwners the previous owners in the format {player: UwmcPlayer, from: Date, till: Date}
+     * @private
+     */
+    _setPreviousOwners(previousOwners) {
+        this._previousOwners = previousOwners;
+    }
+
+    /**
+     * the player that ones the plot, false if no one owns it
+     * @type {Player|boolean}
+     * @readonly
+     */
+    get owner() {
+        // the current owner doesn't have a till date
+        for (let owner of this.previousOwners) {
+            if (!owner.till) return owner.player;
+        }
+
+        return false;
+    }
+
+    /**
+     * the number of the plot in the area
+     * @type {int}
+     */
+    get number() {
+        return this._number;
+    }
+    set number(number) {
+        this._number = number;
+    }
+
+    /**
+     * the area the plot is placed in (eg. Neustadt)
+     * @type {string}
+     */
+    get area() {
+        return this._area;
+    }
+    set area(area) {
+        this._area = area;
+    }
+
+    /**
+     * the name of the MainMapPlot like it is viewed on the dynmap (Area Number)
+     * @type {string}
+     * @readonly
+     */
+    get name() {
+        return `${ this.area } ${ this.number }`;
+    }
+
+    /**
+     * if the zone has an owner or not
+     * @type {boolean}
+     * @readonly
+     */
+    get owned() {
+        for (let owner of this.previousOwners) {
+            if (!owner.till) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * checks if the value is an instanceof MainMapPlot
+     * @param {Object} plot
+     * @return {boolean} true if the plot is a MainMapPlot
+     */
+    static isMainMapPlot(plot) {
+        return plot instanceof MainMapPlot;
+    }
+}
+
+module.exports = MainMapPlot;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CreatableZone.html">CreatableZone</a></li><li><a href="FreeZonesCalcRequest.html">FreeZonesCalcRequest</a></li><li><a href="Helper.html">Helper</a></li><li><a href="MainMapPlot.html">MainMapPlot</a></li><li><a href="MainMapPlotRequest.html">MainMapPlotRequest</a></li><li><a href="MainMapPlotStatRequest.html">MainMapPlotStatRequest</a></li><li><a href="MainMapZone.html">MainMapZone</a></li><li><a href="Player.html">Player</a></li><li><a href="PlayerListRequest.html">PlayerListRequest</a></li><li><a href="PlayerZone.html">PlayerZone</a></li><li><a href="Plot.html">Plot</a></li><li><a href="PlotListRequest.html">PlotListRequest</a></li><li><a href="Request.html">Request</a></li><li><a href="RuleRequest.html">RuleRequest</a></li><li><a href="ServerZone.html">ServerZone</a></li><li><a href="UwmcPlayer.html">UwmcPlayer</a></li><li><a href="UwmcTool.html">UwmcTool</a></li><li><a href="VoteListRequest.html">VoteListRequest</a></li><li><a href="Zone.html">Zone</a></li><li><a href="ZoneListRequest.html">ZoneListRequest</a></li><li><a href="ZoneMapStatRequest.html">ZoneMapStatRequest</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createStats">createStats</a></li><li><a href="global.html#getArea">getArea</a></li><li><a href="global.html#getCoords">getCoords</a></li><li><a href="global.html#getName">getName</a></li><li><a href="global.html#getNumber">getNumber</a></li><li><a href="global.html#getOwner">getOwner</a></li><li><a href="global.html#getTrusted">getTrusted</a></li><li><a href="global.html#isBetween">isBetween</a></li><li><a href="global.html#isInArea">isInArea</a></li><li><a href="global.html#totalZoneArea">totalZoneArea</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Fri Dec 30 2016 20:56:24 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const PlayerListRequest = require('./requests/PlayerListRequest');
+const ZoneListRequest = require('./requests/ZoneListRequest');
+const PlotListRequest = require('./requests/PlotListRequest');
+const VoteListRequest = require('./requests/VoteListRequest');
+const FreeZonesCalcRequest = require('./requests/FreeZonesCalcRequest');
+const MainMapPlotRequest = require('./requests/MainMapPlotRequest');
+const ZoneMapStatRequest = require('./requests/ZoneMapStatRequest');
+const MainMapPlotStatRequest = require('./requests/MainMapPlotStatRequest');
+const RuleRequest = require('./requests/RuleRequest');
+const UwmcPlayer = require('./player/UwmcPlayer');
+const Player = require('./player/Player');
+const MainMapZone = require('./zones/MainMapZone');
+const PlayerZone = require('./zones/PlayerZone');
+const Plot = require('./zones/Plot');
+const ServerZone = require('./zones/ServerZone');
+const Zone = require('./zones/Zone');
+
+/**
+ * Main Class of the uwmc tools
+ */
+class UwmcTool {
+    /**
+     * creates a new UwmcTool
+     */
+    constructor() {
+        this._playerListRequest = new PlayerListRequest();
+        this._zoneListRequest = new ZoneListRequest();
+        this._plotListRequest = new PlotListRequest();
+        this._voteListRequest = new VoteListRequest();
+        this._freeZonesCalcRequest = new FreeZonesCalcRequest();
+        this._mainMapPlotRequest = new MainMapPlotRequest();
+        this._zoneMapStatRequest = new ZoneMapStatRequest();
+        this._mainMapPlotStatRequest = new MainMapPlotStatRequest();
+        this._ruleRequest = new RuleRequest();
+    }
+
+    /**
+     * gets the data from the playerlist
+     * @return {Promise.&lt;*>} the response of {@see PlayerListRequest#execute}
+     */
+    getPlayerListData() {
+        return this._playerListRequest.execute();
+    }
+
+    /**
+     * gets the data about the zones
+     * @return {Promise.&lt;*>} the response of {@see ZoneListRequest#execute}
+     */
+    getZoneListData() {
+        return this._zoneListRequest.execute();
+    }
+
+    /**
+     * gets the data about the plots
+     * @return {Promise.&lt;*>} the response of {@see PlotListRequest#execute}
+     */
+    getPlotListData() {
+        return this._plotListRequest.execute();
+    }
+
+    /**
+     * save the data from the votelist
+     * @return {Promise.&lt;*>} the response of {@see VoteListRequest#execute}
+     */
+    getVoteListData() {
+        return this._voteListRequest.execute();
+    }
+
+    /**
+     * save the data about the main map plots
+     * @return {Promise.&lt;*>} the response of {@see MainMapPlotRequest#execute}
+     */
+    getMainMapPlotData() {
+        return this._mainMapPlotRequest.execute();
+    }
+
+    /**
+     * save the statistic data about the zones of the main map
+     * @return {Promise.&lt;*>} the response of {@see ZoneMapStatRequest#execute}
+     */
+    getZoneMapStatData() {
+        return this._zoneMapStatRequest.execute();
+    }
+
+    /**
+     * save the statistic data about the plots of the main map
+     * @return {Promise.&lt;*>} the response of {@see MainMapPlotStatRequest#execute}
+     */
+    getMainMapPlotStatData() {
+        return this._mainMapPlotStatRequest.execute();
+    }
+
+    /**
+     * get the current rules
+     * @return {Promise.&lt;*>} the response of {@see RuleRequest#execute}
+     */
+    getRuleData() {
+        return this._ruleRequest.execute();
+    }
+
+    /**
+     * gets all free Zones of the given length and width
+     * @param {int} length the length of the free areas to find
+     * @param {int} width the width of the free areas to find
+     * @return {Promise.&lt;Array.&lt;Zone>>} the free areas
+     */
+    getFreeZones(length, width) {
+        return this._freeZonesCalcRequest.execute(length, width);
+    }
+
+    /*
+     * converts the rank id of an rank to the coresponding name
+     */
+    static rankToRankName(rank) {
+        return UwmcPlayer.rankToRankName(rank);
+    }
+
+    /**
+     * the UwmcPlayer class
+     * @Type {Class}
+     * @readonly
+     */
+    static get UwmcPlayer() {
+        return UwmcPlayer;
+    }
+
+    /**
+     * the Player class
+     * @Type {Class}
+     * @readonly
+     */
+    static get Player() {
+        return Player;
+    }
+
+    /**
+     * the MainMapZone class
+     * @Type {Class}
+     * @readonly
+     */
+    static get MainMapZone() {
+        return MainMapZone;
+    }
+
+    /**
+     * the PlayerZone class
+     * @Type {Class}
+     * @readonly
+     */
+    static get PlayerZone() {
+        return PlayerZone;
+    }
+
+    /**
+     * the Plot class
+     * @Type {Class}
+     * @readonly
+     */
+    static get Plot() {
+        return Plot;
+    }
+
+    /**
+     * the ServerZone class
+     * @Type {Class}
+     * @readonly
+     */
+    static get ServerZone() {
+        return ServerZone;
+    }
+
+    /**
+     * the Zone class
+     * @Type {Class}
+     * @readonly
+     */
+    static get Zone() {
+        return Zone;
+    }
+}
+
+/**
+ * main module of the uwmctools
+ * @type {UwmcTool}
+ */
+module.exports = UwmcTool;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CreatableZone.html">CreatableZone</a></li><li><a href="FreeZonesCalcRequest.html">FreeZonesCalcRequest</a></li><li><a href="Helper.html">Helper</a></li><li><a href="MainMapPlot.html">MainMapPlot</a></li><li><a href="MainMapPlotRequest.html">MainMapPlotRequest</a></li><li><a href="MainMapPlotStatRequest.html">MainMapPlotStatRequest</a></li><li><a href="MainMapZone.html">MainMapZone</a></li><li><a href="Player.html">Player</a></li><li><a href="PlayerListRequest.html">PlayerListRequest</a></li><li><a href="PlayerZone.html">PlayerZone</a></li><li><a href="Plot.html">Plot</a></li><li><a href="PlotListRequest.html">PlotListRequest</a></li><li><a href="Request.html">Request</a></li><li><a href="RuleRequest.html">RuleRequest</a></li><li><a href="ServerZone.html">ServerZone</a></li><li><a href="UwmcPlayer.html">UwmcPlayer</a></li><li><a href="UwmcTool.html">UwmcTool</a></li><li><a href="VoteListRequest.html">VoteListRequest</a></li><li><a href="Zone.html">Zone</a></li><li><a href="ZoneListRequest.html">ZoneListRequest</a></li><li><a href="ZoneMapStatRequest.html">ZoneMapStatRequest</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createStats">createStats</a></li><li><a href="global.html#getArea">getArea</a></li><li><a href="global.html#getCoords">getCoords</a></li><li><a href="global.html#getName">getName</a></li><li><a href="global.html#getNumber">getNumber</a></li><li><a href="global.html#getOwner">getOwner</a></li><li><a href="global.html#getTrusted">getTrusted</a></li><li><a href="global.html#isBetween">isBetween</a></li><li><a href="global.html#isInArea">isInArea</a></li><li><a href="global.html#totalZoneArea">totalZoneArea</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Fri Dec 30 2016 20:56:24 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

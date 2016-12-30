@@ -1,18 +1,4 @@
 {
-    "MONGODB": {
-        "DATABASE": {
-            "UWMC": {
-                "NAME": "uwmc",
-                "COLLECTION": {
-                    "PLAYERS": "players",
-                    "ZONES": "zones",
-                    "PLOTS": "plots",
-                    "MAPSTATS": "mapstats",
-                    "MAINMAP_PLOTS": "mainmap_plots"
-                }
-            }
-        }
-    },
     "URLS": {
         "UWMC": {
             "ZONELIST_MAIN": "https://unlimitedworld.de/dynmap/tiles/_markers_/marker_main.json",

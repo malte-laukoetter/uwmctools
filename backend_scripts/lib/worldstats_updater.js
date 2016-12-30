@@ -21,7 +21,6 @@ _asyncToGenerator(function* () {
 
     for (let area in worldStats) {
         if ({}.hasOwnProperty.call(worldStats, area)) {
-            console.log(worldStats[area]);
             const timelineAreaRef = timelineRef.child(area);
             const currentAreaRef = currentRef.child(area);
 

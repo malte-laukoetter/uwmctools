@@ -14,9 +14,33 @@ const MongoClient = require( 'mongodb' ).MongoClient;
 
     const db = await MongoClient.connect(''); //TODO: add MongoDb Url
 
-    const data = await db.collection('plots').find(
-        {x: {$ne: null}, z: {$ne: null}, owner: {$ne: null}, pos: {$ne: null}},
-        {x: 1, z: 1, owner: 1, pos: 1, trusted: 1, created: 1, deleted: 1, _id: 0}).toArray();
+    const data = await db.collection('plots').aggregate([{
+        $group: {
+            '_id': {
+                'x': '$x',
+                'z': '$z',
+            },
+            'x': {
+                $last: '$data',
+            },
+            'z': {
+                $last: '$data',
+            },
+            'owner': {
+                $last: '$data',
+            },
+            'pos': {
+                $last: '$data',
+            },
+            'trusted': {
+                $last: '$data',
+            },
+            'created': {
+                $last: '$data',
+            },
+        },
+    }]).toArray();
+
 
     try {
         for (let item of data) {
@@ -25,9 +49,6 @@ const MongoClient = require( 'mongodb' ).MongoClient;
 
             if(item.created)
                 plotRef.child('created').set(item.created.getTime());
-
-            if(item.deleted)
-                plotRef.child('deleted').set(item.deleted.getTime());
 
             if(item.owner) {
                 plotRef.child('owner').set(item.owner.id);

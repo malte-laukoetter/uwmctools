@@ -22,7 +22,8 @@ _asyncToGenerator(function* () {
 
         for (let year in player.votes) {
             for (let month in player.votes[year]) {
-                playerVoteDataRef.child(`${ year }-${ parseInt(month) + 1 }`).set([player.votes[year][month].v1, player.votes[year][month].v2]);
+                let n = parseInt(month) + 1;
+                playerVoteDataRef.child(`${ year }-${ n < 10 ? '0' + n : n }`).set([player.votes[year][month].v1, player.votes[year][month].v2]);
             }
         }
     });

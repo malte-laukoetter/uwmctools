@@ -4,7 +4,7 @@ const Request = require( './Request' );
 const mainMapPlotConverter = require('../converter/MainMapPlotConverter');
 
 /**
- * request to get the data from the dynmap and calculates all free areas
+ * request to get the data from the dynmap and generates the main map plots
  */
 class MainMapPlotRequest extends Request {
     /**
@@ -15,8 +15,8 @@ class MainMapPlotRequest extends Request {
     }
 
     /**
-     * executes the request, converts the data and saves the player zones to the database
-     * @return {Promise} result of the database query
+     * executes the request, converts the data and returns the main map plots
+     * @return {Promise} the main map plots
      */
     execute() {
         return super.execute().then( function( res ) {

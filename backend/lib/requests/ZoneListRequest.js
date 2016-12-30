@@ -4,8 +4,7 @@ const Request = require('./Request');
 const playerZoneConverter = require('../converter/MainMapPlayerZoneConverter');
 
 /**
- * request to get the data about the zones from the dynmap of uwmc.de it also converts the data and saves the player
- * zones to the database
+ * request to get the data about the zones from the dynmap of uwmc.de it also converts the data
  */
 class ZoneListRequest extends Request {
     /**
@@ -18,9 +17,8 @@ class ZoneListRequest extends Request {
     }
 
     /**
-     * executes the request, converts the data and saves the player zones to the database
-     * @param {Db} db the database the data should be saved in
-     * @return {Promise} result of the database query
+     * executes the request, converts the data and returns the player zones
+     * @return {Promise} the zone list
      */
     execute() {
         return super.execute().then(function (res) {

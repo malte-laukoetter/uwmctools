@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: converter/MainMapPlotConverter.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: converter/MainMapPlotConverter.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+const zoneConverter = require('./MainMapZoneConverter');
+const MainMapPlot = require('../zones/MainMapPlot');
+const Player = require('../player/Player');
+const playerConverter = require('./PlayerConverter');
+
+/**
+ * generates the name of the owner of a main map plot from the label of a main map plot from the dynmap
+ * @param {object} data the data of the dynmap about the plot
+ * @return {boolean|string} the name of the owner or false if the plot dosn't have an owner
+ */
+function getOwner(data) {
+    const label = data.label;
+    const owner = label.split('font-weight:bold">')[1].split('&lt;/span')[0];
+
+    return owner === 'Plot verfügbar' ? false : owner.toLowerCase();
+}
+
+/**
+ * generates the name of a main map plot from the label of a main map plot from the dynmap
+ * @param {object} data the data of the dynmap about the plot
+ * @return {string} the name of the plot
+ */
+function getName(data) {
+    return data.label.split('font-size:16px">')[1].split('&lt;/p')[0];
+}
+
+/**
+ * generates the areas the plot is located in
+ * @param {object} data the data of the dynmap about the plot
+ * @return {string} the name of the area
+ */
+function getArea(data) {
+    return getName(data).split(/ /)[0];
+}
+
+/**
+ * generates the number of the plot
+ * @param {object} data the data of the dynmap about the plot
+ * @return {int} the number of the plot
+ */
+function getNumber(data) {
+    return getName(data).split(/ /)[1];
+}
+
+module.exports = (() => {
+    var _ref = _asyncToGenerator(function* (data, Type = MainMapPlot) {
+        const zoneList = zoneConverter(data, Type);
+        const playerNames = Object.values(data).map(getOwner);
+        const players = yield playerConverter(playerNames);
+
+        return zoneList.map(function (zone) {
+            const owner = getOwner(data[zone.id]);
+
+            if (owner) {
+                if (players.has(owner)) {
+                    zone.addOwner(players.get(owner), new Date(), null);
+                } else {
+                    zone.addOwner(new Player(), new Date(), null);
+                }
+            }
+
+            return zone;
+        }).map(function (zone) {
+            zone.area = getArea(data[zone.id]);
+            return zone;
+        }).map(function (zone) {
+            zone.number = getNumber(data[zone.id]);
+            return zone;
+        });
+    });
+
+    return function (_x) {
+        return _ref.apply(this, arguments);
+    };
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CreatableZone.html">CreatableZone</a></li><li><a href="FreeZonesCalcRequest.html">FreeZonesCalcRequest</a></li><li><a href="Helper.html">Helper</a></li><li><a href="MainMapPlot.html">MainMapPlot</a></li><li><a href="MainMapPlotRequest.html">MainMapPlotRequest</a></li><li><a href="MainMapPlotStatRequest.html">MainMapPlotStatRequest</a></li><li><a href="MainMapZone.html">MainMapZone</a></li><li><a href="Player.html">Player</a></li><li><a href="PlayerListRequest.html">PlayerListRequest</a></li><li><a href="PlayerZone.html">PlayerZone</a></li><li><a href="Plot.html">Plot</a></li><li><a href="PlotListRequest.html">PlotListRequest</a></li><li><a href="Request.html">Request</a></li><li><a href="RuleRequest.html">RuleRequest</a></li><li><a href="ServerZone.html">ServerZone</a></li><li><a href="UwmcPlayer.html">UwmcPlayer</a></li><li><a href="UwmcTool.html">UwmcTool</a></li><li><a href="VoteListRequest.html">VoteListRequest</a></li><li><a href="Zone.html">Zone</a></li><li><a href="ZoneListRequest.html">ZoneListRequest</a></li><li><a href="ZoneMapStatRequest.html">ZoneMapStatRequest</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createStats">createStats</a></li><li><a href="global.html#getArea">getArea</a></li><li><a href="global.html#getCoords">getCoords</a></li><li><a href="global.html#getName">getName</a></li><li><a href="global.html#getNumber">getNumber</a></li><li><a href="global.html#getOwner">getOwner</a></li><li><a href="global.html#getTrusted">getTrusted</a></li><li><a href="global.html#isBetween">isBetween</a></li><li><a href="global.html#isInArea">isInArea</a></li><li><a href="global.html#totalZoneArea">totalZoneArea</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Fri Dec 30 2016 20:56:24 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

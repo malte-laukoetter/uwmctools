@@ -6,8 +6,7 @@ const Plot = require( '../zones/Plot' );
 const plotConverter = require('../converter/PlotConverter');
 
 /**
- * request to get the data about the plots from the dynmap of uwmc.de it also converts the data and saves the plots to
- * the database
+ * request to get the data about the plots from the dynmap of uwmc.de it also converts the data
  */
 class PlotListRequest extends Request {
     /**
@@ -19,7 +18,7 @@ class PlotListRequest extends Request {
 
     /**
      * executes the request and converts the data
-     * @return {Promise} result of the database query
+     * @return {Promise} the plot list
      */
     execute() {
         return super.execute().then( function( res ) {

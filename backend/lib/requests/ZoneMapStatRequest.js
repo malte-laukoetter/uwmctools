@@ -87,11 +87,10 @@ class ZoneMapStatRequest extends Request {
     }
 
     /**
-     * executes the request, converts the data, saves it to the database and returns the statistic data
-     * @param {Db} db the database the data should be saved in
+     * executes the request and converts the data
      * @return {Promise} the current statistics
      * */
-    execute(db) {
+    execute() {
         return super.execute().then((() => {
             var _ref = _asyncToGenerator(function* (res) {
                 const zoneListData = [yield playerZoneConverter(res.body.sets.Spielerzonen.areas), serverZoneConverter(res.body.sets.Serverzonen.areas)];

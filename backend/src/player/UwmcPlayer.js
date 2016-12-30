@@ -1,4 +1,3 @@
-const assert = require('assert');
 const EventEmitter = require('events');
 
 const config = require('../config.json');
@@ -277,38 +276,6 @@ class UwmcPlayer extends Player {
     }
 
     /**
-     * saves the data of this player to the database or updates it if there is already a player
-     * with this uuid in the database
-     * @param {Db} db the database to use
-     * @return {Promise} the result of the db query
-     */
-    saveToDb(db) {
-        let player = this;
-        return new Promise(function (resolve, reject) {
-            db.collection(config.MONGODB.DATABASE.UWMC.COLLECTION.PLAYERS).updateOne({
-                    uuid: player.uuid,
-                }, {
-                    $set: {
-                        name: player.name,
-                        boardId: player.boardId,
-                        rank: player.rank,
-                        lastPlayed: player.lastPlayed,
-                        ranks: player.rankHistory,
-                        votes: player.votes,
-                    },
-                }, {
-                    upsert: true,
-                },
-                function(err, results) {
-                    if (err)
-                        reject(err);
-
-                    resolve(results);
-                });
-        });
-    }
-
-    /**
      * converts the UwmcPlayer to JSON
      * @return {Object} the converted data
      */
@@ -324,90 +291,6 @@ class UwmcPlayer extends Player {
             'plots': this.plots,
             'mainMapPlots': this.mainMapPlots,
         };
-    }
-
-    /**
-     * gets the data of the player with the given uuid from the database and creates a new UwmcPlayer object with it.
-     * If there is no data about this player in the database it returns a UwmcPlayer object with just the given uuid.
-     *
-     * @param {Db} db the database to use
-     * @param {string} uuid the uuid of the player
-     * @return {Promise.<UwmcPlayer>} the player that is created form the database
-     */
-    static createFromDb(db, uuid) {
-        return new Promise(function(resolve, reject) {
-            db.collection(config.MONGODB.DATABASE.UWMC.COLLECTION.PLAYERS).aggregate(
-                [{
-                    $match: {
-                        'uuid': uuid,
-                    },
-                }, {
-                    $lookup: {
-                        from: config.MONGODB.DATABASE.UWMC.COLLECTION.ZONES,
-                        localField: 'uuid',
-                        foreignField: 'owner.id',
-                        as: 'zones',
-                    },
-                }, {
-                    $lookup: {
-                        from: config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS,
-                        localField: 'uuid',
-                        foreignField: 'owner.id',
-                        as: 'plots_owned',
-                    },
-                }, {
-                    $lookup: {
-                        from: config.MONGODB.DATABASE.UWMC.COLLECTION.PLOTS,
-                        localField: 'uuid',
-                        foreignField: 'trusted._uuid',
-                        as: 'plots_trusted',
-                    },
-                }, {
-                    $lookup: {
-                        from: config.MONGODB.DATABASE.UWMC.COLLECTION.MAINMAP_PLOTS,
-                        localField: 'uuid',
-                        foreignField: 'previousOwners.player._uuid',
-                        as: 'mainMapPlots',
-                    },
-                }, {
-                    $project: {
-                        _id: 0,
-                        uuid: 1,
-                        name: 1,
-                        rank: 1,
-                        ranks: 1,
-                        boardId: 1,
-                        votes: 1,
-                        lastPlayed: 1,
-                        zones: 1,
-                        mainMapPlots: 1,
-                        plots: {
-                            $concatArrays: ['$plots_owned', '$plots_trusted'],
-                        },
-                    },
-                }])
-            .next(function(err, data) {
-                assert.equal(err, null);
-
-                if (data && data.uuid) {
-                    let player = new UwmcPlayer(data.uuid);
-
-                    player.name = data.name;
-                    player.rank = data.rank;
-                    player.boardId = data.boardId;
-                    player.lastPlayed = data.lastPlayed;
-                    player._setVotes(data.votes || {});
-                    player._setRankHistory(data.ranks || []);
-                    player._setZones(data.zones);
-                    player._setPlots(data.plots);
-                    player._setMainMapPlots(data.mainMapPlots);
-
-                    resolve(player);
-                } else {
-                    resolve(new UwmcPlayer(uuid));
-                }
-            });
-        });
     }
 
     /**

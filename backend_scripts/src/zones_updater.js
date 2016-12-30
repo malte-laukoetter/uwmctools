@@ -9,24 +9,35 @@ const UwmcTools = require('uwmctools');
 
     const db = firebase.database();
     const dataRef = db.ref('uwmctools/zones/data');
+    const listRef = db.ref('uwmctools/zones/list');
     const playerRef = db.ref('uwmctools/players/data');
 
     const uwmcTool = new UwmcTools('');
 
     const zoneListData = await uwmcTool.getZoneListData();
+    listRef.once('value', function(arr) {
+        let oldZoneSet = arr ? new Set(arr.val()) : [];
 
-    zoneListData.forEach((zone) => {
-        let zoneDataRef = dataRef.child(zone.id);
-
-        zoneDataRef.child('created').once('value', function(data) {
-            if(!data.val()) {
+        zoneListData.forEach((zone) => {
+            let zoneDataRef = dataRef.child(zone.id);
+            if(!oldZoneSet.has(zone.id)) {
                 zoneDataRef.child('pos').set(zone.pos);
                 zoneDataRef.child('number').set(zone.number);
                 zoneDataRef.child('created').set(new Date().getTime());
                 zoneDataRef.child('owner').set(zone.player.uuid);
                 playerRef.child(zone.player.uuid).child('zones').child(zone.id).set(true);
+            }else{
+                oldZoneSet.delete(zone.id);
             }
         });
+
+        oldZoneSet.forEach((zoneId) => {
+            let zoneDataRef = dataRef.child(zoneId);
+
+            zoneDataRef.child('deleted').set(new Date().getTime())
+        });
+
+        listRef.set(zoneListData.map((zone) => zone.id));
     });
 })();
 

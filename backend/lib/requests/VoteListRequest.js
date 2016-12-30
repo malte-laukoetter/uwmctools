@@ -6,7 +6,7 @@ const UwmcPlayer = require('../player/UwmcPlayer');
 const Helper = require('../Helper');
 
 /**
- * request to get the data about the votes of unlimitedworld and saves them to the playerobjects of the database
+ * request to get the data about the votes of unlimitedworld
  */
 class VoteListRequest extends Request {
     /**
@@ -17,9 +17,8 @@ class VoteListRequest extends Request {
     }
 
     /**
-     * executes the request, converts the data and saves it to the DB
-     * @param {Db} db the database the data should be saved in
-     * @return {Promise} result of the database query
+     * executes the request and converts the data
+     * @return {Promise} the votelist
      */
     execute() {
         return super.execute().then(function (res) {

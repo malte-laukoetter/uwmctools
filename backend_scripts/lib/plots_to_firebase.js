@@ -14,8 +14,36 @@ _asyncToGenerator(function* () {
     const plotsRef = fdb.ref('uwmctools/plots/data');
 
     const db = yield MongoClient.connect(''); //TODO: add MongoDb Url
-
-    const data = yield db.collection('plots').find({ x: { $ne: null }, z: { $ne: null }, owner: { $ne: null }, pos: { $ne: null } }, { x: 1, z: 1, owner: 1, pos: 1, trusted: 1, created: 1, deleted: 1, _id: 0 }).toArray();
+    /*
+        const data = await db.collection('plots').find(
+            {x: {$ne: null}, z: {$ne: null}, owner: {$ne: null}, pos: {$ne: null}},
+            {x: 1, z: 1, owner: 1, pos: 1, trusted: 1, created: 1, _id: 0}).toArray();*/
+    const data = yield db.collection('plots').aggregate([{
+        $group: {
+            '_id': {
+                'x': '$x',
+                'z': '$z'
+            },
+            'x': {
+                $last: '$data'
+            },
+            'z': {
+                $last: '$data'
+            },
+            'owner': {
+                $last: '$data'
+            },
+            'pos': {
+                $last: '$data'
+            },
+            'trusted': {
+                $last: '$data'
+            },
+            'created': {
+                $last: '$data'
+            }
+        }
+    }]).toArray();
 
     try {
         for (let item of data) {
@@ -23,8 +51,6 @@ _asyncToGenerator(function* () {
             let plotRef = plotsRef.child(plotId);
 
             if (item.created) plotRef.child('created').set(item.created.getTime());
-
-            if (item.deleted) plotRef.child('deleted').set(item.deleted.getTime());
 
             if (item.owner) {
                 plotRef.child('owner').set(item.owner.id);

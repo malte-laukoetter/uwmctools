@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: zones/Plot.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: zones/Plot.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const config = require('../config.json');
+
+const Zone = require('./Zone');
+const Player = require('../player/Player');
+const CreatableZone = require('./CreatableZone');
+
+/**
+ * a Plot of the Creative Map of unlimitedworld
+ */
+class Plot extends CreatableZone {
+    /**
+     * creates a new Plot of the creative map
+     * @param {int} x1 the x1 coordinate of the plot
+     * @param {int} x2 the x2 coordinate of the plot
+     * @param {int} z1 the z1 coordinate of the plot
+     * @param {int} z2 the z2 coordinate of the plot
+     * @param {int} posX the x position of the plot in the creative world
+     * @param {int} posZ the z position of the plot in the creative world
+     */
+    constructor(x1 = 0, x2 = 0, z1 = 0, z2 = 0, posX = 0, posZ = 0) {
+        super(x1, x2, z1, z2);
+
+        this._posX = posX;
+        this._posZ = posZ;
+    }
+
+    /**
+     * the id of the plot (something like "ebdf264aabda45708f61f2d7a2bb4758-3/-6")
+     * @type {string}
+     * @readonly
+     */
+    get id() {
+        return `${ this.posX }|${ this.posZ }`;
+    }
+    set id(id) {
+        this._id = id;
+    }
+
+    /**
+     * the player that owns the plot
+     * @type {Player}
+     * @readonly
+     */
+    get owner() {
+        return this._owner;
+    }
+    set owner(player) {
+        this._owner = player;
+    }
+
+    /**
+     * adds a player to the list of trusted players
+     * @param {Player} player the player that should be added
+     */
+    addTrusted(player) {
+        if (!Player.isPlayer(player)) throw new Error('no Player');
+
+        if (!this._trusted) this._trusted = [];
+
+        this._trusted.push(player);
+    }
+
+    /**
+     * all trusted players of the plot
+     * @type {Array.&lt;Player>}
+     * @readonly
+     */
+    get trusted() {
+        return this._trusted || [];
+    }
+
+    /**
+     * the name of the zone like it is viewed on the dynmap (X/Z)
+     * @type {string}
+     * @readonly
+     */
+    get name() {
+        return `${ this.plotPos.x }/${ this.plotPos.z }`;
+    }
+
+    /**
+     * the x coordinate of plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
+     * @type {int}
+     */
+    get posX() {
+        return this._posX;
+    }
+    set posX(posX) {
+        this._posX = posX;
+    }
+
+    /**
+     * gets the z coordinate of the plot position (e.g. 0 for the one in the center or 1 for one of the zone next to it)
+     * @type {int}
+     */
+    get posZ() {
+        return this._posZ;
+    }
+    set posZ(posZ) {
+        this._posZ = posZ;
+    }
+
+    /**
+     * test if it is a Plot
+     * @param {Object} plot the Object that should be tested
+     * @return {boolean} true if the object is a Plot
+     */
+    static isPlot(plot) {
+        return plot instanceof Plot;
+    }
+}
+
+module.exports = Plot;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CreatableZone.html">CreatableZone</a></li><li><a href="FreeZonesCalcRequest.html">FreeZonesCalcRequest</a></li><li><a href="Helper.html">Helper</a></li><li><a href="MainMapPlot.html">MainMapPlot</a></li><li><a href="MainMapPlotRequest.html">MainMapPlotRequest</a></li><li><a href="MainMapPlotStatRequest.html">MainMapPlotStatRequest</a></li><li><a href="MainMapZone.html">MainMapZone</a></li><li><a href="Player.html">Player</a></li><li><a href="PlayerListRequest.html">PlayerListRequest</a></li><li><a href="PlayerZone.html">PlayerZone</a></li><li><a href="Plot.html">Plot</a></li><li><a href="PlotListRequest.html">PlotListRequest</a></li><li><a href="Request.html">Request</a></li><li><a href="RuleRequest.html">RuleRequest</a></li><li><a href="ServerZone.html">ServerZone</a></li><li><a href="UwmcPlayer.html">UwmcPlayer</a></li><li><a href="UwmcTool.html">UwmcTool</a></li><li><a href="VoteListRequest.html">VoteListRequest</a></li><li><a href="Zone.html">Zone</a></li><li><a href="ZoneListRequest.html">ZoneListRequest</a></li><li><a href="ZoneMapStatRequest.html">ZoneMapStatRequest</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createStats">createStats</a></li><li><a href="global.html#getArea">getArea</a></li><li><a href="global.html#getCoords">getCoords</a></li><li><a href="global.html#getName">getName</a></li><li><a href="global.html#getNumber">getNumber</a></li><li><a href="global.html#getOwner">getOwner</a></li><li><a href="global.html#getTrusted">getTrusted</a></li><li><a href="global.html#isBetween">isBetween</a></li><li><a href="global.html#isInArea">isInArea</a></li><li><a href="global.html#totalZoneArea">totalZoneArea</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Fri Dec 30 2016 20:56:24 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
