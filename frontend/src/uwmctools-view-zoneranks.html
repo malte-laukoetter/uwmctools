@@ -1,0 +1,359 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script>
+
+<link rel="import" href="uwmctools-search-bar.html">
+<link rel="import" href="uwmctools-footer.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="uwmctools-view-zoneranks">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+        --app-grid-columns: 2;
+      }
+
+      @media (max-width: 1300px) {
+        :host {
+          --app-grid-columns: 1;
+        }
+      }
+
+      paper-listbox {
+          width: calc(100% - 20px);
+          float: left;
+          margin: 10px;
+      }
+
+      paper-input {
+        background-color: var(--default-primary-color);
+        padding: 0 10px;
+      }
+
+      paper-spinner {
+          margin-left: calc(50% - 16px);
+      }
+
+      @media (min-width: 600px) {
+          paper-listbox {
+              width: calc(50% - 20px);
+          }
+      }
+
+      @media (min-width: 1024px) {
+          paper-listbox {
+              width: calc(33% - 20px);
+          }
+      }
+
+      a {
+          text-decoration: none;
+          color: currentColor;
+      }
+
+      a:hover {
+          font-weight: bolder;
+      }
+
+      paper-item {
+        background-color: #fff;
+      }
+
+      paper-item.title {
+        background-color: initial;
+      }
+
+      .second-toolbar {
+        height: 50px;
+        position: initial;
+      }
+    </style>
+
+    <app-header-layout fullbleed>
+      <app-header condenses fixed effects="waterfall">
+        <uwmctools-search-bar></uwmctools-search-bar>
+        <app-toolbar>
+          <h1 main-title>Zonen Rangliste</h1>
+        </app-toolbar>
+        <app-toolbar class="second-toolbar">
+          <h3>Beinträchtigt die Performance bis zum nächsten neuladen der Seite...</h3>
+        </app-toolbar>
+      </app-header>
+      <div class="content flex">
+        <iron-ajax auto url="https://lergin.de/api/cors/[[dynmapMainMarkerDataUrl]]" handle-as="json" last-response="{{dynmapMainMarkerData}}" loading={{ajaxLoading}}></iron-ajax>
+
+        <template is="dom-if" if="[[ajaxLoading]]">
+            <paper-spinner alt="Loading zone list" active></paper-spinner>
+        </template>
+
+        <template is="dom-if" if="[[!ajaxLoading]]">
+            <paper-input label="Filter" value="{{searchString}}" type="search" autosave></paper-input>
+
+            <paper-listbox>
+                <paper-item class="title"><b>meiste gezonte Fläche</b></paper-item>
+
+                <template is="dom-repeat" items="[[maxZoneArea]]" as="zone" index-as="index" filter="{{_computeFilter(searchString, 'name')}}">
+                    <paper-item>[[zone.pos]] - <a href="/player/[[zone.name]]">[[zone.name]]</a> - [[zone.area]] Blöcke</paper-item>
+                </template>
+            </paper-listbox>
+
+            <paper-listbox>
+                <paper-item class="title"><b>meisten Zonen</b></paper-item>
+
+                <template is="dom-repeat" items="[[maxZones]]" as="zone" index-as="index" filter="{{_computeFilter(searchString, 'name')}}">
+                    <paper-item>[[zone.pos]] - <a href="/player/[[zone.name]]">[[zone.name]]</a> - [[zone.amount]] Zonen</paper-item>
+                </template>
+            </paper-listbox>
+
+            <paper-listbox>
+                <paper-item class="title"><b>größte Zonenfläche</b></paper-item>
+
+                <template is="dom-repeat" items="[[zoneList]]" as="zone" index-as="index" filter="{{_computeFilter(searchString, 'owner')}}" sort="{{_sortBiggestZones()}}">
+                    <paper-item on-tap="openDialog" zone-index="[[zone.index]]">
+                        [[zone.id]] - <a href="/player/[[zone.owner]]">[[zone.owner]]</a>#[[zone.number]] - [[zone.area]] Blöcke
+                    </paper-item>
+                </template>
+            </paper-listbox>
+        </template>
+
+         <paper-dialog id="zone-dialog">
+            <h2>[[selectedZone.id]] - [[selectedZone.owner]]#[[selectedZone.number]]</h2>
+            <paper-dialog-scrollable>
+                <paper-item><b>Fläche:</b>&nbsp;[[selectedZone.area]] Blöcke</paper-item>
+                <paper-item>
+                  <paper-item-body two-line>
+                    <div><b>X:</b> [[selectedZone.x.0]] ; [[selectedZone.x.1]] ([[selectedZone.size.x]] Blöcke)</div>
+                    <div secondary><b>Z:</b> [[selectedZone.z.0]] ; [[selectedZone.z.1]] ([[selectedZone.size.z]] Blöcke)</div>
+                  </paper-item-body>
+                </paper-item>
+                <paper-item>
+                  <paper-item-body two-line>
+                    <div><b>Besitzer:</b> <a href="/tools/uwmc/player/[[selectedZone.owner]]">[[selectedZone.owner]]</a></div>
+                    <div secondary><b>Zonen Nummer:</b> [[selectedZone.number]]</div>
+                  </paper-item-body>
+                </paper-item>
+                <paper-item><b>Zone Id:</b>&nbsp;[[selectedZone.id]]</paper-item>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button id="copyNaviCommandButton" navi-command="/navi [[selectedZone.center.x]] [[selectedZone.center.z]]">Copy Navi Command</paper-button>
+                <a href="https://unlimitedworld.de/dynmap/?worldname=main&mapname=flat&zoom=6&x=[[selectedZone.center.x]]&y=64&z=[[selectedZone.center.z]]" target="_blank"><paper-button>Zonenkarte</paper-button></a>
+                <paper-button dialog-dismiss>Close</paper-button>
+            </div>
+        </paper-dialog>
+      </div>
+      <uwmctools-footer></uwmctools-footer>
+    </app-header-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-zoneranks',
+
+      properties: {
+        dynmapMainMarkerDataUrl: {
+          type: "String",
+          value: "http://unlimitedworld.de/dynmap/tiles/_markers_/marker_main.json"
+        },
+        dynmapMainMarkerData: {
+          type: "Object"
+        },
+        selectedZone: {
+          type: "Object"
+        },
+        maxZones: {
+          type: "Array",
+          computed: "_computeMaxZones(playerKeyZoneList)"
+        },
+        maxZoneArea: {
+          type: "Array",
+          computed: "_computeMaxZoneArea(playerKeyZoneList)"
+        },
+        zoneList: {
+          type: "Array",
+          computed: "_convertZoneList(dynmapMainMarkerData)"
+        },
+        playerKeyZoneList: {
+          type: "Object",
+        }
+      },
+
+      _convertZoneList(dynmapMainMarkerData) {
+        let response = dynmapMainMarkerData;
+        let zoneList = [];
+        let playerToZone = {};
+        let maxZoneNumber = 0;
+
+        for (zoneId in response.sets.Spielerzonen.areas) {
+          let zoneData = response.sets.Spielerzonen.areas[zoneId];
+          let labelData = zoneData.label;
+
+          let size = {
+            x: (Math.max(zoneData.x[0], zoneData.x[1]) - Math.min(zoneData.x[0], zoneData.x[1])),
+            z: (Math.max(zoneData.z[0], zoneData.z[1]) - Math.min(zoneData.z[0], zoneData.z[1]))
+          }
+
+          let zone = {
+            x: zoneData.x,
+            z: zoneData.z,
+            center: {
+              x: Math.max(zoneData.x[0], zoneData.x[1]) - 0.5 * size.x,
+              z: Math.max(zoneData.z[0], zoneData.z[1]) - 0.5 * size.z
+            },
+            size: size,
+            id: zoneId,
+            area: size.x * size.z,
+            index: zoneList.length
+          }
+
+          let owner = labelData.split(/color: #[A-F0-9a-f]{6}">(\[.*\])*/) //it's working but i don't know how so better don't touch it ;)
+
+          if (owner.length > 2) {
+            if (owner[1] && owner[2] == ' </span><span style="' && owner[1].substring(0, 1) == "[") {
+              owner = owner[4].split('</span>')[0];
+            } else {
+              owner = owner[2].split('</span>')[0];
+            }
+
+            if (owner.split(' ').length > 1) {
+              owner = owner.split(' ')[1]
+            }
+
+            zone.owner = owner;
+          } else {
+            console.log("Die eine südliche Communityzone ist wohl eine Spielerzone alle anderen aber Serverzonen...")
+            console.log("Achja diese Nachricht ist hier weil ich hier deswegen eine extra Abfrage machen muss...")
+            zone.owner = "Server - Communityzone"
+          }
+
+          let zoneNumber = labelData.split(/Zonen Nr\.:\s*<b>/)
+
+          if (zoneNumber.length > 1) {
+            zoneNumber = parseInt(zoneNumber[1].split('</b>')[0]);
+          } else {
+            zoneNumber = 0;
+          }
+
+          zone.number = zoneNumber;
+
+          if (!playerToZone[zone.owner]) {
+            playerToZone[zone.owner] = []
+          }
+
+          playerToZone[zone.owner].push(zone);
+
+          zoneList.push(zone)
+        }
+
+        this.playerKeyZoneList = playerToZone;
+
+        return zoneList;
+      },
+      _computeMaxZones: function(playerKeyZoneList) {
+        let sortable = [];
+        for (player in playerKeyZoneList) {
+          sortable.push({
+            'name': player,
+            'amount': playerKeyZoneList[player].length
+          });
+        }
+
+        sortable.sort(
+          function(a, b) {
+            return b.amount - a.amount
+          }
+        )
+
+        let lastZoneAmount = 0;
+        let lastZonePos = 0;
+
+        for (id in sortable) {
+          if (lastZoneAmount != sortable[id].amount) {
+            lastZoneAmount = sortable[id].amount;
+            lastZonePos = parseInt(id) + 1;
+          }
+
+          sortable[id].pos = lastZonePos;
+        }
+
+        return sortable;
+      },
+      _computeMaxZoneArea: function(playerKeyZoneList) {
+        let sortable = [];
+        for (player in playerKeyZoneList) {
+          let area = 0;
+
+          for (zone in playerKeyZoneList[player]) {
+            area += playerKeyZoneList[player][zone].area;
+          }
+
+          sortable.push({
+            'name': player,
+            'area': area
+          });
+        }
+
+        sortable.sort(
+          function(a, b) {
+            return b.area - a.area
+          }
+        )
+
+        let lastZoneArea = 0;
+        let lastZonePos = 0;
+
+        for (id in sortable) {
+          if (lastZoneArea != sortable[id].area) {
+            lastZoneArea = sortable[id].area;
+            lastZonePos = parseInt(id) + 1;
+          }
+
+          sortable[id].pos = lastZonePos;
+        }
+
+        return sortable;
+      },
+      _sortBiggestZones: function() {
+        return function(a, b) {
+          return b.area - a.area
+        }
+      },
+      _computeFilter: function(search, field) {
+        if (!search) {
+          return null;
+        } else {
+          search = search.toLowerCase();
+          return function(zone) {
+            var name = zone[field].toLowerCase();
+            return name.indexOf(search) != -1;
+          };
+        }
+      },
+      openDialog: function(item){
+        this.selectedZone = this.zoneList[item.srcElement.zoneIndex];
+
+        document.getElementById("zone-dialog").open()
+      },
+      ready: function(){
+        new Clipboard('#copyNaviCommandButton',{
+          text: function(trigger) {
+            return trigger.naviCommand;
+          }
+        });
+      }
+    });
+  </script>
+</dom-module>

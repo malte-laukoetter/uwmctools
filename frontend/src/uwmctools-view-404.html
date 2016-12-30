@@ -1,6 +1,17 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="uwmctools-footer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="uwmctools-footer.html">
+<link rel="import" href="uwmctools-search-bar.html">
+<link rel="import" href="uwmctools-time-chart.html">
+<link rel="import" href="firebase-indexeddb-link.html">
 
 <dom-module id="uwmctools-view-404">
   <template>
@@ -9,10 +20,17 @@
         display: block;
       }
     </style>
-    <div>
-      <div class="content">404 - Not Found</div>
+
+    <app-header-layout fullbleed>
+      <app-header condenses fixed effects="waterfall">
+        <uwmctools-search-bar></uwmctools-search-bar>
+        <app-toolbar>
+          <h1 main-title>404 - Hier ist nichts :(</h1>
+        </app-toolbar>
+      </app-header>
+      <div class="content flex"></div>
       <uwmctools-footer></uwmctools-footer>
-    </div>
+    </app-header-layout>
   </template>
 
   <script>

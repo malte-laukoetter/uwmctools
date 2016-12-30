@@ -63,7 +63,7 @@
           </paper-menu-button>
         </app-toolbar>
       </app-header>
-      <div class="content">
+      <div class="content flex">
         <div class="app-grid">
           <template is="dom-repeat" items="[[_convertToArray(players)]]" sort="[[sortList]]" observe="n key">
               <uwmctools-player-card name=[[item.key]] uuid=[[item.uuid]]></uwmctools-player-card>
