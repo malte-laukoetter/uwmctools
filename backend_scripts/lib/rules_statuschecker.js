@@ -21,7 +21,7 @@ _asyncToGenerator(function* () {
 
     if (oldRules.val() !== data) {
         ref.set(data);
-        PushService.push('/topics/UWMC_RULE_UPDATE', {
+        PushService.push('/topics/UWMCTOOLS_RULES_CHANGE_0', {
             'title': 'Regeländerung UWMC',
             'body': 'Es gab eine Änderung der Regeln von UnlimitedWorld.de',
             'click_action': 'https://uwmc.de/rules'

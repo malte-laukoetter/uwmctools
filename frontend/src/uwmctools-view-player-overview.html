@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
+<link rel="import" href="uwmctools-notification-toggle-button.html">
 <link rel="import" href="uwmctools-column-timeline-chart.html">
 <link rel="import" href="firebase-indexeddb-link.html">
 
@@ -15,7 +16,7 @@
 
         padding: 10px;
 
-        --app-grid-columns: 3;
+        --app-grid-columns: 2;
       }
 
       .app-grid div {
@@ -73,6 +74,22 @@
           <template is="dom-repeat" items="[[_convertToArray(player.rankchanges)]]" sort="_sortByKey">
               <paper-item>[[_computeDate(item.key)]] - [[_computeUwmcRank(item.val)]]</paper-item>
           </template>
+        </paper-card>
+      </div>
+      <div>
+        <paper-card heading="Benachrichtigungen">
+          <paper-item>
+            <uwmctools-notification-toggle-button topic="UWMCTOOLS_PLAYER_RANKCHANGE_[[uuid]]"></uwmctools-notification-toggle-button>
+            Rangänderungen
+          </paper-item>
+          <paper-item>
+            <uwmctools-notification-toggle-button topic="UWMCTOOLS_PLAYER_ONLINE_[[uuid]]"></uwmctools-notification-toggle-button>
+            Spieler kommt Online
+          </paper-item>
+          <paper-item>
+            <uwmctools-notification-toggle-button topic="UWMCTOOLS_PLAYER_OFFLINE_[[uuid]]"></uwmctools-notification-toggle-button>
+            Spieler geht Offline
+          </paper-item>
         </paper-card>
       </div>
       <uwmctools-column-timeline-chart 

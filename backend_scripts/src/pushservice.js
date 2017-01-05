@@ -3,6 +3,8 @@ const config = require(__dirname + '/firebase_cloud_messaging.json');
 const request = require('request');
 
 exports.push = function (to, notification) {
+    console.log(to);
+    console.log(notification);
     request.post({
         url: `https://fcm.googleapis.com/fcm/send`,
         headers: {
