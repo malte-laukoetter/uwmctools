@@ -34,16 +34,14 @@
         @apply(--shadow-elevation-2dp);
       }
     </style>
-    <template is="dom-if" if="[[search]]">
-      <firebase-indexeddb-link path="uwmctools/players/search" data="{{players}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/players/search" data="{{players}}"></firebase-indexeddb-link>
 
-      <lunr-js
-        data="[[_convertToArray(players)]]"
-        search="{{search}}"
-        output="{{output}}"
-        fields="[[searchFields]]" log>
-      </lunr-js>
-    </template>
+    <lunr-js
+      data="[[_convertToArray(players)]]"
+      search="{{search}}"
+      output="{{output}}"
+      fields="[[searchFields]]" log>
+    </lunr-js>
 
     <paper-search-bar placeholder="Name eines Spielers" query="{{search}}" hide-filter-button></paper-search-bar>
 
@@ -74,7 +72,9 @@
 
         return array;
       },
-      clearSearch: function() {
+      clearSearch: function(e,f,g) {
+        window.history.pushState({}, null, `/player/${Polymer.dom(e).localTarget.name}/overview`);
+        window.dispatchEvent(new CustomEvent('location-changed'));
         this.search = "";
       }
     });
