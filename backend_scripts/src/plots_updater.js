@@ -19,64 +19,68 @@ function createNewFirebasePlot(dataRef, playerRef, plot) {
 }
 
 (async function() {
-    firebase.initializeApp({
-        credential: firebase.credential.cert(__dirname + '/firebase_credentials.json'),
-        databaseURL: 'https://dashboard-196e4.firebaseio.com',
-    });
-
-    const db = firebase.database();
-    const dataRef = db.ref('uwmctools/plots/data');
-    const listRef = db.ref('uwmctools/plots/list');
-    const playerRef = db.ref('uwmctools/players/data');
-
-    const uwmcTool = new UwmcTools('');
-
-    const plotListData = await uwmcTool.getPlotListData();
-    listRef.once('value', function(arr) {
-        let oldPlotSet = arr?new Set(arr.val()):[];
-
-        plotListData.forEach((plot) => {
-            let plotDataRef = dataRef.child(plot.id);
-
-            if(oldPlotSet.has(plot.id)) {
-                plotDataRef.once('value', function(data) {
-                    if(!plot.owner || (data.val().owner && data.val().owner !== plot.owner.uuid)) {
-                        if(data.val().owner) {
-                            playerRef.child(data.val().owner).child('plots').child('owned').child(plot.id).remove();
-                        }
-
-                        if(data.val().trusted) {
-                            data.val().trusted.forEach((uuid) => {
-                                playerRef.child(uuid).child('plots').child('trusted').child(plot.id).remove();
-                            });
-                        }
-                    }
-
-                    if(plot.owner && data.val().owner !== plot.owner.uuid) {
-                        createNewFirebasePlot(plotDataRef, playerRef, plot);
-                    }
-                });
-
-                oldPlotSet.delete(plot.id);
-            }else{
-                createNewFirebasePlot(plotDataRef, playerRef, plot);
-            }
+    try {
+        firebase.initializeApp({
+            credential: firebase.credential.cert(__dirname + '/firebase_credentials.json'),
+            databaseURL: 'https://dashboard-196e4.firebaseio.com',
         });
 
-        oldPlotSet.forEach((plotId) => {
-            let plotDataRef = dataRef.child(plotId);
+        const db = firebase.database();
+        const dataRef = db.ref('uwmctools/plots/data');
+        const listRef = db.ref('uwmctools/plots/list');
+        const playerRef = db.ref('uwmctools/players/data');
 
-            plotDataRef.once('value', function(data) {
-                playerRef.child(data.val().owner).child('plots').child('owned').child(plotId).remove();
-                data.val().trusted.forEach((uuid) => {
-                    playerRef.child(uuid).child('plots').child('trusted').child(plotId).remove();
-                });
-                plotDataRef.remove();
+        const uwmcTool = new UwmcTools('');
+
+        const plotListData = await uwmcTool.getPlotListData();
+        listRef.once('value', function(arr) {
+            let oldPlotSet = arr ? new Set(arr.val()) : [];
+
+            plotListData.forEach((plot) => {
+                let plotDataRef = dataRef.child(plot.id);
+
+                if (oldPlotSet.has(plot.id)) {
+                    plotDataRef.once('value', function(data) {
+                        if (!plot.owner || (data.val().owner && data.val().owner !== plot.owner.uuid)) {
+                            if (data.val().owner) {
+                                playerRef.child(data.val().owner).child('plots').child('owned').child(plot.id).remove();
+                            }
+
+                            if (data.val().trusted) {
+                                data.val().trusted.forEach((uuid) => {
+                                    playerRef.child(uuid).child('plots').child('trusted').child(plot.id).remove();
+                                });
+                            }
+                        }
+
+                        if (plot.owner && data.val().owner !== plot.owner.uuid) {
+                            createNewFirebasePlot(plotDataRef, playerRef, plot);
+                        }
+                    });
+
+                    oldPlotSet.delete(plot.id);
+                } else {
+                    createNewFirebasePlot(plotDataRef, playerRef, plot);
+                }
             });
-        });
 
-        listRef.set(plotListData.map((plot) => plot.id));
-    });
+            oldPlotSet.forEach((plotId) => {
+                let plotDataRef = dataRef.child(plotId);
+
+                plotDataRef.once('value', function(data) {
+                    playerRef.child(data.val().owner).child('plots').child('owned').child(plotId).remove();
+                    data.val().trusted.forEach((uuid) => {
+                        playerRef.child(uuid).child('plots').child('trusted').child(plotId).remove();
+                    });
+                    plotDataRef.remove();
+                });
+            });
+
+            listRef.set(plotListData.map((plot) => plot.id));
+        });
+    }catch(err) {
+        console.error(err);
+    }
 })();
 
 setTimeout(() => process.exit(), 60000);

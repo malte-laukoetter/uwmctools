@@ -24,30 +24,27 @@ function getUuids(players, Type = Player) {
     /*
      * bulking them in blocks of 100 names (max names for one call to the mojang api)
      */
-    // amount of blocks needed
-    let amountOfMojangRequests = Math.ceil(unresolvedPlayers.size / 100);
     // array of the blocks
     let requestNameLists = [];
 
-    // generate one clean arrays for each block of names
-    for (let i = 0; i < amountOfMojangRequests; i++) {
-        requestNameLists.push([]);
-    }
-
     // so we know which block we are filling and how much space is left
-    let currendList = 0;
-    let currendListLength = 0;
+    let currentList = 0;
+    let currentListLength = 0;
 
     // and add the names to the blocks
     for (let player of unresolvedPlayers.values()) {
-        currendListLength++;
+        currentListLength++;
 
-        if (currendListLength >= 100) {
-            currendList++;
-            currendListLength = 0;
+        if (currentListLength >= 100) {
+            currentList++;
+            currentListLength = 0;
+
+            if (!requestNameLists[currentList]) {
+                requestNameLists[currentList] = [];
+            }
         }
 
-        requestNameLists[currendList].push(player);
+        requestNameLists[currentList].push(player);
     }
 
     let requests = [];
