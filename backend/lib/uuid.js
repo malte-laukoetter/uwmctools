@@ -38,10 +38,10 @@ function getUuids(players, Type = Player) {
         if (currentListLength >= 100) {
             currentList++;
             currentListLength = 0;
+        }
 
-            if (!requestNameLists[currentList]) {
-                requestNameLists[currentList] = [];
-            }
+        if (!requestNameLists[currentList]) {
+            requestNameLists[currentList] = [];
         }
 
         requestNameLists[currentList].push(player);

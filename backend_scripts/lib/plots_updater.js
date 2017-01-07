@@ -71,9 +71,11 @@ _asyncToGenerator(function* () {
 
                 plotDataRef.once('value', function (data) {
                     playerRef.child(data.val().owner).child('plots').child('owned').child(plotId).remove();
-                    data.val().trusted.forEach(uuid => {
-                        playerRef.child(uuid).child('plots').child('trusted').child(plotId).remove();
-                    });
+                    if (data.val().trusted) {
+                        data.val().trusted.forEach(uuid => {
+                            playerRef.child(uuid).child('plots').child('trusted').child(plotId).remove();
+                        });
+                    }
                     plotDataRef.remove();
                 });
             });

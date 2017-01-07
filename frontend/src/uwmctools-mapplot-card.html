@@ -44,9 +44,9 @@
       </paper-item>
       <paper-item class="title">Ehemalige Besitzer:</paper-item>
       <template is="dom-repeat" items="[[toArray(plot.owners)]]" filter="excludeCurrendOwner">
-        <paper-item><uwmctools-player uuid="[[item.uuid]]"></uwmctools-player> ([[timestampToDate(item.from)]] - [[date(item.till)]])</paper-item>
+        <paper-item><uwmctools-player uuid="[[item.uuid]]"></uwmctools-player>&nbsp;([[timestampToDate(item.from)]] - [[timestampToDate(item.till)]])</paper-item>
       </template>
-    </paper-card>   
+    </paper-card>
   </template>
 
   <script>
@@ -56,7 +56,7 @@
       properties: {
         plotId: {
           type: String,
-          value: "" 
+          value: ""
         },
       },
       excludeCurrendOwner: function(owner){

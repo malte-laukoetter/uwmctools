@@ -25,7 +25,7 @@ const UwmcTools = require('uwmctools');
                     plotDataRef.child('pos').set(plot.pos);
                     plotDataRef.child('number').set(plot.number);
                     plotDataRef.child('area').set(plot.area);
-                    if (plot.owner) {
+                    if (plot.owner && plot.owner.uuid) {
                         plotDataRef.child('owners').push({
                             uuid: plot.owner.uuid,
                             from: new Date().getTime(),
@@ -41,11 +41,12 @@ const UwmcTools = require('uwmctools');
                         data.ref.child('till').set(new Date().getTime());
                     }
 
-                    if (plot.owner) {
+                    if (plot.owner && plot.owner.uuid) {
                         plotDataRef.child('owners').push({
                             uuid: plot.owner.uuid,
                             from: new Date().getTime(),
                         });
+
                         playerRef.child(plot.owner.uuid).child('mapplots').child(plot.id).set(true);
                     }
                 }

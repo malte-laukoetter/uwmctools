@@ -1,6 +1,6 @@
 {
   "name": "uwmctools",
-  "version": "2.8.2",
+  "version": "2.8.3",
   "description": "convert data from unlimitedworld.de, mostly used for the tools on https://uwmc.lergin.de",
   "homepage": "https://github.com/Lergin/uwmctools",
   "bugs": {
