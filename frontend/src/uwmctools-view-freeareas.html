@@ -64,6 +64,13 @@
               </a>
             </template>
           </paper-datatable-api-column>
+          <paper-datatable-api-column header="Kompass" property="z1" other-properties='["x1"]'>
+            <template>
+              <a href="https://unlimitedworld.de/server_api/dynmap_compass.php?x=[[_add50(otherValues.x1)]]&z=[[_add50(value)]]" target="_blank">
+                <paper-button>Kompass setzen</paper-button>
+              </a>
+            </template>
+          </paper-datatable-api-column>
         </paper-datatable-api>
       </div>
       <uwmctools-footer></uwmctools-footer>

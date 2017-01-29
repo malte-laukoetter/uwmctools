@@ -7,6 +7,7 @@
 <link rel="import" href="firebase-indexeddb-link.html">
 <link rel="import" href="uwmctools-player.html">
 <link rel="import" href="uwmctools-zone-behavior.html">
+<link rel="import" href="uwmctools-location.html">
 
 <dom-module id="uwmctools-mapplot-card">
   <template>
@@ -40,7 +41,7 @@
         [[zoneSize(plot.pos)]] Blöcke ([[zoneWidth(plot.pos)]]*[[zoneHeight(plot.pos)]])
       </paper-item>
       <paper-item>
-        [[zoneCenterX(plot.pos)]] / [[zoneCenterZ(plot.pos)]]
+        <uwmctools-location x="[[zoneCenterX(plot.pos)]]" z="[[zoneCenterZ(plot.pos)]]"></uwmctools-location>
       </paper-item>
       <paper-item class="title">Ehemalige Besitzer:</paper-item>
       <template is="dom-repeat" items="[[toArray(plot.owners)]]" filter="excludeCurrendOwner">

@@ -6,6 +6,7 @@
 
 <link rel="import" href="firebase-indexeddb-link.html">
 <link rel="import" href="uwmctools-player.html">
+<link rel="import" href="uwmctools-location.html">
 <link rel="import" href="uwmctools-zone-behavior.html">
 
 <dom-module id="uwmctools-zone-card">
@@ -34,7 +35,7 @@
         [[zoneSize(zone.pos)]] Blöcke ([[zoneWidth(zone.pos)]]*[[zoneHeight(zone.pos)]])
       </paper-item>
       <paper-item>
-        [[zoneCenterX(zone.pos)]] / [[zoneCenterZ(zone.pos)]]
+        <uwmctools-location x="[[zoneCenterX(zone.pos)]]" z="[[zoneCenterZ(zone.pos)]]"></uwmctools-location>
       </paper-item>
       <paper-item>
         Erstellt: [[timestampToDate(zone.created)]]
