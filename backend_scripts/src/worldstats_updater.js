@@ -38,7 +38,9 @@ const UwmcTools = require('uwmctools');
             }
         }
     }catch(err) {
-        console.error(err);
+        if(err) {
+            console.error(err);
+        }
     }
 })();
 
