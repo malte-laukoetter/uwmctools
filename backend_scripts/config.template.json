@@ -1,0 +1,42 @@
+{
+  "observers": {
+    "push_service": {
+      "APIKEY": "",
+      "type": "push"
+    }
+  },
+  "updater": {
+    "rules": {
+      "interval": 3600000,
+      "startTime": 0
+    },
+    "mainmap-plot-stats": {
+      "interval": 86400000,
+      "startTime": 60000
+    },
+    "mainmap-plots": {
+      "interval": 86400000,
+      "startTime": 120000
+    },
+    "player-list": {
+      "interval": 600000,
+      "startTime": 0
+    },
+    "plots": {
+      "interval": 86400000,
+      "startTime": 180000
+    },
+    "votes": {
+      "interval": 3600000,
+      "startTime": 0
+    },
+    "world-stats": {
+      "interval": 86400000,
+      "startTime": 240000
+    },
+    "zones": {
+      "interval": 86400000,
+      "startTime": 300000
+    }
+  }
+}

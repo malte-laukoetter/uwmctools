@@ -1,18 +1,11 @@
 {
-  "scripts": {
-    "test": "babel src -d lib --copy-files"
-  },
-  "engines": {
-    "node": ">=6.3.0"
-  },
+  "main": "index.js",
   "dependencies": {
-    "firebase-admin": "^4.0.4",
+    "firebase-admin": "^5.9.1",
+    "lergins-bot-framework": "^1.3.3",
     "uwmctools": "^2.8.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.5.2",
-    "babel-preset-es2017": "^6.16.0",
-    "eslint": "^3.9.0",
-    "eslint-config-google": "^0.7.0"
+    "typescript": "^2.7.2"
   }
 }
