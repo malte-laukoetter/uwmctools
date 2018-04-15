@@ -9,6 +9,7 @@ import { PlotsUpdater } from './updater/PlotsUpdater';
 import { VotesUpdater } from './updater/VotesUpdater';
 import { WorldStatsUpdater } from './updater/WorldStatsUpdater';
 import { ZonesUpdater } from './updater/ZonesUpdater';
+import { FreeZonesUpdater } from './updater/FreeZonesUpdater';
 
 export const bot = new BotFramework.Builder()
   .configFolderPath(path.join(__dirname, '..'))
@@ -24,5 +25,6 @@ bot.addUpdater(new RulesUpdater());
 bot.addUpdater(new VotesUpdater());
 bot.addUpdater(new WorldStatsUpdater());
 bot.addUpdater(new ZonesUpdater());
+bot.addUpdater(new FreeZonesUpdater());
 
 bot.start();

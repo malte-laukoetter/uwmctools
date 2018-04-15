@@ -27,14 +27,14 @@ export class PlotsUpdater extends BasicUpdater {
   async updateInfo() {
     const plotListData = await this.uwmcTool.getPlotListData();
 
-    this.listRef.once('value', function (arr) {
+    this.listRef.once('value', (arr) => {
       let oldPlotSet = arr ? new Set(arr.val()) : new Set();
 
       plotListData.forEach((plot) => {
         let plotDataRef = this.dataRef.child(plot.id);
 
         if (oldPlotSet.has(plot.id)) {
-          plotDataRef.once('value', function (data) {
+          plotDataRef.once('value', (data) => {
             if (!plot.owner || (data.val().owner && data.val().owner !== plot.owner.uuid)) {
               if (data.val().owner) {
                 this.playerRef.child(data.val().owner).child('plots').child('owned').child(plot.id).remove();
@@ -61,7 +61,7 @@ export class PlotsUpdater extends BasicUpdater {
       oldPlotSet.forEach((plotId) => {
         let plotDataRef = this.dataRef.child(plotId);
 
-        plotDataRef.once('value', function (data) {
+        plotDataRef.once('value', (data) => {
           this.playerRef.child(data.val().owner).child('plots').child('owned').child(plotId).remove();
           if (data.val().trusted) {
             data.val().trusted.forEach((uuid) => {

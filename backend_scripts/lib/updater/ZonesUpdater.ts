@@ -26,7 +26,7 @@ export class ZonesUpdater extends BasicUpdater {
 
   async updateInfo() {
     const zoneListData = await this.uwmcTool.getZoneListData();
-    this.listRef.once('value', function (arr) {
+    this.listRef.once('value', (arr) => {
       let oldZoneSet = arr.val() ? new Set(Object.keys(arr.val())) : new Set();
 
       zoneListData.forEach((zone) => {
