@@ -14,7 +14,6 @@
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script>
 
-<link rel="import" href="uwmctools-search-bar.html">
 <link rel="import" href="uwmctools-footer.html">
 
 <link rel="import" href="shared-styles.html">
@@ -107,7 +106,7 @@
                 <paper-item class="title"><b>meiste gezonte Fläche</b></paper-item>
 
                 <template is="dom-repeat" items="[[maxZoneArea]]" as="zone" index-as="index" filter="{{_computeFilter(searchString, 'name')}}">
-                    <paper-item>[[zone.pos]] - <a href="/player/[[zone.name]]">[[zone.name]]</a> - [[zone.area]] Blöcke</paper-item>
+                    <paper-item>[[zone.pos]] - <a>[[zone.name]]</a> - [[zone.area]] Blöcke</paper-item>
                 </template>
             </paper-listbox>
 
@@ -115,7 +114,7 @@
                 <paper-item class="title"><b>meisten Zonen</b></paper-item>
 
                 <template is="dom-repeat" items="[[maxZones]]" as="zone" index-as="index" filter="{{_computeFilter(searchString, 'name')}}">
-                    <paper-item>[[zone.pos]] - <a href="/player/[[zone.name]]">[[zone.name]]</a> - [[zone.amount]] Zonen</paper-item>
+                    <paper-item>[[zone.pos]] - <a>[[zone.name]]</a> - [[zone.amount]] Zonen</paper-item>
                 </template>
             </paper-listbox>
 
@@ -124,7 +123,7 @@
 
                 <template is="dom-repeat" items="[[zoneList]]" as="zone" index-as="index" filter="{{_computeFilter(searchString, 'owner')}}" sort="{{_sortBiggestZones()}}">
                     <paper-item on-tap="openDialog" zone-index="[[zone.index]]">
-                        [[zone.id]] - <a href="/player/[[zone.owner]]">[[zone.owner]]</a>#[[zone.number]] - [[zone.area]] Blöcke
+                        [[zone.id]] - <a>[[zone.owner]]</a>#[[zone.number]] - [[zone.area]] Blöcke
                     </paper-item>
                 </template>
             </paper-listbox>
@@ -142,7 +141,7 @@
                 </paper-item>
                 <paper-item>
                   <paper-item-body two-line>
-                    <div><b>Besitzer:</b> <a href="/tools/uwmc/player/[[selectedZone.owner]]">[[selectedZone.owner]]</a></div>
+                    <div><b>Besitzer:</b> <a>[[selectedZone.owner]]</a></div>
                     <div secondary><b>Zonen Nummer:</b> [[selectedZone.number]]</div>
                   </paper-item-body>
                 </paper-item>

@@ -9,13 +9,10 @@
 
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="uwmctools-footer.html">
-<link rel="import" href="uwmctools-search-bar.html">
 <link rel="import" href="uwmctools-time-chart.html">
 <link rel="import" href="firebase-indexeddb-link.html">
 <link rel="import" href="uwmctools-chart-view-behavior.html">
 <link rel="import" href="uwmctools-ratio-chart.html">
-<link rel="import" href="uwmctools-zone-card.html">
-<link rel="import" href="uwmctools-mapplot-card.html">
 
 <dom-module id="uwmctools-view-default">
   <template>
@@ -50,12 +47,12 @@
     <firebase-indexeddb-link path="uwmctools/stats/world/timeline/north/playerzoneAmount" data="{{timeline_north}}"></firebase-indexeddb-link>
     <firebase-indexeddb-link path="uwmctools/stats/world/timeline/south/playerzoneAmount" data="{{timeline_south}}"></firebase-indexeddb-link>
     <firebase-indexeddb-link path="uwmctools/stats/world/timeline/main/playerzoneAmount" data="{{timeline_main}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/north-east/playerzoneAmount" data="{{timeline_north_east}}"></firebase-indexeddb-link>
     <firebase-indexeddb-link path="uwmctools/stats/world/timeline/full/playerzoneAmount" data="{{timeline_full}}"></firebase-indexeddb-link>
     <firebase-indexeddb-link path="uwmctools/stats/mainmapplots/current" data="{{plots}}"></firebase-indexeddb-link>
 
     <app-header-layout fullbleed>
       <app-header condenses fixed effects="waterfall">
-        <uwmctools-search-bar></uwmctools-search-bar>
         <app-toolbar>
           <h1 main-title>Tools und Statistiken für unlimitedworld.de</h1>
         </app-toolbar>
@@ -63,7 +60,7 @@
       <div class="content flex">
         <div class="app-grid">
           <a href="/worldstats/overview/"><uwmctools-time-chart
-            cols='["Gesamt", "Center", "Süden", "Norden", "Osten"]'
+            cols='["Gesamt", "Center", "Süden", "Norden", "Osten", "Nord-Osten"]'
             timeline="[[playerZoneAmounts]]"
             title="Zonen Statistiken"
           ></uwmctools-time-chart></a>
@@ -74,8 +71,6 @@
             exclude='["all"]'
             show-value
         ></uwmctools-ratio-chart></a>
-        <a href="/player/GoodKing/zones"><uwmctools-zone-card zone-id="uwzone_2563"><uwmctools-zone-card></a>
-        <a href="/freeareas/"><uwmctools-mapplot-card plot-id="uwzone_16641"><uwmctools-mapplot-card></a>
         </div>
       </div>
       <uwmctools-footer></uwmctools-footer>
@@ -89,7 +84,7 @@
       properties: {
         playerZoneAmounts: {
             type: Object,
-            computed: 'computeCombinedTimeline(timeline_full,timeline_main,timeline_north,timeline_south,timeline_east)'
+            computed: 'computeCombinedTimeline(timeline_full,timeline_main,timeline_north,timeline_south,timeline_east,timeline_north_east)'
         },
       },
       computeCombinedTimeline: function(... areas){
