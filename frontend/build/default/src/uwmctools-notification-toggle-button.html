@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="uwmctools-notification.html">
+
+<dom-module id="uwmctools-notification-toggle-button">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-toggle-button checked="[[status]]" on-tap="_changeSubStatus"></paper-toggle-button>
+
+    <uwmctools-notification id="notification" status="{{status}}" topic="[[topic]]"></uwmctools-notification>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-notification-toggle-button',
+      _changeSubStatus: function(){
+        this.$.notification.toggle();
+      }
+    });
+  </script>
+</dom-module>

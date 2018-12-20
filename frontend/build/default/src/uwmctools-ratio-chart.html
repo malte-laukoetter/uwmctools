@@ -1,0 +1,101 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/google-chart/google-chart.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="uwmctools-ratio-chart">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      google-chart {
+        width: 100%;
+        height: 400px;
+      }
+
+      paper-card {
+        width: 100%;
+      }
+    </style>
+
+    <paper-card heading="[[title]]">
+      <google-chart id="chart" type="pie" options="[[options]]" data="[[_data]]">
+      </google-chart>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-ratio-chart',
+      properties: {
+        options: {
+            type: Object,
+            computed: 'computeOptions(showValue)'
+        },
+        title: {
+          type: String,
+          value: "" 
+        },
+        cols: {
+            type: Array,
+            value: ["Label", "Value"]
+        },
+        labels: {
+          type: Array,
+          value: false
+        },
+        subproperty: {
+          type: String,
+          value: ''
+        },
+        data: {
+          type: Object
+        },
+        exclude: {
+          type: Array,
+          value: []
+        },
+        _data: {
+          type: Array,
+          computed: 'computeData(data, cols,subproperty, exclude, labels)'
+        },
+        showValue: {
+          type: Boolean,
+          value: false
+        }
+      },
+      computeData: function(data, cols, subproperty, exclude, labels){
+        let res = [cols];
+        let i = 0;
+
+        for(let label in data){
+          if(exclude.indexOf(label) === -1){
+            let l = labels?labels[i]:label;
+            
+            if(subproperty){
+              res.push([l, data[label][subproperty]]);
+            }else{
+              res.push([l, data[label]])
+            }
+            i++;
+          }
+        }
+
+        return res;
+      },
+      computeOptions: function(showValue){
+        return {
+          legend: {
+            position: 'bottom',
+          },
+          pieSliceText: showValue?'value':'percentage'
+        }
+      },
+      redraw() {
+        this.$.chart.redraw();
+      }
+    });
+  </script>
+</dom-module>

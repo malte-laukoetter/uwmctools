@@ -2,10 +2,6 @@
   "entrypoint": "index.html",
   "shell": "src/uwmctools-app.html",
   "fragments": [
-    "src/uwmctools-view-plugin.html",
-    "src/uwmctools-view-plugins.html",
-    "src/uwmctools-view-user.html",
-    "src/uwmctools-view-users.html",
     "src/uwmctools-view-default.html",
     "src/uwmctools-view-faq.html",
     "src/uwmctools-view-404.html"

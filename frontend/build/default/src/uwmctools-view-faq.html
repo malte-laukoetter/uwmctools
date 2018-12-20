@@ -1,0 +1,81 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-expansion-panel/paper-panel.html">
+<link rel="import" href="../bower_components/paper-expansion-panel/paper-panel-list.html">
+<link rel="import" href="../bower_components/juicy-html/juicy-html.html">
+<link rel="import" href="../bower_components/math-tex/dist/math-tex.html">
+
+<link rel="import" href="uwmctools-footer.html">
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="uwmctools-view-faq">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .content {
+          margin: 20px;
+      }
+
+      paper-panel {
+          background-color: #fff;
+      }
+    </style>
+
+    <firebase-indexeddb-link path="uwmctools/faq" data="{{faq}}"></firebase-indexeddb-link>
+
+    <app-header-layout fullbleed="">
+      <app-header condenses="" reveals="" effects="waterfall">
+        <app-toolbar>
+          <h1 main-title="">FAQ</h1>
+        </app-toolbar>
+      </app-header>
+      <div class="content flex">
+        <paper-panel-list>
+          <template is="dom-repeat" items="[[faq]]">
+            <paper-panel on-tap="_onHeaderTap">
+              <paper-closed-panel-title>[[item.question]]</paper-closed-panel-title>
+              <paper-expanded-panel-title>[[item.question]]</paper-expanded-panel-title>
+              <paper-expanded-panel-content>
+                <div>
+                  <template is="juicy-html" content$="[[item.answer]]"></template>
+                </div>
+              </paper-expanded-panel-content>
+            </paper-panel>
+          </template>
+        </paper-panel-list>
+      </div>   
+      <uwmctools-footer></uwmctools-footer>
+    </app-header-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-faq',
+
+      _convertToArray: function(objs) {
+        var array = [];
+        for(var obj in objs){
+          var res = objs[obj];
+          res.key = obj
+          array.push(res);
+        }
+
+        return array;
+      },
+      _onHeaderTap: function(e){
+        var target = Polymer.dom(e).localTarget;
+        target.opened = !target.opened;
+      }
+    });
+  </script>
+</dom-module>

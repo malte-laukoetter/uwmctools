@@ -1,0 +1,141 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+
+<link rel="import" href="uwmctools-footer.html">
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="uwmctools-view-worldstats">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+        --app-grid-columns: 2;
+      }
+
+      @media (max-width: 1300px) {
+        :host {
+          --app-grid-columns: 1;
+        }
+      }
+    </style>
+
+    <app-route route="{{route}}" pattern="/:tab" data="{{data}}" tail="{{subroute}}"></app-route>
+
+    <app-header-layout fullbleed="">
+      <app-header condenses="" fixed="" effects="waterfall">
+        <app-toolbar>
+          <h1 main-title="">Zonen Statistiken - [[_toName(data.tab)]]</h1>
+        </app-toolbar>
+        <paper-tabs sticky="" selected="{{data.tab}}" attr-for-selected="name" class="drawer-list" role="navigation">
+          <paper-tab name="overview">Übersicht</paper-tab>
+          <paper-tab name="map">Ganze Karte</paper-tab>
+          <paper-tab name="center">Center</paper-tab>
+          <paper-tab name="north">Norden</paper-tab>
+          <paper-tab name="south">Süden</paper-tab>
+          <paper-tab name="east">Osten</paper-tab>
+          <paper-tab name="west">Westen</paper-tab>
+          <paper-tab name="north-east">Nord-Osten</paper-tab>
+        </paper-tabs>
+      </app-header>
+      <div class="content flexs">
+        <iron-pages selected="[[data.tab]]" attr-for-selected="id" fallback-selection="overview">
+          <uwmctools-view-worldstats-overview id="overview"></uwmctools-view-worldstats-overview>
+          <uwmctools-view-worldstats-area-full id="map"></uwmctools-view-worldstats-area-full>
+          <uwmctools-view-worldstats-area-center id="center"></uwmctools-view-worldstats-area-center>
+          <uwmctools-view-worldstats-area-north id="north"></uwmctools-view-worldstats-area-north>
+          <uwmctools-view-worldstats-area-south id="south"></uwmctools-view-worldstats-area-south>
+          <uwmctools-view-worldstats-area-east id="east"></uwmctools-view-worldstats-area-east>
+          <uwmctools-view-worldstats-area-west id="west"></uwmctools-view-worldstats-area-west>
+          <uwmctools-view-worldstats-area-north-east id="north-east"></uwmctools-view-worldstats-area-north-east>
+        </iron-pages>
+      </div>
+      <uwmctools-footer></uwmctools-footer>
+    </app-header-layout>
+  </template>
+
+  <script>
+    const tabs = new Map();
+    tabs.set('overview', 'Übersicht');
+    tabs.set('map', 'Ganze Karte');
+    tabs.set('center', 'Center');
+    tabs.set('north', 'Norden');
+    tabs.set('south', 'Süden');
+    tabs.set('east', 'Osten');
+    tabs.set('west', 'Westen');
+    tabs.set('north-east', 'Nord-Osten');
+
+    Polymer({
+      is: 'uwmctools-view-worldstats',
+
+      properties: {
+        route: {
+            type: Object,
+            notify: true
+        },
+        _oldTab: {
+            type: String
+        },
+        tabToView : {
+          value: {
+            'overview': 'overview',
+            'map': 'area-full',
+            'center': 'area-center',
+            'north': 'area-north',
+            'south': 'area-south',
+            'east': 'area-east',
+            'west': 'area-west',
+            'north-east': 'area-north-east',
+          }
+        }
+      },
+
+      observers: [
+        '_subRouteChanged(subroute)',
+        '_tabChanged(data.tab)'
+      ],
+      
+      _subRouteChanged: function(subroute){
+        // the subroute need to be non empty so the route databinding works
+        if (!this.subroute.path) {
+          this.set('subroute.path', '/');
+        }
+      },
+
+      _tabChanged: function(tab){
+        if(tab != this._oldTab){
+          let resolvedPageUrl;
+
+          if(this.tabToView[tab]){
+            resolvedPageUrl = this.resolveUrl('uwmctools-view-worldstats-' + this.tabToView[tab] + '.html');
+          }else{
+            resolvedPageUrl = this.resolveUrl('uwmctools-view-worldstats-area.html');
+          }
+          this.importHref(resolvedPageUrl, null, this._showPage404, true);
+
+          // redraw the charts of the tab so they fit the card
+          if(this.$[tab]) {
+            this._oldTab = tab;
+            if(this.$[tab].redraw)
+              this.$[tab].redraw();
+          }
+        }
+      },
+      _toName: function(tab){
+        return tabs.get(tab);
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,73 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-messaging.html">
+
+<dom-module id="uwmctools-notification">
+  <template>
+      <iron-ajax id="status_request" content-type="application/json" url="https://lergin.de/api/notification/v2/get?[[topic]]" body="[[_computeBody(token)]]" on-response="updateStatus" auto="" method="POST"></iron-ajax>
+      <firebase-messaging id="messaging" token="{{token}}"></firebase-messaging>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-notification',
+      properties: {
+        topic: {
+          type: String,
+          value: ""
+        },
+        status: {
+            type: String,
+            value: false,
+            notify: true,
+        },
+      },
+      _computeBody: function(token){
+        return JSON.stringify({token: token});
+      },
+      subscribe: function(){
+        this.$.messaging.requestPermission().then(() => {
+           return fetch(`https://lergin.de/api/notification/v2/subscribe/${this.topic}`, {
+                method: 'POST',
+                headers: new Headers({
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify({"token": this.token})
+           });
+        }).then((res) => {
+            console.log(res)
+            if(res.status === 200){
+                this.status = true;
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+      },
+      unsubscribe: function(){
+        fetch(`https://lergin.de/api/notification/v2/unsubscribe/${this.topic}`, {
+                method: 'POST',
+                headers: new Headers({
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify({"token": this.token})
+        }).then((res) => {
+            this.status = false;
+        }).catch((err) => {
+            console.log(err);
+        });
+      },
+      updateStatus: function(res){
+          console.log(this.topic)
+          console.log(res.detail.response.indexOf(this.topic) !== -1)
+          this.status = res.detail.response.indexOf(this.topic) !== -1;
+      },
+      toggle: function(){
+          if(this.status){
+              this.unsubscribe();
+          }else{
+              this.subscribe();
+          }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,139 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/google-chart/google-chart.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="uwmctools-time-chart">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      google-chart {
+        width: 100%;
+        height: 400px;
+      }
+
+      paper-card {
+        width: 100%;
+      }
+    </style>
+
+    <paper-card heading="[[title]]">
+      <google-chart id="chart" type="line" options="[[options]]" cols="[[_cols]]" rows="[[_rows]]">
+      </google-chart>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-time-chart',
+      properties: {
+        options: {
+            type: Object,
+            value: {
+              vAxis: {
+                  format: 'decimal',
+                  minValue: 0
+              },
+              legend: {
+                  position: 'bottom'
+              }
+            }
+        },
+        title: {
+          type: String,
+          value: "" 
+        },
+        cols: {
+            type: Array,
+            value: []
+        },
+        _cols: {
+            type: Object,
+            computed: 'computeCols(cols)'
+        },
+        difference: {
+            type: Boolean,
+            value: false
+        },
+        timeline: {
+          type: Array,
+          value: []
+        },
+        _rows: {
+          type: Object,
+          computed: 'computeRows(_dates, _data, difference)'
+        },
+        _dates: {
+          type: Array,
+          computed: 'computeDates(timeline)'
+        },
+        _data: {
+          type: Array,
+          computed: 'computeStats(timeline)'
+        }
+      },
+      computeCols: function(colnames){
+        var cols = [{"label":"Date", "type":"date"}];
+
+        for(var col of colnames)
+          cols.push({"label": col, "type": "number"})
+
+        return cols;
+      },
+      computeRows: function(dates, data, difference){
+        let rows = [];
+
+        if(difference){
+          for(var i = 1; i < dates.length; i++){
+            if(dates[i] != '2016-12-12'){ //date after the end of the crash -> difference values are not making much sense
+              if(Array.isArray(data[i])){
+                rows.push([new Date(dates[i])].concat(data[i].map((curr, j) => curr - data[i-1][j])));
+              }else{
+                rows.push([new Date(dates[i]), data[i] - data[i-1]])
+              }
+            }
+          }
+        }else{
+          for(var i = 0; i < dates.length; i++){
+            if(Array.isArray(data[i])){
+              rows.push([new Date(dates[i])].concat(data[i]));
+            }else{
+              rows.push([new Date(dates[i]), data[i]])
+            }
+          }
+        } 
+
+        for(let row of rows){
+          while(row.length <= this.cols.length){
+            row.push(0);
+          }
+        }
+
+        return rows;
+      },
+      computeDates: function(timeline){
+        var res = [];
+
+        for(var date in timeline)
+          res.push(date);
+
+        return res;
+      },
+
+      computeStats: function(timeline){
+        var res = [];
+
+        for(let date in timeline)
+            res.push(timeline[date]);
+
+        return res;
+      },
+      redraw() {
+        this.$.chart.redraw();
+      }
+    });
+  </script>
+</dom-module>

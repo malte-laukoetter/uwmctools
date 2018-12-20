@@ -1,0 +1,37 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="uwmctools-time-chart.html">
+<link rel="import" href="uwmctools-chart-view-behavior.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="uwmctools-ratio-chart.html">
+
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<dom-module id="uwmctools-view-plotstats-area">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <firebase-indexeddb-link path="uwmctools/stats/mainmapplots/timeline/[[area]]/free" data="{{free}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/mainmapplots/timeline/[[area]]/full" data="{{full}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/mainmapplots/current/[[area]]" data="{{current}}"></firebase-indexeddb-link>
+
+    <div class="app-grid">
+        <uwmctools-time-chart cols="[&quot;Freie Plots&quot;]" timeline="[[free]]" title="Freie Plots"></uwmctools-time-chart>
+        <uwmctools-time-chart cols="[&quot;Belegte Plots&quot;]" timeline="[[full]]" title="Belegte Plots"></uwmctools-time-chart>
+        <uwmctools-ratio-chart data="[[current]]" exclude="[&quot;all&quot;]" labels="[&quot;Frei&quot;, &quot;Belegt&quot;]" title="Plot Anteile"></uwmctools-ratio-chart>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-plotstats-area',
+      behaviors: [UwmctoolsChartViewBehavior]
+    });
+  </script>
+</dom-module>

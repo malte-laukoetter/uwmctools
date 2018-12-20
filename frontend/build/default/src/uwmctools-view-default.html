@@ -1,0 +1,94 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="uwmctools-footer.html">
+<link rel="import" href="uwmctools-time-chart.html">
+<link rel="import" href="firebase-indexeddb-link.html">
+<link rel="import" href="uwmctools-chart-view-behavior.html">
+<link rel="import" href="uwmctools-ratio-chart.html">
+
+<dom-module id="uwmctools-view-default">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+        --app-grid-columns: 2;
+      }
+
+      @media (max-width: 1300px) {
+        :host {
+          --app-grid-columns: 2;
+        }
+      }
+
+      @media (max-width: 639px) {
+        :host {
+          --app-grid-columns: 1;
+        }
+      }
+
+      uwmctools-player-card {
+          padding: 20px
+      }
+
+      a {
+        color: inherit;
+      }
+    </style>
+
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/east/playerzoneAmount" data="{{timeline_east}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/north/playerzoneAmount" data="{{timeline_north}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/south/playerzoneAmount" data="{{timeline_south}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/main/playerzoneAmount" data="{{timeline_main}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/north-east/playerzoneAmount" data="{{timeline_north_east}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/full/playerzoneAmount" data="{{timeline_full}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/mainmapplots/current" data="{{plots}}"></firebase-indexeddb-link>
+
+    <app-header-layout fullbleed="">
+      <app-header condenses="" fixed="" effects="waterfall">
+        <app-toolbar>
+          <h1 main-title="">Tools und Statistiken für unlimitedworld.de</h1>
+        </app-toolbar>
+      </app-header>
+      <div class="content flex">
+        <div class="app-grid">
+          <a href="/worldstats/overview/"><uwmctools-time-chart cols="[&quot;Gesamt&quot;, &quot;Center&quot;, &quot;Süden&quot;, &quot;Norden&quot;, &quot;Osten&quot;, &quot;Nord-Osten&quot;]" timeline="[[playerZoneAmounts]]" title="Zonen Statistiken"></uwmctools-time-chart></a>
+          <a href="/plotstats/overview/"><uwmctools-ratio-chart data="[[plots]]" subproperty="free" title="Plot Statistiken" exclude="[&quot;all&quot;]" show-value=""></uwmctools-ratio-chart></a>
+        </div>
+      </div>
+      <uwmctools-footer></uwmctools-footer>
+    </app-header-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-default',
+      behaviors: [UwmctoolsChartViewBehavior],
+      properties: {
+        playerZoneAmounts: {
+            type: Object,
+            computed: 'computeCombinedTimeline(timeline_full,timeline_main,timeline_north,timeline_south,timeline_east,timeline_north_east)'
+        },
+      },
+      computeCombinedTimeline: function(... areas){
+        let data = {};
+
+        for(let date in areas[0]){
+          data[date] = [];
+          for(let area in areas){
+            data[date].push(areas[area][date]);
+          }
+        }
+
+        return data;
+      },
+    });
+  </script>
+</dom-module>

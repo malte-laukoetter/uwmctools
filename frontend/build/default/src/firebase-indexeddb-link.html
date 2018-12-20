@@ -1,0 +1,26 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+
+<dom-module id="firebase-indexeddb-link">
+  <template>
+    <firebase-document path="[[path]]" data="{{liveData}}"></firebase-document>
+    <app-indexeddb-mirror key="[[path]]" data="[[liveData]]" persisted-data="{{data}}">
+    </app-indexeddb-mirror>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'firebase-indexeddb-link',
+      properties: {
+        path: {
+          type: String
+        },
+        data: {
+          notify: true
+        }
+      }
+      
+    });
+  </script>
+</dom-module>

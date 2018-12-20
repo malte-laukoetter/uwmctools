@@ -1,0 +1,48 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<dom-module id="uwmctools-location">
+  <template>
+    <style>
+      :host {
+        display: inline;
+      }
+      
+      a {
+        text-decoration: none;
+      }
+    </style>
+    <span on-tap="setCompass">
+       <!-- <iron-ajax id="compassreq" url="https://unlimitedworld.de/server_api/dynmap_compass.php?x=[[x]]&z=[[z]]" handle-as="json" on-response="handleResponse" 
+        
+        ></iron-ajax>-->
+        <a href="https://unlimitedworld.de/server_api/dynmap_compass.php?x=[[x]]&amp;z=[[z]]" target="_blank">
+        <span>[[x]] / [[z]]</span>
+        <paper-tooltip>Klicke auf die Koordinaten um deinen Kompass einzustellen</paper-tooltip>
+        </a>
+    </span>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-location',
+      properties: {
+        x: {
+          type: Number,
+          value: 0 
+        },
+        z: {
+            type: Number,
+            value: 0
+        }
+      },
+      setCompass(){
+          // missing cors header...
+          // this.$.compassreq.generateRequest();
+      }
+    });
+  </script>
+</dom-module>

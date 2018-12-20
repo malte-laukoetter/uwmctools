@@ -1,0 +1,88 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="uwmctools-time-chart.html">
+<link rel="import" href="uwmctools-chart-view-behavior.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="uwmctools-ratio-chart.html">
+
+<link rel="import" href="firebase-indexeddb-link.html">
+
+<dom-module id="uwmctools-view-worldstats-area">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <firebase-indexeddb-link path="uwmctools/stats/world/timeline/[[area]]" data="{{timeline}}"></firebase-indexeddb-link>
+    <firebase-indexeddb-link path="uwmctools/stats/world/current/[[area]]" data="{{current}}"></firebase-indexeddb-link>
+
+    <div class="app-grid">
+        <uwmctools-time-chart cols="[&quot;Zonen&quot;]" timeline="[[timeline.playerzoneAmount]]" title="Spielerzonen Anzahl"></uwmctools-time-chart>
+        <uwmctools-time-chart cols="[&quot;Zonen&quot;]" timeline="[[timeline.playerzoneAmount]]" title="Spielerzonen Anzahl (Änderungsrate)" difference=""></uwmctools-time-chart>
+        <uwmctools-time-chart cols="[&quot;Spieler&quot;, &quot;Server&quot;, &quot;Frei&quot;]" timeline="[[zoneAreasTimeline]]" title="Zonen Flächen"></uwmctools-time-chart>
+        <uwmctools-time-chart cols="[&quot;Spieler&quot;, &quot;Server&quot;, &quot;Frei&quot;]" timeline="[[zoneAreasTimeline]]" title="Zonen Flächen (Änderungsrate)" difference=""></uwmctools-time-chart>
+        <uwmctools-time-chart cols="[&quot;Blöcke&quot;]" timeline="[[zoneAreaAvg]]" title="Spieler Zonen Flächen (Durchschnitt)"></uwmctools-time-chart>
+        <uwmctools-ratio-chart data="[[zoneAreas]]" exclude="[&quot;all&quot;]" labels="[&quot;Spieler&quot;, &quot;Server&quot;, &quot;Frei&quot;]" title="Flächen Anteile"></uwmctools-ratio-chart>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'uwmctools-view-worldstats-area',
+      behaviors: [UwmctoolsChartViewBehavior],
+      properties: {
+        zoneAreasTimeline: {
+            type: Object,
+            computed: 'computeZoneAreasTimeline(timeline.playerzoneArea, timeline.serverzoneArea, timeline.area)'
+        },
+        zoneAreas: {
+            type: Object,
+            computed: 'computeZoneAreas(current.playerzoneArea, current.serverzoneArea, current.area)'
+        },
+        zoneAreaAvg: {
+            type: Object,
+            computed: 'computeAvgAreaTimeline(timeline.playerzoneArea, timeline.playerzoneAmount)'
+        },
+      },
+      computeZoneAreasTimeline: function(player, server, full){
+        let areas = {};
+
+        for(let date in player){
+          areas[date] = [
+            player[date],
+            server[date],
+            full[date] - player[date] - server[date]
+          ]
+        }
+
+        if(Object.keys(areas).length === 0)
+          areas = {"2000-01-01": [0, 0, 0]}
+
+        return areas;
+      },
+      computeAvgAreaTimeline: function(size, amount){
+        let areas = {};
+
+        for(let date in size){
+          areas[date] = size[date] / amount[date];
+        }
+
+        if(Object.keys(areas).length === 0)
+          areas = {"2000-01-01": [0, 0, 0]}
+
+        return areas;
+      },
+      computeZoneAreas: function(player, server, full){
+        return [
+          player,
+          server,
+          full - player - server
+        ]
+      }
+    });
+  </script>
+</dom-module>
