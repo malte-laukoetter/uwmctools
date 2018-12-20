@@ -50,6 +50,7 @@
           <paper-tab name="north">Norden</paper-tab>
           <paper-tab name="south">Süden</paper-tab>
           <paper-tab name="east">Osten</paper-tab>
+          <paper-tab name="west">Westen</paper-tab>
           <paper-tab name="north-east">Nord-Osten</paper-tab>
         </paper-tabs>
       </app-header>
@@ -64,6 +65,7 @@
           <uwmctools-view-worldstats-area-north id="north"></uwmctools-view-worldstats-area-north>
           <uwmctools-view-worldstats-area-south id="south"></uwmctools-view-worldstats-area-south>
           <uwmctools-view-worldstats-area-east id="east"></uwmctools-view-worldstats-area-east>
+          <uwmctools-view-worldstats-area-west id="west"></uwmctools-view-worldstats-area-west>
           <uwmctools-view-worldstats-area-north-east id="north-east"></uwmctools-view-worldstats-area-north-east>
         </iron-pages>
       </div>
@@ -79,6 +81,7 @@
     tabs.set('north', 'Norden');
     tabs.set('south', 'Süden');
     tabs.set('east', 'Osten');
+    tabs.set('west', 'Westen');
     tabs.set('north-east', 'Nord-Osten');
 
     Polymer({
@@ -100,6 +103,7 @@
             'north': 'area-north',
             'south': 'area-south',
             'east': 'area-east',
+            'west': 'area-west',
             'north-east': 'area-north-east',
           }
         }
